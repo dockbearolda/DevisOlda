@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="OLDA Atelier — Boutique B2B de souvenirs premium Saint-Martin">
+    <meta name="theme-color" content="#ffffff">
+    <title>OLDA Atelier | Boutique Officielle</title>
+    <style>
+        :root {
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --sand: #f0f0f0;
+            --sand-dark: #e8e2d9;
+            --black: #1d1d1f;
+            --charcoal: #2c2c2e;
+            --ocean: #0a7ea4;
+            --ocean-light: #e6f4f8;
+            --tropique: #2d6a4f;
+            --gray: #86868b;
+            --gray-light: #aeaeb2;
+            --border: #e5e5e5;
+            --border-light: #f2f2f2;
+            --discount: #bf4800;
+            --discount-light: #fff8f5;
+            --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --transition-fast: 0.2s ease;
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 8px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+        body { font-family: var(--font-main); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; line-height: 1.5; overflow-x: hidden; }
+        .home-page { position: fixed; inset: 0; background: #ffffff; z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .home-page.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .home-logo { width: clamp(180px, 40vw, 280px); height: auto; margin-bottom: 50px; animation: fadeInUp 0.8s ease; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease; }
+        .home-page.transitioning .home-logo { transform: scale(0.85) translateY(-20px); opacity: 0; }
+        .home-btn { padding: 16px 32px; background: transparent; border: none; color: var(--black); font-family: var(--font-main); font-size: 13px; font-weight: 400; letter-spacing: 0.8px; cursor: pointer; transition: all var(--transition-smooth); animation: fadeInUp 0.8s ease 0.2s both; position: relative; overflow: hidden; }
+        .home-btn::after { content: ''; position: absolute; bottom: 8px; left: 50%; width: 0; height: 1px; background: var(--ocean); transition: all 0.3s ease; transform: translateX(-50%); }
+        .home-btn:hover { color: var(--ocean); }
+        .home-btn:hover::after { width: 60%; }
+        .home-page.transitioning .home-btn { opacity: 0; transform: translateY(10px); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .shop-container { opacity: 0; transform: translateY(30px); transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s; }
+        .shop-container.visible { opacity: 1; transform: translateY(0); }
+        .header { position: sticky; top: 0; z-index: 100; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 clamp(20px, 5vw, 40px); height: 65px; background: rgba(248, 248, 248, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .logo { height: 40px; width: auto; cursor: pointer; transition: opacity var(--transition-fast), transform 0.3s ease; grid-column: 2; justify-self: center; }
+        .logo:hover { opacity: 0.7; transform: scale(1.02); }
+        .cart-trigger { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: none; border: none; cursor: pointer; transition: transform var(--transition-fast); grid-column: 3; justify-self: end; }
+        .cart-trigger:hover { transform: scale(1.05); }
+        .cart-trigger svg { width: 22px; height: 22px; stroke: var(--black); stroke-width: 1.5; fill: none; }
+        .cart-count { position: absolute; top: 8px; right: 0; min-width: 14px; height: 14px; padding: 0 3px; background: var(--gray-light); color: var(--white); font-size: 9px; font-weight: 500; border-radius: 7px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.5); transition: all var(--transition-fast); }
+        .cart-count.visible { opacity: 0.85; transform: scale(1); }
+        .nav-main { position: relative; display: flex; gap: 8px; padding: 14px clamp(20px, 5vw, 40px); overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--white); }
+        .nav-main::-webkit-scrollbar { display: none; }
+        .tab-btn { flex-shrink: 0; padding: 10px 18px; background: none; border: none; font-size: 11px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--charcoal); cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; border-bottom: 1px solid transparent; }
+        .tab-btn:hover { color: var(--black); }
+        .tab-btn.active { color: var(--black); border-bottom-color: var(--black); font-weight: 500; }
+        .nav-sub { position: relative; display: flex; gap: 20px; padding: 12px clamp(20px, 5vw, 40px); overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--white); }
+        .nav-sub::-webkit-scrollbar { display: none; }
+        .sub-btn { flex-shrink: 0; padding: 6px 0; background: none; border: none; border-bottom: 1px solid transparent; font-size: 10px; font-weight: 400; letter-spacing: 0.8px; text-transform: uppercase; color: var(--charcoal); cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
+        .sub-btn:hover { color: var(--black); }
+        .sub-btn.active { color: var(--black); border-bottom-color: var(--black); }
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); position: relative; align-items: start; }
+        .product-grid::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--border); pointer-events: none; }
+        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(3, 1fr); } .product-grid::after { display: none; } }
+        @media (min-width: 1200px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+        .product-card { padding: clamp(30px, 6vw, 50px) clamp(15px, 4vw, 25px); display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid var(--border); opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; position: relative; }
+        .product-card.visible { opacity: 1; transform: translateY(0); }
+        @media (min-width: 768px) { .product-card { border-right: 1px solid var(--border); } .product-card:nth-child(3n) { border-right: none; } }
+        @media (min-width: 1200px) { .product-card:nth-child(3n) { border-right: 1px solid var(--border); } .product-card:nth-child(4n) { border-right: none; } }
+        .discount-badge { position: absolute; top: 15px; right: 15px; background: var(--discount); color: var(--white); font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(191, 72, 0, 0.3); }
+        .product-img-wrapper { position: relative; width: 100%; max-width: 242px; margin: 0 auto 24px auto; cursor: pointer; }
+        .product-img { width: 100%; max-width: 242px; height: 242px; background-size: 90%; background-position: center center; background-repeat: no-repeat; transition: transform var(--transition-smooth); display: block; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05)); }
+        .product-card:hover .product-img { transform: scale(1.03); }
+        .product-title { font-size: 18.7px; font-weight: 500; line-height: 1.4; margin-bottom: 6px; min-height: 43px; display: flex; align-items: center; justify-content: center; }
+        .product-info { font-size: 14.4px; color: var(--gray); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 22px; font-weight: 400; }
+        .product-pricing { margin-bottom: 16px; display: none; }
+        .product-pricing.visible { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .price-original { font-size: 15.6px; color: var(--gray); text-decoration: line-through; }
+        .price-discounted { font-size: 19.2px; font-weight: 600; color: var(--tropique); }
+        .qty-select { appearance: none; -webkit-appearance: none; width: 100px; padding: 5px 20px 5px 8px; background: var(--white); border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-main); font-size: 10px; font-weight: 400; letter-spacing: 0.5px; color: var(--black); cursor: pointer; margin-bottom: 12px; transition: border-color var(--transition-fast); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; }
+        .qty-select:hover { border-color: var(--gray-light); }
+        .qty-select:focus { outline: none; border-color: var(--ocean); box-shadow: 0 0 0 3px var(--ocean-light); }
+        .add-btn { padding: 10px 18px; background: none; border: none; color: var(--ocean); font-family: var(--font-main); font-size: 11px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all var(--transition-fast); border-radius: 6px; min-height: 44px; }
+        .add-btn:hover { background: var(--ocean-light); }
+        .add-btn.added { color: var(--tropique); }
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); z-index: 200; opacity: 0; visibility: hidden; transition: all var(--transition-smooth); }
+        .cart-overlay.open { opacity: 1; visibility: visible; }
+        .cart-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 380px; background: var(--white); z-index: 201; display: flex; flex-direction: column; transform: translateX(100%); transition: transform var(--transition-smooth); box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1); }
+        .cart-panel.open { transform: translateX(0); }
+        .cart-header { display: flex; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 4vw, 24px); border-bottom: 1px solid var(--border); }
+        .cart-title { font-size: 16px; font-weight: 500; letter-spacing: 0.5px; }
+        .cart-close { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: none; border: none; cursor: pointer; border-radius: 50%; transition: background var(--transition-fast); }
+        .cart-close:hover { background: var(--sand); }
+        .cart-close svg { width: 18px; height: 18px; stroke: var(--black); stroke-width: 1.5; }
+        .cart-body { flex: 1; overflow-y: auto; padding: clamp(16px, 4vw, 24px); }
+        .cart-empty { text-align: center; padding: 40px 16px; color: var(--gray); font-size: 13px; font-weight: 400; }
+        .cart-empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+        .cart-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border-light); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-size: 12px; font-weight: 500; margin-bottom: 3px; }
+        .cart-item-ref { font-size: 10px; color: var(--gray); letter-spacing: 0.3px; font-weight: 400; }
+        .cart-item-qty { font-size: 11px; color: var(--ocean); font-weight: 500; margin-top: 4px; }
+        .cart-item-remove { padding: 6px; background: none; border: none; color: var(--gray-light); cursor: pointer; transition: color var(--transition-fast); font-size: 16px; line-height: 1; }
+        .cart-item-remove:hover { color: var(--black); }
+        .cart-footer { padding: clamp(16px, 4vw, 20px); border-top: 1px solid var(--border); background: var(--off-white); }
+        .cart-summary { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 12px; color: var(--gray); font-weight: 400; }
+        .cart-summary strong { color: var(--black); font-weight: 500; }
+        .order-form { display: none; margin-bottom: 14px; }
+        .order-form.visible { display: block; }
+        .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 8px; }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-label { display: block; font-size: 9px; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .form-input, .form-textarea { width: 100%; padding: 8px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-main); font-size: 12px; color: var(--black); transition: border-color var(--transition-fast); }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--ocean); box-shadow: 0 0 0 2px var(--ocean-light); }
+        .form-textarea { resize: none; min-height: 50px; }
+        .cart-submit { width: 100%; padding: 14px; background: var(--black); border: none; border-radius: var(--radius); color: var(--white); font-family: var(--font-main); font-size: 12px; font-weight: 500; letter-spacing: 0.5px; cursor: pointer; transition: all var(--transition-fast); }
+        .cart-submit:hover:not(:disabled) { background: var(--charcoal); transform: translateY(-1px); }
+        .cart-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+        .confirmation-overlay { position: fixed; inset: 0; background: rgba(248, 248, 248, 0.98); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .confirmation-overlay.visible { opacity: 1; visibility: visible; }
+        .confirmation-logo { width: clamp(140px, 30vw, 200px); height: auto; margin-bottom: 40px; animation: confirmFadeIn 0.8s ease 0.2s both; }
+        .confirmation-message { font-size: clamp(14px, 3vw, 18px); font-weight: 400; color: var(--charcoal); text-align: center; letter-spacing: 0.5px; animation: confirmFadeIn 0.8s ease 0.4s both; padding: 0 20px; }
+        .confirmation-close { margin-top: 50px; padding: 12px 28px; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--charcoal); font-family: var(--font-main); font-size: 12px; font-weight: 400; letter-spacing: 0.5px; cursor: pointer; transition: all var(--transition-fast); animation: confirmFadeIn 0.8s ease 0.6s both; }
+        .confirmation-close:hover { background: var(--sand); border-color: var(--sand-dark); }
+        @keyframes confirmFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { padding: 40px clamp(20px, 5vw, 40px); text-align: center; border-top: 1px solid var(--border); background: var(--off-white); }
+        .footer-text { font-size: 11px; color: var(--gray); letter-spacing: 0.5px; font-weight: 400; }
+        .zoom-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; padding: 20px; }
+        .zoom-overlay.active { opacity: 1; visibility: visible; }
+        .zoom-container { position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; }
+        .zoom-img { max-width: 100%; max-height: 90vh; object-fit: contain; transform: scale(0.9); transition: transform 0.3s ease; }
+        .zoom-overlay.active .zoom-img { transform: scale(1); }
+        .zoom-close { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; z-index: 2001; }
+        .zoom-close:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+        .zoom-close svg { width: 20px; height: 20px; stroke: white; stroke-width: 2; }
+    </style>
+</head>
+<body>
+    <section class="home-page" id="homePage">
+        <svg class="home-logo" viewBox="0 0 283.46 283.46" aria-label="OLDA Atelier">
+            <g><path d="M81.27,54.16h-5.48l-.97,2.51h-4.94l6.3-14.42h4.78l6.3,14.42h-5.03l-.97-2.51ZM79.93,50.65l-1.4-3.63-1.4,3.63h2.8Z"/><path d="M96.93,46.02h-4.22v-3.77h13.31v3.77h-4.22v10.65h-4.86v-10.65Z"/><path d="M125.72,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M134.06,42.25h4.86v10.65h6.51v3.77h-11.38v-14.42Z"/><path d="M153.24,42.25h4.86v14.42h-4.86v-14.42Z"/><path d="M178.91,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M193.43,53.04h-1.32v3.63h-4.86v-14.42h6.94c4.02,0,6.57,2.1,6.57,5.44,0,2.08-.99,3.65-2.72,4.53l3.03,4.45h-5.19l-2.45-3.63ZM193.88,46h-1.77v3.38h1.77c1.34,0,1.98-.64,1.98-1.69s-.64-1.69-1.98-1.69Z"/></g>
+            <path d="M187.85,114.63h33.12c.82,0,1.48.66,1.48,1.48v34.05c0,.82-.66,1.48-1.48,1.48h-73.22c-.82,0-1.48-.66-1.48-1.48v-76.52c0-.82.66-1.48,1.48-1.48h37.15c.82,0,1.48.66,1.48,1.48v39.51c0,.82.66,1.48,1.48,1.48Z"/>
+            <path d="M141.24,238.96l41.28-77.18c.58-1.05,2.09-1.05,2.67,0l41.39,77.18c.56,1.02-.18,2.26-1.34,2.26h-82.67c-1.16,0-1.89-1.24-1.34-2.26Z"/>
+            <g><path d="M101.44,161.74h-2.56l.48,79.48h1.16c20.68,0,38.61-15.44,40.49-36.03,2.14-23.57-16.43-43.44-39.57-43.44Z"/><path d="M95.36,161.74h-32.71c-.82,0-1.48.66-1.48,1.48v76.52c0,.82.66,1.48,1.48,1.48h32.26l.45-79.48Z"/></g>
+            <path d="M140.12,108.5c-1.61-20.24-18-36.63-38.24-38.24-25.72-2.04-47.09,19.32-45.05,45.04,1.6,20.24,18,36.64,38.24,38.25.12,0,.23,0,.34.02l.23-39.79v-.05l-11.32,11.07s-1.19-11.25,6.13-12.84h-13s4.12-7.32,14.54-4.85l-7.67-7.67s11.86-1.72,12.82,6.62c1.07-8.9,12.54-6.48,12.54-6.48l-7.92,8.04c8.81-3.63,14.91,4.33,14.91,4.33h-13.05c4.85,1.4,6.01,6.08,6.2,9.41.14,2.05-.12,3.59-.12,3.59l-3.54-3.59-7.55-7.62.24,39.91c24-.2,43.23-20.71,41.29-45.17Z"/>
+        </svg>
+        <button class="home-btn" id="enterShop">Découvrir les produits</button>
+        <a href="/devis.html" class="home-btn" style="margin-top: 12px; text-decoration: none;">Demander un devis textile</a>
+    </section>
+    <div class="shop-container" id="shopContainer">
+        <header class="header" role="banner">
+            <svg class="logo" viewBox="0 0 283.46 283.46" aria-label="OLDA Atelier">
+                <g><path d="M81.27,54.16h-5.48l-.97,2.51h-4.94l6.3-14.42h4.78l6.3,14.42h-5.03l-.97-2.51ZM79.93,50.65l-1.4-3.63-1.4,3.63h2.8Z"/><path d="M96.93,46.02h-4.22v-3.77h13.31v3.77h-4.22v10.65h-4.86v-10.65Z"/><path d="M125.72,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M134.06,42.25h4.86v10.65h6.51v3.77h-11.38v-14.42Z"/><path d="M153.24,42.25h4.86v14.42h-4.86v-14.42Z"/><path d="M178.91,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M193.43,53.04h-1.32v3.63h-4.86v-14.42h6.94c4.02,0,6.57,2.1,6.57,5.44,0,2.08-.99,3.65-2.72,4.53l3.03,4.45h-5.19l-2.45-3.63ZM193.88,46h-1.77v3.38h1.77c1.34,0,1.98-.64,1.98-1.69s-.64-1.69-1.98-1.69Z"/></g>
+                <path d="M187.85,114.63h33.12c.82,0,1.48.66,1.48,1.48v34.05c0,.82-.66,1.48-1.48,1.48h-73.22c-.82,0-1.48-.66-1.48-1.48v-76.52c0-.82.66-1.48,1.48-1.48h37.15c.82,0,1.48.66,1.48,1.48v39.51c0,.82.66,1.48,1.48,1.48Z"/>
+                <path d="M141.24,238.96l41.28-77.18c.58-1.05,2.09-1.05,2.67,0l41.39,77.18c.56,1.02-.18,2.26-1.34,2.26h-82.67c-1.16,0-1.89-1.24-1.34-2.26Z"/>
+                <g><path d="M101.44,161.74h-2.56l.48,79.48h1.16c20.68,0,38.61-15.44,40.49-36.03,2.14-23.57-16.43-43.44-39.57-43.44Z"/><path d="M95.36,161.74h-32.71c-.82,0-1.48.66-1.48,1.48v76.52c0,.82.66,1.48,1.48,1.48h32.26l.45-79.48Z"/></g>
+                <path d="M140.12,108.5c-1.61-20.24-18-36.63-38.24-38.24-25.72-2.04-47.09,19.32-45.05,45.04,1.6,20.24,18,36.64,38.24,38.25.12,0,.23,0,.34.02l.23-39.79v-.05l-11.32,11.07s-1.19-11.25,6.13-12.84h-13s4.12-7.32,14.54-4.85l-7.67-7.67s11.86-1.72,12.82,6.62c1.07-8.9,12.54-6.48,12.54-6.48l-7.92,8.04c8.81-3.63,14.91,4.33,14.91,4.33h-13.05c4.85,1.4,6.01,6.08,6.2,9.41.14,2.05-.12,3.59-.12,3.59l-3.54-3.59-7.55-7.62.24,39.91c24-.2,43.23-20.71,41.29-45.17Z"/>
+            </svg>
+            <button class="cart-trigger" id="cartTrigger" aria-label="Ouvrir le panier">
+                <svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </header>
+        <nav class="nav-main" id="navMain"></nav>
+        <nav class="nav-sub" id="navSub"></nav>
+        <main class="product-grid" id="productGrid"></main>
+        <footer class="footer"><p class="footer-text">© 2026 Atelier OLDA — Boutique Officielle — Saint-Martin, Antilles françaises — Tous droits réservés</p><p class="footer-text" style="margin-top: 8px;"><a href="/devis.html" style="color: var(--ocean); text-decoration: none;">Demander un devis textile personnalisé →</a></p></footer>
+    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-panel" id="cartPanel">
+        <header class="cart-header">
+            <h2 class="cart-title">Votre Sélection</h2>
+            <button class="cart-close" id="cartClose"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>
+        </header>
+        <div class="cart-body" id="cartBody"><div class="cart-empty"><div class="cart-empty-icon">☀️</div><p>Votre sélection est vide</p></div></div>
+        <footer class="cart-footer">
+            <div class="cart-summary"><span>Articles</span><strong id="cartTotal">0</strong></div>
+            <form class="order-form" id="orderForm">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label" for="customerName">Nom</label><input type="text" class="form-input" id="customerName" placeholder="Votre nom" required></div>
+                    <div class="form-group"><label class="form-label" for="customerEmail">Email</label><input type="email" class="form-input" id="customerEmail" placeholder="votre@email.com" required></div>
+                </div>
+                <div class="form-group"><label class="form-label" for="customerComment">Commentaire</label><textarea class="form-textarea" id="customerComment" placeholder="Informations complémentaires..."></textarea></div>
+            </form>
+            <button class="cart-submit" id="cartSubmit" disabled>Confirmer la commande</button>
+        </footer>
+    </aside>
+    <div class="confirmation-overlay" id="confirmationOverlay">
+        <svg class="confirmation-logo" viewBox="0 0 283.46 283.46" aria-label="OLDA Atelier">
+            <g><path d="M81.27,54.16h-5.48l-.97,2.51h-4.94l6.3-14.42h4.78l6.3,14.42h-5.03l-.97-2.51ZM79.93,50.65l-1.4-3.63-1.4,3.63h2.8Z"/><path d="M96.93,46.02h-4.22v-3.77h13.31v3.77h-4.22v10.65h-4.86v-10.65Z"/><path d="M125.72,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M134.06,42.25h4.86v10.65h6.51v3.77h-11.38v-14.42Z"/><path d="M153.24,42.25h4.86v14.42h-4.86v-14.42Z"/><path d="M178.91,53v3.67h-11.99v-14.42h11.73v3.67h-6.94v1.69h6.1v3.5h-6.1v1.9h7.21Z"/><path d="M193.43,53.04h-1.32v3.63h-4.86v-14.42h6.94c4.02,0,6.57,2.1,6.57,5.44,0,2.08-.99,3.65-2.72,4.53l3.03,4.45h-5.19l-2.45-3.63ZM193.88,46h-1.77v3.38h1.77c1.34,0,1.98-.64,1.98-1.69s-.64-1.69-1.98-1.69Z"/></g>
+            <path d="M187.85,114.63h33.12c.82,0,1.48.66,1.48,1.48v34.05c0,.82-.66,1.48-1.48,1.48h-73.22c-.82,0-1.48-.66-1.48-1.48v-76.52c0-.82.66-1.48,1.48-1.48h37.15c.82,0,1.48.66,1.48,1.48v39.51c0,.82.66,1.48,1.48,1.48Z"/>
+            <path d="M141.24,238.96l41.28-77.18c.58-1.05,2.09-1.05,2.67,0l41.39,77.18c.56,1.02-.18,2.26-1.34,2.26h-82.67c-1.16,0-1.89-1.24-1.34-2.26Z"/>
+            <g><path d="M101.44,161.74h-2.56l.48,79.48h1.16c20.68,0,38.61-15.44,40.49-36.03,2.14-23.57-16.43-43.44-39.57-43.44Z"/><path d="M95.36,161.74h-32.71c-.82,0-1.48.66-1.48,1.48v76.52c0,.82.66,1.48,1.48,1.48h32.26l.45-79.48Z"/></g>
+            <path d="M140.12,108.5c-1.61-20.24-18-36.63-38.24-38.24-25.72-2.04-47.09,19.32-45.05,45.04,1.6,20.24,18,36.64,38.24,38.25.12,0,.23,0,.34.02l.23-39.79v-.05l-11.32,11.07s-1.19-11.25,6.13-12.84h-13s4.12-7.32,14.54-4.85l-7.67-7.67s11.86-1.72,12.82,6.62c1.07-8.9,12.54-6.48,12.54-6.48l-7.92,8.04c8.81-3.63,14.91,4.33,14.91,4.33h-13.05c4.85,1.4,6.01,6.08,6.2,9.41.14,2.05-.12,3.59-.12,3.59l-3.54-3.59-7.55-7.62.24,39.91c24-.2,43.23-20.71,41.29-45.17Z"/>
+        </svg>
+        <p class="confirmation-message">Atelier OLDA vous remercie pour votre commande</p>
+        <button class="confirmation-close" id="confirmationClose">Continuer mes achats</button>
+    </div>
+    <div class="zoom-overlay" id="zoomOverlay">
+        <div class="zoom-container">
+            <img class="zoom-img" id="zoomImg" src="" alt="Zoom produit">
+            <button class="zoom-close" id="zoomClose" aria-label="Fermer le zoom">
+                <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        const IMG = "/images/";
+        let PRICES = {};
+        fetch('/prices.json').then(res => res.json()).then(data => { PRICES = data; renderProducts(); }).catch(err => console.warn('Prices file not found'));
+        const DATA = [
+            { key: "nouveautes", label: "Nouveautés", sub: [{ key: "arrivages", label: "Arrivages", items: [
+                { name: "Support Mobile Acrylique", ref: "SM 01", img: IMG+"SM01.jpg", qtyType: "default" },
+                { name: "Bloc Note Similicuir", ref: "BNSA6", detail: "A6", img: IMG+"BNS.5.jpg", qtyType: "blocnote" },
+                { name: "Bloc Note Similicuir", ref: "BNS5", detail: "A5", img: IMG+"BNS5.jpg", qtyType: "blocnote" }
+            ]}]},
+            { key: "tasses", label: "Tasses", sub: [
+                { key: "ceramique", label: "Tasse Céramique", items: [
+                    { name: "Tasse Céramique", ref: "TC 01", size: "350ml", color: "Rouge & Blanc", img: IMG+"TC01.jpg", qtyType: "tasse" }
+                ]}
+            ]},
+            { key: "goodies", label: "Goodies", sub: [
+                { key: "porte-cles", label: "Porte-Clés", items: [
+                    { name: "Porte-Clés Plexiglass", ref: "PCP 01", img: IMG+"PCP01.jpg", qtyType: "portecles" }
+                ]}
+            ]}
+        ];
+        const QTY_CONFIG = {
+            tasse: { min: 3, max: 36, step: 3 },
+            portecles: { min: 10, max: 200, step: 10 },
+            blocnote: { min: 4, max: 100, step: 4 },
+            default: { min: 1, max: 50, step: 1 }
+        };
+        function generateQtyOptions(qtyType) {
+            const config = QTY_CONFIG[qtyType] || QTY_CONFIG.default;
+            const options = [];
+            for (let i = config.min; i <= config.max; i += config.step) options.push({ val: i, label: i.toString() });
+            return options;
+        }
+        let currentMainCat = DATA[0], currentSubCat = DATA[0].sub[0], cart = [];
+        const $ = id => document.getElementById(id);
+        const homePage = $('homePage'), enterShop = $('enterShop'), shopContainer = $('shopContainer');
+        const navMain = $('navMain'), navSub = $('navSub'), productGrid = $('productGrid');
+        const cartTrigger = $('cartTrigger'), cartOverlay = $('cartOverlay'), cartPanel = $('cartPanel');
+        const cartClose = $('cartClose'), cartBody = $('cartBody'), cartCount = $('cartCount');
+        const cartTotal = $('cartTotal'), cartSubmit = $('cartSubmit');
+        const orderForm = $('orderForm'), customerName = $('customerName');
+        const customerEmail = $('customerEmail'), customerComment = $('customerComment');
+        const confirmationOverlay = $('confirmationOverlay'), confirmationClose = $('confirmationClose');
+        enterShop.addEventListener('click', () => { homePage.classList.add('transitioning'); setTimeout(() => { homePage.classList.add('hidden'); shopContainer.classList.add('visible'); }, 600); });
+        document.querySelector('.logo').addEventListener('click', () => { homePage.classList.remove('hidden', 'transitioning'); shopContainer.classList.remove('visible'); });
+        confirmationClose.addEventListener('click', () => { confirmationOverlay.classList.remove('visible'); });
+        function renderNavMain() {
+            navMain.innerHTML = DATA.map(c => '<button class="tab-btn' + (c.key === currentMainCat.key ? ' active' : '') + '" data-key="' + c.key + '">' + c.label + '</button>').join('');
+            navMain.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { const cat = DATA.find(c => c.key === btn.dataset.key); if (cat) { currentMainCat = cat; currentSubCat = cat.sub[0]; renderNavMain(); renderNavSub(); renderProducts(); } }));
+        }
+        function renderNavSub() {
+            navSub.innerHTML = currentMainCat.sub.map(s => '<button class="sub-btn' + (s.key === currentSubCat.key ? ' active' : '') + '" data-key="' + s.key + '">' + s.label + '</button>').join('');
+            navSub.querySelectorAll('.sub-btn').forEach(btn => btn.addEventListener('click', () => { const sub = currentMainCat.sub.find(s => s.key === btn.dataset.key); if (sub) { currentSubCat = sub; renderNavSub(); renderProducts(); } }));
+        }
+        function renderProducts() {
+            productGrid.innerHTML = currentSubCat.items.map(item => {
+                let info = item.ref; if (item.color) info += ' | ' + item.color; if (item.size) info += ' | ' + item.size;
+                const qtyOptions = generateQtyOptions(item.qtyType || 'default');
+                return '<article class="product-card"><div class="product-img-wrapper" data-image="' + item.img + '"><div class="product-img" style="background-image: url(\'' + item.img + '\')"></div></div><h3 class="product-title">' + item.name + '</h3><p class="product-info">' + info + '</p><select class="qty-select">' + qtyOptions.map(o => '<option value="' + o.val + '">' + o.label + '</option>').join('') + '</select><button class="add-btn" data-ref="' + item.ref + '">Ajouter</button></article>';
+            }).join('');
+            productGrid.querySelectorAll('.add-btn').forEach(btn => btn.addEventListener('click', () => { const card = btn.closest('.product-card'); const item = currentSubCat.items.find(i => i.ref === btn.dataset.ref); const qty = parseInt(card.querySelector('.qty-select').value); if (item) { addToCart(item, qty); btn.textContent = '✓ Ajouté'; btn.classList.add('added'); setTimeout(() => { btn.textContent = 'Ajouter'; btn.classList.remove('added'); }, 1500); } }));
+            observeProducts();
+        }
+        function observeProducts() { const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }), { threshold: 0.1 }); productGrid.querySelectorAll('.product-card').forEach(card => observer.observe(card)); }
+        function addToCart(item, qty) { const existing = cart.find(i => i.ref === item.ref); if (existing) existing.qty += qty; else cart.push({ ...item, qty }); updateCartUI(); }
+        function removeFromCart(ref) { cart = cart.filter(i => i.ref !== ref); updateCartUI(); }
+        function updateCartUI() {
+            const total = cart.reduce((sum, i) => sum + i.qty, 0);
+            cartCount.textContent = total; cartCount.classList.toggle('visible', total > 0);
+            cartTotal.textContent = total; cartSubmit.disabled = cart.length === 0;
+            orderForm.classList.toggle('visible', cart.length > 0);
+            if (cart.length === 0) cartBody.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">☀️</div><p>Votre sélection est vide</p></div>';
+            else {
+                cartBody.innerHTML = cart.map(i => '<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">' + i.name + '</div><div class="cart-item-ref">' + i.ref + '</div><div class="cart-item-qty">Quantité : ' + i.qty + '</div></div><button class="cart-item-remove" data-ref="' + i.ref + '">×</button></div>').join('');
+                cartBody.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', () => removeFromCart(btn.dataset.ref)));
+            }
+        }
+        function openCart() { cartOverlay.classList.add('open'); cartPanel.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeCart() { cartOverlay.classList.remove('open'); cartPanel.classList.remove('open'); document.body.style.overflow = ''; }
+        cartTrigger.addEventListener('click', openCart);
+        cartClose.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+        emailjs.init('skJW2Ge2SH15HZXNp');
+        cartSubmit.addEventListener('click', async () => {
+            if (!customerName.value || !customerEmail.value) { alert('Veuillez remplir votre nom et email.'); return; }
+            cartSubmit.disabled = true; cartSubmit.textContent = 'Envoi...';
+            const orderNumber = 'OLDA-' + String(Date.now()).slice(-6);
+            let orderDetails = ''; cart.forEach(item => { orderDetails += '• ' + item.name + ' — ' + item.ref + ' — Qté: ' + item.qty + '\n'; });
+            try {
+                await emailjs.send('service_o3r7snn', 'template_sqg7vz2', { name: customerName.value, email: customerEmail.value, title: orderNumber, order_details: orderDetails, comment: customerComment.value || 'Aucun' });
+                confirmationOverlay.classList.add('visible'); cart = []; updateCartUI(); closeCart(); orderForm.reset();
+            } catch (e) { alert('Erreur. Réessayez.'); }
+            cartSubmit.disabled = false; cartSubmit.textContent = 'Confirmer la commande';
+        });
+        renderNavMain(); renderNavSub(); renderProducts(); updateCartUI();
+    })();
+    </script>
+</body>
+</html>
