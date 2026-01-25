@@ -3,231 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA PRODUCTION | ATELIER LUXE</title>
+    <title>OLDA PRO | ATELIER</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Bebas+Neue&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Bebas+Neue&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* Polices Spécifiques */
         @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
         @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
 
-        :root {
-            --apple-bg: #f5f5f7;
-            --olda-blue: #0071e3;
-        }
-
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--apple-bg); color: #1d1d1f; }
-        
-        /* Typography styles for Personalization */
-        .font-bebas { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; }
+        body { font-family: 'Montserrat', sans-serif; background: #f5f5f7; color: #1d1d1f; padding-bottom: 100px; }
+        .font-bebas { font-family: 'Bebas Neue', cursive; }
         .font-edo { font-family: 'EDO', sans-serif; }
         .font-rodeo { font-family: 'Rodeo', sans-serif; }
-        .font-premium { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+        
+        .input-premium { background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px; padding: 12px; font-weight: 600; outline: none; width: 100%; }
+        
+        .color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px #d2d2d7; transition: 0.2s; }
+        .color-btn.active { box-shadow: 0 0 0 2px #0071e3; transform: scale(1.1); }
 
-        /* Stepper Style */
-        .step-pill { 
-            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
-            padding: 10px 14px; border-radius: 40px; border: 1.5px solid #e5e5e7;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; text-align: center;
-        }
-        .step-active { background: #000; color: #fff; border-color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-
-        /* Fiche A6 centrage & style */
         .fiche-a6 {
-            width: 105mm; height: 148mm; background: #fff; margin: 2rem auto;
-            padding: 12mm; display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border-radius: 4px;
+            width: 105mm; height: 148mm; background: white; margin: 30px auto;
+            padding: 10mm; display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; text-align: center; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
 
         @media print {
             @page { size: A6; margin: 0; }
-            body { background: #fff; padding: 0; }
             .no-print { display: none !important; }
             .fiche-a6 { margin: 0; box-shadow: none; page-break-after: always; }
         }
 
-        .input-premium {
-            background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px;
-            padding: 14px; font-size: 14px; font-weight: 600; outline: none; transition: 0.2s;
-        }
-        .input-premium:focus { border-color: var(--olda-blue); box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
+        .step-pill { font-size: 8px; font-weight: 900; padding: 8px; border-radius: 20px; border: 1px solid #e5e5e7; flex: 1; cursor: pointer; transition: 0.3s; }
+        .step-active { background: #000; color: #fff; border-color: #000; }
     </style>
 </head>
-<body class="pb-20">
+<body>
 
-    <div class="max-w-xl mx-auto p-6 no-print">
-        <header class="mb-10 text-center">
-            <h1 class="text-3xl font-[900] tracking-tighter uppercase italic">Olda <span class="text-blue-600">Production</span></h1>
-            <p class="text-[10px] uppercase font-bold tracking-[0.3em] opacity-40 mt-2">Atelier de personnalisation</p>
-        </header>
+<div class="max-w-xl mx-auto p-6 no-print">
+    <header class="mb-8 text-center">
+        <h1 class="text-2xl font-[900] uppercase tracking-tighter italic">Olda <span class="text-blue-600">Production</span></h1>
+    </header>
 
-        <div class="bg-white p-8 rounded-[32px] shadow-sm space-y-8 border border-white">
-            <div class="grid grid-cols-2 gap-6">
-                <div class="flex flex-col">
-                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Client</label>
-                    <input type="text" id="client" placeholder="NOM" class="input-premium uppercase">
-                </div>
-                <div class="flex flex-col">
-                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Collection</label>
-                    <select id="genre" class="input-premium" onchange="updateRefs()">
-                        <option value="H">HOMME</option>
-                        <option value="F">FEMME</option>
-                        <option value="E">ENFANT</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div class="flex flex-col">
-                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Référence</label>
-                    <select id="ref" class="input-premium"></select>
-                </div>
-                <div class="flex flex-col">
-                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Taille</label>
-                    <select id="taille" class="input-premium font-bold">
-                        <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="space-y-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Avant</span> <span id="vAv" class="text-[10px] font-bold">60mm</span></div>
-                <select id="typeAv" class="input-premium w-full" onchange="toggleBox('Av')">
-                    <option value="SANS">AUCUN LOGO</option>
-                    <option value="PERSO">PERSONNALISATION (TEXTE)</option>
-                    <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
-                    <option value="BEA-16AV">BEA-16AV</option>
-                </select>
-                <div id="boxAv" class="hidden space-y-3">
-                    <input type="text" id="valAv" placeholder="Votre texte..." class="input-premium w-full">
-                    <select id="fontAv" class="input-premium w-full text-xs">
-                        <option value="font-bebas">BEBAS NEUE BOLD</option>
-                        <option value="font-edo">EDO (PINCEAU)</option>
-                        <option value="font-rodeo">RODEO (RETRO)</option>
-                        <option value="font-premium">SPACE GROTESK (LUXE)</option>
-                    </select>
-                </div>
-                <input type="range" id="rangeAv" min="0" max="120" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'mm'">
-            </div>
-
-            <div class="space-y-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Arrière</span> <span id="vAr" class="text-[10px] font-bold">250mm</span></div>
-                <select id="typeAr" class="input-premium w-full" onchange="toggleBox('Ar')">
-                    <option value="SANS">AUCUN LOGO</option>
-                    <option value="PERSO">PERSONNALISATION (TEXTE)</option>
-                    <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
-                    <option value="BEA-16AR">BEA-16AR</option>
-                </select>
-                <div id="boxAr" class="hidden space-y-3">
-                    <input type="text" id="valAr" placeholder="Votre texte..." class="input-premium w-full">
-                    <select id="fontAr" class="input-premium w-full text-xs">
-                        <option value="font-bebas">BEBAS NEUE BOLD</option>
-                        <option value="font-edo">EDO (PINCEAU)</option>
-                        <option value="font-rodeo">RODEO (RETRO)</option>
-                        <option value="font-premium">SPACE GROTESK (LUXE)</option>
-                    </select>
-                </div>
-                <input type="range" id="rangeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'mm'">
-            </div>
-
-            <div class="space-y-3">
-                <label class="text-[10px] font-[900] uppercase opacity-40 italic">Couleur de marquage</label>
-                <div class="flex flex-wrap gap-3 justify-center" id="palette"></div>
-            </div>
-
-            <button onclick="generer()" class="w-full bg-black text-white py-6 rounded-2xl font-[900] uppercase tracking-[0.3em] hover:bg-zinc-800 transition-all shadow-xl">Générer Fiche Production</button>
+    <div class="bg-white p-8 rounded-[30px] shadow-sm space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+            <input type="text" id="client" placeholder="CLIENT" class="input-premium uppercase">
+            <select id="genre" class="input-premium" onchange="updateRefs()"><option value="H">HOMME</option><option value="F">FEMME</option></select>
         </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <select id="ref" class="input-premium"></select>
+            <select id="taille" class="input-premium"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+        </div>
+
+        <hr>
+
+        <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
+            <p class="text-[10px] font-black uppercase text-blue-600">Position Avant</p>
+            <select id="typeAv" class="input-premium" onchange="toggleBox('Av')">
+                <option value="SANS">AUCUN</option>
+                <option value="PERSO">TEXTE PERSONNALISÉ</option>
+                <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
+                <option value="BEA-16AV">BEA-16AV</option>
+            </select>
+            <div id="boxAv" class="hidden space-y-2">
+                <input type="text" id="valAv" placeholder="Texte..." class="input-premium">
+                <select id="fontAv" class="input-premium text-xs">
+                    <option value="font-bebas">BEBAS NEUE</option>
+                    <option value="font-edo">EDO</option>
+                    <option value="font-rodeo">RODEO</option>
+                </select>
+                <input type="file" id="fileAv" class="hidden" accept="image/*" onchange="previewImg('Av')">
+                <button onclick="document.getElementById('fileAv').click()" class="text-[10px] font-bold underline opacity-50">Charger Image Avant</button>
+            </div>
+            <div class="flex flex-wrap gap-2 justify-center" id="palAv"></div>
+        </div>
+
+        <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
+            <p class="text-[10px] font-black uppercase text-blue-600">Position Arrière</p>
+            <select id="typeAr" class="input-premium" onchange="toggleBox('Ar')">
+                <option value="SANS">AUCUN</option>
+                <option value="PERSO">TEXTE PERSONNALISÉ</option>
+                <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
+                <option value="BEA-16AR">BEA-16AR</option>
+            </select>
+            <div id="boxAr" class="hidden space-y-2">
+                <input type="text" id="valAr" placeholder="Texte..." class="input-premium">
+                <select id="fontAr" class="input-premium text-xs">
+                    <option value="font-bebas">BEBAS NEUE</option>
+                    <option value="font-edo">EDO</option>
+                    <option value="font-rodeo">RODEO</option>
+                </select>
+                <input type="file" id="fileAr" class="hidden" accept="image/*" onchange="previewImg('Ar')">
+                <button onclick="document.getElementById('fileAr').click()" class="text-[10px] font-bold underline opacity-50">Charger Image Arrière</button>
+            </div>
+            <div class="flex flex-wrap gap-2 justify-center" id="palAr"></div>
+        </div>
+
+        <button onclick="generer()" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">Générer Fiche A6</button>
     </div>
+</div>
 
-    <div id="orderList" class="flex flex-col items-center gap-10"></div>
+<div id="fiches"></div>
 
-    <script>
-        const colors = [
-            {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Beige', v:'#f5f5dc'}, {n:'Or', v:'#d4af37'},
-            {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu Clair', v:'#0071e3'}, {n:'Violet', v:'#8f00ff'}
-        ];
-        let selCol = '#000';
+<script>
+    const colors = [
+        {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Or', v:'#d4af37'}, 
+        {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu', v:'#0071e3'}
+    ];
+    let selAv = '#000', selAr = '#000';
+    let imgAv = null, imgAr = null;
 
-        function init() {
-            const pal = document.getElementById('palette');
+    function init() {
+        ['Av', 'Ar'].forEach(pos => {
+            const p = document.getElementById('pal'+pos);
             colors.forEach(c => {
-                const d = document.createElement('button');
-                d.className = `w-8 h-8 rounded-full border-2 border-white shadow-sm transition-transform active:scale-90 ${c.n==='Noir'?'ring-2 ring-black':''}`;
-                d.style.background = c.v;
-                if(c.n==='Blanc') d.style.borderColor = '#eee';
-                d.onclick = () => {
-                    document.querySelectorAll('#palette button').forEach(b => b.classList.remove('ring-2','ring-black'));
-                    d.classList.add('ring-2','ring-black');
-                    selCol = c.v;
+                const b = document.createElement('button');
+                b.className = `color-btn ${c.n==='Noir'?'active':''}`;
+                b.style.background = c.v;
+                b.onclick = () => {
+                    p.querySelectorAll('.color-btn').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
+                    if(pos === 'Av') selAv = c.v; else selAr = c.v;
                 };
-                pal.appendChild(d);
+                p.appendChild(b);
             });
-            updateRefs();
-        }
+        });
+        updateRefs();
+    }
 
-        function updateRefs() {
-            const g = document.getElementById('genre').value;
-            const rs = document.getElementById('ref'); rs.innerHTML = '';
-            for(let i=1; i<=20; i++) {
-                let v = `${g}-${i.toString().padStart(3,'0')}`;
-                rs.add(new Option(v, v));
+    function updateRefs() {
+        const g = document.getElementById('genre').value;
+        const rs = document.getElementById('ref'); rs.innerHTML = '';
+        for(let i=1; i<=15; i++) {
+            let v = `${g}-${i.toString().padStart(3,'0')}`;
+            rs.add(new Option(v, v));
+        }
+    }
+
+    function toggleBox(pos) {
+        const v = document.getElementById('type'+pos).value;
+        document.getElementById('box'+pos).classList.toggle('hidden', v === 'SANS' || v.startsWith('BEA'));
+    }
+
+    function previewImg(pos) {
+        const file = document.getElementById('file'+pos).files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => { if(pos==='Av') imgAv = e.target.result; else imgAr = e.target.result; };
+        reader.readAsDataURL(file);
+    }
+
+    async function generer() {
+        const id = Date.now();
+        const client = document.getElementById('client').value || "CLIENT";
+        const fiche = document.createElement('div');
+        fiche.className = "fiche-a6 shadow-xl";
+
+        const render = (pos, label, color, img) => {
+            const type = document.getElementById('type'+pos).value;
+            let html = '';
+            if(type === 'PERSO') {
+                html = `<p class="${document.getElementById('font'+pos).value}" style="color:${color}; font-size:32pt; line-height:1;">${document.getElementById('val'+pos).value || 'TEXTE'}</p>`;
+            } else if(type === 'LOGO CLIENT') {
+                html = img ? `<img src="${img}" style="max-height:40mm; max-width:80mm; object-fit:contain;">` : 'IMAGE VIDE';
+            } else if(type !== 'SANS') {
+                html = `<p class="font-bebas" style="color:${color}; font-size:40pt;">${type}</p>`;
             }
-        }
+            return `<div class="w-full flex flex-col items-center">
+                <span class="text-[7px] font-black opacity-20 uppercase mb-2 tracking-widest">${label}</span>
+                <div class="h-[45mm] flex items-center justify-center">${html}</div>
+            </div>`;
+        };
 
-        function toggleBox(pos) {
-            const v = document.getElementById('type'+pos).value;
-            document.getElementById('box'+pos).classList.toggle('hidden', v === 'SANS' || v.startsWith('BEA'));
-        }
+        fiche.innerHTML = `
+            <div class="w-full border-b pb-4 text-left">
+                <h2 class="text-4xl font-[900] tracking-tighter leading-none">${client.toUpperCase()}</h2>
+                <p class="text-blue-600 text-[9px] font-black uppercase mt-1 tracking-widest">
+                    ${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}
+                </p>
+            </div>
+            ${render('Av', 'AVANT', selAv, imgAv)}
+            ${render('Ar', 'ARRIÈRE', selAr, imgAr)}
+            <div class="no-print w-full flex gap-1 pt-4 border-t" id="st-${id}">
+                <div class="step-pill step-active" onclick="st('${id}',0)">Attente</div>
+                <div class="step-pill" onclick="st('${id}',1)">Reçu</div>
+                <div class="step-pill" onclick="st('${id}',2)">Prod</div>
+                <div class="step-pill" onclick="st('${id}',3)">Fini</div>
+            </div>
+        `;
+        document.getElementById('fiches').prepend(fiche);
+    }
 
-        async function generer() {
-            const id = Date.now();
-            const client = document.getElementById('client').value || "ANONYME";
-            const fiche = document.createElement('div');
-            fiche.className = "fiche-a6 shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-700";
+    function st(id, idx) {
+        const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
+        steps.forEach((s, i) => s.className = i <= idx ? "step-pill step-active" : "step-pill");
+    }
 
-            const build = async (pos, label) => {
-                const type = document.getElementById('type'+pos).value;
-                const size = document.getElementById('range'+pos).value;
-                let html = '';
-                if(type === 'PERSO') {
-                    const txt = document.getElementById('val'+pos).value || 'TEXTE';
-                    html = `<p class="${document.getElementById('font'+pos).value}" style="color:${selCol}; font-size: 34pt; line-height:1;">${txt}</p>`;
-                } else if(type === 'SANS') {
-                    html = `<div class="w-full h-px bg-gray-100"></div>`;
-                } else {
-                    html = `<p class="font-bebas" style="color:${selCol}; font-size: 40pt;">${type}</p>`;
-                }
-                return `<div class="w-full py-4"><span class="text-[7px] font-black opacity-20 uppercase block mb-3 tracking-[0.2em]">${label} — ${size}mm</span>${html}</div>`;
-            };
-
-            fiche.innerHTML = `
-                <div class="w-full border-b-[1.5px] border-black pb-4 flex justify-between items-end">
-                    <div class="text-left">
-                        <p class="text-[8px] font-black uppercase opacity-40 tracking-widest">Fiche Production Officielle</p>
-                        <h2 class="text-4xl font-[900] tracking-tighter leading-none mt-1">${client.toUpperCase()}</h2>
-                        <p class="text-blue-600 text-[10px] font-black mt-2 tracking-[0.2em]">${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}</p>
-                    </div>
-                    <div class="text-right text-[7px] font-bold opacity-30">#${Math.floor(Math.random()*9000+1000)}<br>${new Date().toLocaleDateString()}</div>
-                </div>
-                ${await build('Av', 'Position Avant')}
-                ${await build('Ar', 'Position Arrière')}
-                <div class="no-print w-full flex gap-1 pt-6 border-t" id="st-${id}">
-                    <div class="step-pill flex-1 step-active" onclick="st('${id}',0)">Attente</div>
-                    <div class="step-pill flex-1" onclick="st('${id}',1)">Reçu</div>
-                    <div class="step-pill flex-1" onclick="st('${id}',2)">Prod</div>
-                    <div class="step-pill flex-1" onclick="st('${id}',3)">Fini</div>
-                </div>
-                <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[7px] font-black opacity-10 mt-4 uppercase hover:opacity-100 transition-opacity tracking-widest">Supprimer la fiche</button>
-            `;
-            document.getElementById('orderList').prepend(fiche);
-        }
-
-        function st(id, idx) {
-            const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
-            steps.forEach((s, i) => s.className = i <= idx ? "step-pill flex-1 step-active" : "step-pill flex-1");
-        }
-
-        init();
-    </script>
+    init();
+</script>
 </body>
 </html>
