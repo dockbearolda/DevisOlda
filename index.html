@@ -3,132 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Production - Saint-Martin</title>
+    <title>Gestion Interne - Devis Clients</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .stepper-dot { transition: all 0.3s ease; }
-        .active-step { background-color: #000 !important; border-color: #000 !important; color: white; }
-        .completed-step { background-color: #10b981 !important; border-color: #10b981 !important; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; color: #1a1a1a; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .stepper-active { background-color: #000; color: white; border-color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .stepper-line { height: 2px; background: #e5e7eb; flex-grow: 1; margin: 0 10px; margin-top: 14px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="min-h-screen p-4 lg:p-10">
 
-    <header class="max-w-6xl mx-auto mb-10 flex justify-between items-center">
+    <div class="max-w-7xl mx-auto flex justify-between items-center mb-10">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 uppercase tracking-widest">Atelier Saint-Martin</h1>
-            <p class="text-gray-500">Gestion des Collections & Production</p>
+            <h1 class="text-3xl font-extrabold tracking-tighter uppercase italic">Atelier S-M / Logiciel Devis</h1>
+            <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Interface Interne : Mélina • Charlie • Renaud</p>
         </div>
-        <div class="text-right">
-            <span class="bg-black text-white px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-tighter">B2C & Revendeurs</span>
+        <div class="bg-white px-6 py-2 rounded-full border border-gray-200 shadow-sm">
+            <span class="text-xs font-bold uppercase text-green-600">● Système Opérationnel</span>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-10">
         
-        <section class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="text-lg font-semibold mb-6 flex items-center">
-                <span class="mr-2">📝</span> Nouvelle Commande
-            </h2>
-            <form id="orderForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Client</label>
-                    <input type="text" id="client" required class="w-full border-gray-200 rounded-lg p-3 bg-gray-50 focus:ring-2 focus:ring-black outline-none transition" placeholder="Nom du client">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Collection</label>
-                    <select id="collection" class="w-full border-gray-200 rounded-lg p-3 bg-gray-50 focus:ring-2 focus:ring-black outline-none">
-                        <option value="DTF">Collection Textile (DTF)</option>
-                        <option value="UV">Collection Accessoires (Impression UV)</option>
-                        <option value="GRAVURE">Collection Historique (Gravure Mug)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Détails du produit</label>
-                    <textarea id="details" class="w-full border-gray-200 rounded-lg p-3 bg-gray-50 focus:ring-2 focus:ring-black outline-none" rows="3" placeholder="Ex: T-shirt XL Noir, Logo Coeur..."></textarea>
-                </div>
-                <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition shadow-lg">
-                    ENVOYER À L'ATELIER
-                </button>
-            </form>
-        </section>
-
-        <section class="lg:col-span-2 space-y-6">
-            <h2 class="text-lg font-semibold mb-6 flex items-center">
-                <span class="mr-2">⚙️</span> Flux de Production en Temps Réel
-            </h2>
-            
-            <div id="productionList" class="space-y-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-black">
-                    <div class="flex justify-between items-start mb-6">
+        <div class="xl:col-span-4">
+            <div class="glass-card p-8 rounded-3xl shadow-xl sticky top-10">
+                <h2 class="text-xl font-bold mb-6 flex items-center uppercase tracking-tight">
+                    <span class="bg-black text-white w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">＋</span>
+                    Nouveau Devis Client
+                </h2>
+                
+                <form id="quoteForm" class="space-y-5">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nom du Client / Projet</label>
+                            <input type="text" id="clientName" required class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="Ex: Restaurant Le Ti-Gros">
+                        </div>
                         <div>
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Exemple Revendeur #1024</span>
-                            <h3 class="text-xl font-semibold">Tasses Céramiques Personnalisées</h3>
-                            <p class="text-sm text-gray-500">Collection Historique</p>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Téléphone</label>
+                            <input type="tel" id="clientPhone" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="06 90...">
                         </div>
-                        <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-md text-xs font-bold">EN COURS</span>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deadline Souhaitée</label>
+                            <input type="date" id="deadline" required class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none">
+                        </div>
                     </div>
 
-                    <div class="relative flex justify-between items-center w-full">
-                        <div class="absolute h-0.5 bg-gray-100 w-full top-1/2 -translate-y-1/2 z-0"></div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <div class="stepper-dot w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold completed-step">✓</div>
-                            <span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Reçu</span>
-                        </div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <div class="stepper-dot w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold active-step">2</div>
-                            <span class="text-[10px] mt-2 font-semibold text-black uppercase">Prépa</span>
-                        </div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <div class="stepper-dot w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold">3</div>
-                            <span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Marquage</span>
-                        </div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <div class="stepper-dot w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold">4</div>
-                            <span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Finition</span>
-                        </div>
-                        <div class="relative z-10 flex flex-col items-center">
-                            <div class="stepper-dot w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold">5</div>
-                            <span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Prêt</span>
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Type de Collection</label>
+                        <select id="collectionType" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none appearance-none font-semibold">
+                            <option value="TEXTILE">Collection Textile (DTF)</option>
+                            <option value="OBJET">Collection Objets (UV)</option>
+                            <option value="GRAVURE">Collection Gravure (Mugs)</option>
+                        </select>
                     </div>
-                </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Commentaires Particuliers</label>
+                        <textarea id="comments" rows="4" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="Préciser les couleurs, quantités, urgence..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-800 transform active:scale-95 transition-all shadow-2xl">
+                        Enregistrer le Devis
+                    </button>
+                </form>
             </div>
-        </section>
-    </main>
+        </div>
+
+        <div class="xl:col-span-8 space-y-6">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-xl font-bold uppercase tracking-tight">Devis en attente de production</h2>
+                <span id="orderCount" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">0 PROJETS</span>
+            </div>
+
+            <div id="quoteContainer" class="space-y-6">
+                </div>
+        </div>
+    </div>
 
     <script>
-        const form = document.getElementById('orderForm');
-        const list = document.getElementById('productionList');
+        const form = document.getElementById('quoteForm');
+        const container = document.getElementById('quoteContainer');
+        const countSpan = document.getElementById('orderCount');
+        let count = 0;
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const client = document.getElementById('client').value;
-            const collection = document.getElementById('collection').value;
-            const details = document.getElementById('details').value;
+            count++;
+            countSpan.innerText = `${count} PROJETS`;
+
+            const data = {
+                id: Math.floor(1000 + Math.random() * 9000),
+                client: document.getElementById('clientName').value,
+                phone: document.getElementById('clientPhone').value,
+                deadline: document.getElementById('deadline').value,
+                collection: document.getElementById('collectionType').value,
+                comments: document.getElementById('comments').value
+            };
 
             const card = document.createElement('div');
-            card.className = "bg-white p-6 rounded-2xl shadow-sm border-l-4 border-orange-400 animate-fade-in";
+            card.className = "glass-card p-8 rounded-3xl shadow-sm border-l-[12px] border-black transition hover:shadow-xl animate-in slide-in-from-right duration-500";
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">NOUVEAU B2C</span>
-                        <h3 class="text-xl font-semibold">${client}</h3>
-                        <p class="text-sm text-gray-500">Collection ${collection} - ${details}</p>
+                <div class="flex flex-col md:flex-row justify-between mb-8">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-black bg-black text-white px-2 py-0.5 rounded italic">DEVIS #${data.id}</span>
+                            <span class="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Collection ${data.collection}</span>
+                        </div>
+                        <h3 class="text-2xl font-bold tracking-tight">${data.client}</h3>
+                        <div class="flex gap-4 text-xs font-medium text-gray-500">
+                            <span>📞 ${data.phone}</span>
+                            <span class="text-red-500 font-bold">📅 Deadline : ${data.deadline}</span>
+                        </div>
                     </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="text-gray-300 hover:text-red-500 text-sm">Supprimer</button>
+                    <div class="mt-4 md:mt-0 max-w-xs">
+                        <p class="text-xs text-gray-600 bg-gray-100 p-3 rounded-xl italic">"${data.comments}"</p>
+                    </div>
                 </div>
-                <div class="relative flex justify-between items-center w-full">
-                    <div class="absolute h-0.5 bg-gray-100 w-full top-1/2 -translate-y-1/2 z-0"></div>
-                    <div class="relative z-10 flex flex-col items-center"><div class="w-8 h-8 rounded-full border-2 border-black bg-black text-white flex items-center justify-center text-xs font-bold">1</div><span class="text-[10px] mt-2 font-semibold text-black uppercase">Reçu</span></div>
-                    <div class="relative z-10 flex flex-col items-center"><div class="w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold text-gray-400">2</div><span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Prépa</span></div>
-                    <div class="relative z-10 flex flex-col items-center"><div class="w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold text-gray-400">3</div><span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Marquage</span></div>
-                    <div class="relative z-10 flex flex-col items-center"><div class="w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold text-gray-400">4</div><span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Finition</span></div>
-                    <div class="relative z-10 flex flex-col items-center"><div class="w-8 h-8 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-xs font-bold text-gray-400">5</div><span class="text-[10px] mt-2 font-semibold text-gray-400 uppercase">Prêt</span></div>
+
+                <div class="flex items-start w-full">
+                    <div class="flex flex-col items-center flex-1">
+                        <div class="w-7 h-7 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold stepper-active">1</div>
+                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Attente Devis</span>
+                    </div>
+                    <div class="stepper-line"></div>
+                    <div class="flex flex-col items-center flex-1 opacity-30">
+                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">2</div>
+                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Validé</span>
+                    </div>
+                    <div class="stepper-line"></div>
+                    <div class="flex flex-col items-center flex-1 opacity-30">
+                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">3</div>
+                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">En Prod</span>
+                    </div>
+                    <div class="stepper-line"></div>
+                    <div class="flex flex-col items-center flex-1 opacity-30">
+                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">4</div>
+                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Terminé</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-2">
+                    <button class="text-[10px] font-bold uppercase p-2 text-gray-400 hover:text-red-500 transition" onclick="this.closest('.glass-card').remove()">Supprimer</button>
+                    <button class="text-[10px] font-bold uppercase bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 transition">Imprimer Fiche Atelier</button>
                 </div>
             `;
-            list.prepend(card);
+            container.prepend(card);
             form.reset();
         });
     </script>
