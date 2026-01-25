@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OLDA | Système de Production</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:italic&family=Outfit:wght@500&family=Bebas+Neue&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f5f5f7; color: #1d1d1f; }
+        .apple-card { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .input-apple { background: #fbfbfd; border: 1px solid #d2d2d7; border-radius: 10px; padding: 10px; font-size: 14px; width: 100%; outline: none; }
+        
+        /* Couleurs personnalisées */
+        .dot-noir { background: #000000; } .dot-blanc { background: #ffffff; } .dot-beige { background: #f5f5dc; }
+        .dot-jaune { background: #ffeb3b; } .dot-bleu-clair { background: #add8e6; } .dot-bleu-marine { background: #000080; }
+        .dot-vert-pastel { background: #77dd77; } .dot-lavande { background: #e6e6fa; } .dot-kaki { background: #c3b091; }
+        .dot-vert-clair { background: #90ee90; } .dot-menthe { background: #98ff98; } .dot-rose-bebe { background: #ffb7ce; }
+        
+        .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid #d2d2d7; transition: 0.2s; }
+        .color-dot.active { border: 2px solid #0071e3; transform: scale(1.15); box-shadow: 0 0 8px rgba(0,113,227,0.3); }
+
+        /* Polices de personnalisation */
+        .font-modern { font-family: 'Outfit', sans-serif; }
+        .font-chic { font-family: 'Playfair Display', serif; }
+        .font-sport { font-family: 'Bebas Neue', cursive; }
+        
+        @media print { .no-print { display: none !important; } .apple-card { box-shadow: none; border: 1px solid #eee; } }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-8 no-print border-b pb-6">
+            <h1 class="text-3xl font-black tracking-tighter uppercase">OLDA <span class="text-blue-600 font-light tracking-widest text-sm ml-2">PRODUCTION</span></h1>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="text-[10px] font-bold border px-4 py-2 rounded-full uppercase">Imprimer</button>
+            </div>
+        </header>
+
+        <form id="orderForm" class="grid grid-cols-1 md:grid-cols-12 gap-6 no-print">
+            <div class="md:col-span-12 apple-card p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="col-span-2"><label class="text-[9px] font-black uppercase opacity-50 ml-1">Client</label><input type="text" id="client" class="input-apple font-bold" required></div>
+                <div><label class="text-[9px] font-black uppercase opacity-50 ml-1">Support</label>
+                    <select id="refOlda" class="input-apple font-bold" onchange="updateRefs()"></select>
+                </div>
+                <div><label class="text-[9px] font-black uppercase opacity-50 ml-1">Taille</label>
+                    <select id="taille" class="input-apple"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+                </div>
+            </div>
+
+            <div class="md:col-span-6 apple-card p-6 space-y-4">
+                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600">Position Avant</span><span class="text-xs opacity-40">Max 120mm</span></div>
+                <select id="logoAv" class="input-apple" onchange="checkPerso('Av')">
+                    <option value="BEA-16AV">BEA-16AV</option>
+                    <option value="SUR-07AV">SUR-07AV</option>
+                    <option value="PERSONNALISATION">PERSONNALISATION</option>
+                </select>
+                
+                <div id="persoBoxAv" class="hidden space-y-2">
+                    <input type="text" id="textAv" class="input-apple italic" placeholder="Votre texte...">
+                    <select id="fontAv" class="input-apple text-xs">
+                        <option value="font-modern">Police Modern</option>
+                        <option value="font-chic">Police Chic</option>
+                        <option value="font-sport">Police Sport</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-[9px] font-bold mb-1 uppercase"><span>Largeur</span><span id="valAv">60mm</span></div>
+                    <input type="range" id="sizeAv" min="0" max="120" value="60" class="w-full accent-blue-600" oninput="updateVal('Av')">
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-2" id="colorsAv">
+                    <div class="color-dot dot-noir active" onclick="selectColor(this, 'Av', 'Noir')"></div>
+                    <div class="color-dot dot-blanc" onclick="selectColor(this, 'Av', 'Blanc')"></div>
+                    <div class="color-dot dot-beige" onclick="selectColor(this, 'Av', 'Beige')"></div>
+                    <div class="color-dot dot-bleu-clair" onclick="selectColor(this, 'Av', 'Bleu Clair')"></div>
+                    <div class="color-dot dot-menthe" onclick="selectColor(this, 'Av', 'Menthe')"></div>
+                    <div class="color-dot dot-rose-bebe" onclick="selectColor(this, 'Av', 'Rose Bébé')"></div>
+                </div>
+            </div>
+
+            <div class="md:col-span-6 apple-card p-6 space-y-4">
+                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600">Position Arrière</span><span class="text-xs opacity-40">Max 350mm</span></div>
+                <select id="logoAr" class="input-apple" onchange="checkPerso('Ar')">
+                    <option value="BEA-16AR">BEA-16AR</option>
+                    <option value="VIN-01">VIN-01</option>
+                    <option value="PERSONNALISATION">PERSONNALISATION</option>
+                </select>
+
+                <div id="persoBoxAr" class="hidden space-y-2">
+                    <input type="text" id="textAr" class="input-apple italic" placeholder="Votre texte...">
+                    <select id="fontAr" class="input-apple text-xs">
+                        <option value="font-modern">Police Modern</option>
+                        <option value="font-chic">Police Chic</option>
+                        <option value="font-sport">Police Sport</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-[9px] font-bold mb-1 uppercase"><span>Largeur</span><span id="valAr">250mm</span></div>
+                    <input type="range" id="sizeAr" min="0" max="350" value="250" class="w-full accent-blue-600" oninput="updateVal('Ar')">
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-2" id="colorsAr">
+                    <div class="color-dot dot-noir active" onclick="selectColor(this, 'Ar', 'Noir')"></div>
+                    <div class="color-dot dot-blanc" onclick="selectColor(this, 'Ar', 'Blanc')"></div>
+                    <div class="color-dot dot-bleu-marine" onclick="selectColor(this, 'Ar', 'Marine')"></div>
+                    <div class="color-dot dot-kaki" onclick="selectColor(this, 'Ar', 'Kaki')"></div>
+                    <div class="color-dot dot-jaune" onclick="selectColor(this, 'Ar', 'Jaune')"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="md:col-span-12 bg-black text-white py-5 rounded-xl font-black uppercase tracking-[0.3em] shadow-xl hover:bg-zinc-800 transition-all">Générer Fiche de Production</button>
+        </form>
+
+        <div id="productionArea" class="mt-12 space-y-8"></div>
+    </div>
+
+    <script>
+        let selections = { Av: 'Noir', Ar: 'Noir' };
+
+        function updateVal(pos) { document.getElementById(`val${pos}`).innerText = document.getElementById(`size${pos}`).value + 'mm'; }
+        
+        function selectColor(el, pos, color) {
+            el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            selections[pos] = color;
+        }
+
+        function checkPerso(pos) {
+            const val = document.getElementById(`logo${pos}`).value;
+            document.getElementById(`persoBox${pos}`).classList.toggle('hidden', val !== 'PERSONNALISATION');
+        }
+
+        function updateRefs() {
+            const refSelect = document.getElementById('refOlda');
+            for(let i=1; i<=15; i++) {
+                let val = `H-${i.toString().padStart(3, '0')}`;
+                let opt = document.createElement('option');
+                opt.value = val; opt.text = val;
+                refSelect.add(opt);
+            }
+        }
+        updateRefs();
+
+        document.getElementById('orderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const client = document.getElementById('client').value.toUpperCase();
+            const now = new Date();
+            
+            const card = document.createElement('div');
+            card.className = "apple-card p-10 bg-white border-t-[12px] border-black relative";
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start border-b pb-8 mb-8">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-40">Fiche de Production Officielle</p>
+                        <h2 class="text-5xl font-black tracking-tighter">${client}</h2>
+                        <p class="text-sm font-bold mt-2 text-blue-600 uppercase">${document.getElementById('refOlda').value} — TAILLE ${document.getElementById('taille').value}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-4xl font-black">#${now.getHours()}${now.getMinutes()}</p>
+                        <p class="text-[9px] font-bold opacity-30 mt-1 uppercase">${now.toLocaleDateString()}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <div class="border-l-2 border-blue-600 pl-4">
+                            <p class="text-[9px] font-black uppercase opacity-40">Position Avant</p>
+                            ${document.getElementById('logoAv').value === 'PERSONNALISATION' 
+                                ? `<p class="text-2xl font-bold ${document.getElementById('fontAv').value}">${document.getElementById('textAv').value || 'Texte Perso'}</p>`
+                                : `<p class="text-2xl font-black">${document.getElementById('logoAv').value}</p>`}
+                            <div class="flex gap-4 mt-2">
+                                <span class="bg-gray-100 px-3 py-1 rounded text-[10px] font-black uppercase">Largeur: ${document.getElementById('sizeAv').value}mm</span>
+                                <span class="bg-gray-100 px-3 py-1 rounded text-[10px] font-black uppercase">Couleur: ${selections.Av}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="border-l-2 border-blue-600 pl-4">
+                            <p class="text-[9px] font-black uppercase opacity-40">Position Arrière</p>
+                            ${document.getElementById('logoAr').value === 'PERSONNALISATION' 
+                                ? `<p class="text-2xl font-bold ${document.getElementById('fontAr').value}">${document.getElementById('textAr').value || 'Texte Perso'}</p>`
+                                : `<p class="text-2xl font-black">${document.getElementById('logoAr').value}</p>`}
+                            <div class="flex gap-4 mt-2">
+                                <span class="bg-gray-100 px-3 py-1 rounded text-[10px] font-black uppercase">Largeur: ${document.getElementById('sizeAr').value}mm</span>
+                                <span class="bg-gray-100 px-3 py-1 rounded text-[10px] font-black uppercase">Couleur: ${selections.Ar}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-dashed flex justify-between items-center no-print">
+                    <button onclick="this.closest('.apple-card').remove()" class="text-[10px] font-black uppercase text-red-500">Supprimer</button>
+                    <button onclick="window.print()" class="bg-black text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest">Imprimer Fiche</button>
+                </div>
+            `;
+            document.getElementById('productionArea').prepend(card);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
