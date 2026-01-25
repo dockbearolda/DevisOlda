@@ -2,220 +2,229 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Production Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLDA PRODUCTION | ATELIER LUXE</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Bebas+Neue&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Bebas+Neue&display=swap');
-        @font-face { font-family: 'EDO'; src: url('https://fonts.cdnfonts.com/s/14871/Edo.woff') format('woff'); }
-        @font-face { font-family: 'Rodeo'; src: url('https://fonts.cdnfonts.com/s/15456/Rodeo.woff') format('woff'); }
+        /* Polices Spécifiques */
+        @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
+        @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
 
-        body { font-family: 'Inter', sans-serif; background-color: #f8f8fa; color: #1d1d1f; }
-        .apple-card { background: white; border-radius: 20px; border: 1px solid rgba(0,0,0,0.06); }
-        .input-apple { background: #f5f5f7; border: 1px solid #d2d2d7; border-radius: 12px; padding: 12px; font-size: 14px; width: 100%; outline: none; }
+        :root {
+            --apple-bg: #f5f5f7;
+            --olda-blue: #0071e3;
+        }
 
-        .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid #d2d2d7; transition: 0.2s; }
-        .color-dot.active { border: 2px solid #0071e3; transform: scale(1.2); }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--apple-bg); color: #1d1d1f; }
+        
+        /* Typography styles for Personalization */
+        .font-bebas { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; }
+        .font-edo { font-family: 'EDO', sans-serif; }
+        .font-rodeo { font-family: 'Rodeo', sans-serif; }
+        .font-premium { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+
+        /* Stepper Style */
+        .step-pill { 
+            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            padding: 10px 14px; border-radius: 40px; border: 1.5px solid #e5e5e7;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; text-align: center;
+        }
+        .step-active { background: #000; color: #fff; border-color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+        /* Fiche A6 centrage & style */
+        .fiche-a6 {
+            width: 105mm; height: 148mm; background: #fff; margin: 2rem auto;
+            padding: 12mm; display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border-radius: 4px;
+        }
 
         @media print {
             @page { size: A6; margin: 0; }
+            body { background: #fff; padding: 0; }
             .no-print { display: none !important; }
-            .fiche-a6 { 
-                width: 105mm; height: 148mm; padding: 10mm; margin: 0;
-                display: flex; flex-direction: column; justify-content: space-between;
-                page-break-after: always; text-align: center; border: none !important;
-            }
+            .fiche-a6 { margin: 0; box-shadow: none; page-break-after: always; }
         }
 
-        .step-pill { font-[900] text-[7px] uppercase tracking-tighter px-2 py-2 rounded-full border transition-all cursor-pointer flex-1 text-center; }
-        .step-active { background: #000; color: #fff; border-color: #000; }
-        .step-inactive { background: #f5f5f7; color: #a1a1a6; border-color: #e5e5e7; }
-
-        .font-edo { font-family: 'EDO', sans-serif; line-height: 1; }
-        .font-bebas { font-family: 'Bebas Neue', cursive; line-height: 1; }
-        .font-rodeo { font-family: 'Rodeo', sans-serif; line-height: 1; }
+        .input-premium {
+            background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px;
+            padding: 14px; font-size: 14px; font-weight: 600; outline: none; transition: 0.2s;
+        }
+        .input-premium:focus { border-color: var(--olda-blue); box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
     </style>
 </head>
-<body class="p-4">
+<body class="pb-20">
 
-    <div class="max-w-xl mx-auto no-print">
-        <header class="mb-8 border-b pb-4 flex justify-between items-center">
-            <h1 class="text-2xl font-[900] tracking-tighter uppercase">OLDA <span class="text-blue-600 font-normal text-xs ml-2 italic">SYSTEM</span></h1>
-            <button onclick="window.print()" class="text-[10px] font-black border px-4 py-2 rounded-full uppercase">Imprimer Tout</button>
+    <div class="max-w-xl mx-auto p-6 no-print">
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl font-[900] tracking-tighter uppercase italic">Olda <span class="text-blue-600">Production</span></h1>
+            <p class="text-[10px] uppercase font-bold tracking-[0.3em] opacity-40 mt-2">Atelier de personnalisation</p>
         </header>
 
-        <div class="apple-card p-6 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[9px] font-black uppercase opacity-40 ml-1">Client</label>
-                    <input type="text" id="client" class="input-apple font-bold uppercase" placeholder="NOM">
+        <div class="bg-white p-8 rounded-[32px] shadow-sm space-y-8 border border-white">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Client</label>
+                    <input type="text" id="client" placeholder="NOM" class="input-premium uppercase">
                 </div>
-                <div>
-                    <label class="text-[9px] font-black uppercase opacity-40 ml-1">Genre</label>
-                    <select id="genre" class="input-apple font-bold" onchange="updateRefs()">
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Collection</label>
+                    <select id="genre" class="input-premium" onchange="updateRefs()">
                         <option value="H">HOMME</option>
                         <option value="F">FEMME</option>
                         <option value="E">ENFANT</option>
-                        <option value="B">BÉBÉ</option>
                     </select>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[9px] font-black uppercase opacity-40 ml-1">Référence</label>
-                    <select id="refOlda" class="input-apple font-bold"></select>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Référence</label>
+                    <select id="ref" class="input-premium"></select>
                 </div>
-                <div>
-                    <label class="text-[9px] font-black uppercase opacity-40 ml-1">Taille</label>
-                    <select id="taille" class="input-apple font-bold">
+                <div class="flex flex-col">
+                    <label class="text-[10px] font-black uppercase mb-2 opacity-50">Taille</label>
+                    <select id="taille" class="input-premium font-bold">
                         <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
                     </select>
                 </div>
             </div>
 
-            <div class="p-4 bg-gray-50 rounded-xl space-y-4">
-                <div class="flex justify-between items-center border-b pb-2"><span class="text-[10px] font-black uppercase text-blue-600 italic">Configuration Avant</span> <span id="vAv" class="text-[10px] font-bold">60mm</span></div>
-                <select id="logoAv" class="input-apple font-bold" onchange="toggleBox('Av')">
-                    <option value="SANS">SANS LOGO</option>
-                    <option value="PERSONNALISATION">TEXTE PERSO</option>
+            <div class="space-y-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Avant</span> <span id="vAv" class="text-[10px] font-bold">60mm</span></div>
+                <select id="typeAv" class="input-premium w-full" onchange="toggleBox('Av')">
+                    <option value="SANS">AUCUN LOGO</option>
+                    <option value="PERSO">PERSONNALISATION (TEXTE)</option>
                     <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
                     <option value="BEA-16AV">BEA-16AV</option>
                 </select>
-                <div id="boxAv" class="hidden space-y-2">
-                    <input type="text" id="textAv" class="input-apple" placeholder="Texte...">
-                    <select id="fontAv" class="input-apple text-xs">
-                        <option value="font-bebas">Bebas Neue Bold</option>
-                        <option value="font-edo">EDO</option>
-                        <option value="font-rodeo">Rodeo</option>
+                <div id="boxAv" class="hidden space-y-3">
+                    <input type="text" id="valAv" placeholder="Votre texte..." class="input-premium w-full">
+                    <select id="fontAv" class="input-premium w-full text-xs">
+                        <option value="font-bebas">BEBAS NEUE BOLD</option>
+                        <option value="font-edo">EDO (PINCEAU)</option>
+                        <option value="font-rodeo">RODEO (RETRO)</option>
+                        <option value="font-premium">SPACE GROTESK (LUXE)</option>
                     </select>
-                    <input type="file" id="fileAv" class="hidden text-[10px]" accept="image/*">
                 </div>
-                <input type="range" id="sizeAv" min="0" max="120" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'mm'">
-                <div class="flex flex-wrap gap-2 justify-center" id="palAv"></div>
+                <input type="range" id="rangeAv" min="0" max="120" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'mm'">
             </div>
 
-            <div class="p-4 bg-gray-50 rounded-xl space-y-4">
-                <div class="flex justify-between items-center border-b pb-2"><span class="text-[10px] font-black uppercase text-blue-600 italic">Configuration Arrière</span> <span id="vAr" class="text-[10px] font-bold">250mm</span></div>
-                <select id="logoAr" class="input-apple font-bold" onchange="toggleBox('Ar')">
-                    <option value="SANS">SANS LOGO</option>
-                    <option value="PERSONNALISATION">TEXTE PERSO</option>
+            <div class="space-y-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Arrière</span> <span id="vAr" class="text-[10px] font-bold">250mm</span></div>
+                <select id="typeAr" class="input-premium w-full" onchange="toggleBox('Ar')">
+                    <option value="SANS">AUCUN LOGO</option>
+                    <option value="PERSO">PERSONNALISATION (TEXTE)</option>
                     <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
                     <option value="BEA-16AR">BEA-16AR</option>
                 </select>
-                <div id="boxAr" class="hidden space-y-2">
-                    <input type="text" id="textAr" class="input-apple" placeholder="Texte...">
-                    <select id="fontAr" class="input-apple text-xs">
-                        <option value="font-bebas">Bebas Neue Bold</option>
-                        <option value="font-edo">EDO</option>
-                        <option value="font-rodeo">Rodeo</option>
+                <div id="boxAr" class="hidden space-y-3">
+                    <input type="text" id="valAr" placeholder="Votre texte..." class="input-premium w-full">
+                    <select id="fontAr" class="input-premium w-full text-xs">
+                        <option value="font-bebas">BEBAS NEUE BOLD</option>
+                        <option value="font-edo">EDO (PINCEAU)</option>
+                        <option value="font-rodeo">RODEO (RETRO)</option>
+                        <option value="font-premium">SPACE GROTESK (LUXE)</option>
                     </select>
-                    <input type="file" id="fileAr" class="hidden text-[10px]" accept="image/*">
                 </div>
-                <input type="range" id="sizeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'mm'">
-                <div class="flex flex-wrap gap-2 justify-center" id="palAr"></div>
+                <input type="range" id="rangeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'mm'">
             </div>
 
-            <button onclick="createFiche()" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl">Générer Fiche A6</button>
+            <div class="space-y-3">
+                <label class="text-[10px] font-[900] uppercase opacity-40 italic">Couleur de marquage</label>
+                <div class="flex flex-wrap gap-3 justify-center" id="palette"></div>
+            </div>
+
+            <button onclick="generer()" class="w-full bg-black text-white py-6 rounded-2xl font-[900] uppercase tracking-[0.3em] hover:bg-zinc-800 transition-all shadow-xl">Générer Fiche Production</button>
         </div>
     </div>
 
-    <div id="orderList" class="mt-12 flex flex-col items-center gap-10 pb-20"></div>
+    <div id="orderList" class="flex flex-col items-center gap-10"></div>
 
     <script>
-        const colorPalette = [
-            {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Beige', v:'#f5f5dc'},
-            {n:'Rouge', v:'#f00'}, {n:'Marine', v:'#000080'}, {n:'Violet', v:'#8f00ff'},
-            {n:'Menthe', v:'#98ff98'}, {n:'Jaune', v:'#ffeb3b'}, {n:'Rose', v:'#ffb7ce'},
-            {n:'Kaki', v:'#c3b091'}, {n:'Vert', v:'#008000'}
+        const colors = [
+            {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Beige', v:'#f5f5dc'}, {n:'Or', v:'#d4af37'},
+            {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu Clair', v:'#0071e3'}, {n:'Violet', v:'#8f00ff'}
         ];
-        
-        let selections = { Av: { color: '#000', name: 'Noir' }, Ar: { color: '#000', name: 'Noir' } };
+        let selCol = '#000';
+
+        function init() {
+            const pal = document.getElementById('palette');
+            colors.forEach(c => {
+                const d = document.createElement('button');
+                d.className = `w-8 h-8 rounded-full border-2 border-white shadow-sm transition-transform active:scale-90 ${c.n==='Noir'?'ring-2 ring-black':''}`;
+                d.style.background = c.v;
+                if(c.n==='Blanc') d.style.borderColor = '#eee';
+                d.onclick = () => {
+                    document.querySelectorAll('#palette button').forEach(b => b.classList.remove('ring-2','ring-black'));
+                    d.classList.add('ring-2','ring-black');
+                    selCol = c.v;
+                };
+                pal.appendChild(d);
+            });
+            updateRefs();
+        }
 
         function updateRefs() {
             const g = document.getElementById('genre').value;
-            const rs = document.getElementById('refOlda');
-            rs.innerHTML = '';
+            const rs = document.getElementById('ref'); rs.innerHTML = '';
             for(let i=1; i<=20; i++) {
                 let v = `${g}-${i.toString().padStart(3,'0')}`;
                 rs.add(new Option(v, v));
             }
         }
 
-        function init() {
-            ['Av', 'Ar'].forEach(pos => {
-                const pal = document.getElementById(`pal${pos}`);
-                colorPalette.forEach(col => {
-                    const d = document.createElement('div');
-                    d.className = `color-dot ${col.n === 'Noir' ? 'active' : ''}`;
-                    d.style.backgroundColor = col.v;
-                    if(col.n === 'Blanc') d.style.border = "1px solid #ddd";
-                    d.onclick = () => {
-                        pal.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
-                        d.classList.add('active');
-                        selections[pos] = { color: col.v, name: col.n };
-                    };
-                    pal.appendChild(d);
-                });
-            });
-            updateRefs();
-        }
-
         function toggleBox(pos) {
-            const v = document.getElementById(`logo${pos}`).value;
-            document.getElementById(`box${pos}`).classList.toggle('hidden', v === 'SANS' || v.startsWith('BEA'));
-            document.getElementById(`text${pos}`).classList.toggle('hidden', v !== 'PERSONNALISATION');
-            document.getElementById(`font${pos}`).classList.toggle('hidden', v !== 'PERSONNALISATION');
-            document.getElementById(`file${pos}`).classList.toggle('hidden', v !== 'LOGO CLIENT');
+            const v = document.getElementById('type'+pos).value;
+            document.getElementById('box'+pos).classList.toggle('hidden', v === 'SANS' || v.startsWith('BEA'));
         }
 
-        async function createFiche() {
-            const client = document.getElementById('client').value || "CLIENT";
-            const orderId = Math.floor(Math.random() * 9000);
+        async function generer() {
+            const id = Date.now();
+            const client = document.getElementById('client').value || "ANONYME";
             const fiche = document.createElement('div');
-            fiche.className = "fiche-a6 apple-card shadow-2xl p-10 text-center";
+            fiche.className = "fiche-a6 shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-700";
 
-            const renderContent = async (pos) => {
-                const type = document.getElementById(`logo${pos}`).value;
-                const size = document.getElementById(`size${pos}`).value;
-                const hex = selections[pos].color;
+            const build = async (pos, label) => {
+                const type = document.getElementById('type'+pos).value;
+                const size = document.getElementById('range'+pos).value;
                 let html = '';
-
-                if(type === 'PERSONNALISATION') {
-                    html = `<p class="${document.getElementById(`font${pos}`).value}" style="color: ${hex}; font-size: 32pt;">${document.getElementById(`text${pos}`).value || 'TEXTE'}</p>`;
-                } else if(type === 'LOGO CLIENT') {
-                    const f = document.getElementById(`file${pos}`).files[0];
-                    if(f) {
-                        const url = await new Promise(r => { const rd = new FileReader(); rd.onload = e => r(e.target.result); rd.readAsDataURL(f); });
-                        html = `<img src="${url}" class="mx-auto" style="max-height: 35mm; max-width: 90%; object-fit: contain;">`;
-                    }
-                } else if(type !== 'SANS') {
-                    html = `<p class="font-black italic tracking-tighter" style="color: ${hex}; font-size: 36pt;">${type}</p>`;
+                if(type === 'PERSO') {
+                    const txt = document.getElementById('val'+pos).value || 'TEXTE';
+                    html = `<p class="${document.getElementById('font'+pos).value}" style="color:${selCol}; font-size: 34pt; line-height:1;">${txt}</p>`;
+                } else if(type === 'SANS') {
+                    html = `<div class="w-full h-px bg-gray-100"></div>`;
+                } else {
+                    html = `<p class="font-bebas" style="color:${selCol}; font-size: 40pt;">${type}</p>`;
                 }
-                return `<div class="py-4 border-b border-gray-50"><span class="text-[7px] font-black opacity-30 uppercase block mb-2">${pos} — ${size}mm</span>${html}</div>`;
+                return `<div class="w-full py-4"><span class="text-[7px] font-black opacity-20 uppercase block mb-3 tracking-[0.2em]">${label} — ${size}mm</span>${html}</div>`;
             };
 
             fiche.innerHTML = `
-                <div class="mb-4">
-                    <h2 class="text-5xl font-[900] tracking-tighter leading-none">${client.toUpperCase()}</h2>
-                    <p class="text-blue-600 text-[10px] font-black uppercase mt-1 tracking-widest">${document.getElementById('refOlda').value} — TAILLE ${document.getElementById('taille').value}</p>
+                <div class="w-full border-b-[1.5px] border-black pb-4 flex justify-between items-end">
+                    <div class="text-left">
+                        <p class="text-[8px] font-black uppercase opacity-40 tracking-widest">Fiche Production Officielle</p>
+                        <h2 class="text-4xl font-[900] tracking-tighter leading-none mt-1">${client.toUpperCase()}</h2>
+                        <p class="text-blue-600 text-[10px] font-black mt-2 tracking-[0.2em]">${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}</p>
+                    </div>
+                    <div class="text-right text-[7px] font-bold opacity-30">#${Math.floor(Math.random()*9000+1000)}<br>${new Date().toLocaleDateString()}</div>
                 </div>
-                ${await renderContent('Av')}
-                ${await renderContent('Ar')}
-                <div class="no-print mt-6 flex gap-1 pt-4 border-t" id="s-${orderId}">
-                    <div class="step-pill step-active" onclick="setStep('${orderId}', 0)">Attente</div>
-                    <div class="step-pill step-inactive" onclick="setStep('${orderId}', 1)">Réception</div>
-                    <div class="step-pill step-inactive" onclick="setStep('${orderId}', 2)">Production</div>
-                    <div class="step-pill step-inactive" onclick="setStep('${orderId}', 3)">Terminé</div>
+                ${await build('Av', 'Position Avant')}
+                ${await build('Ar', 'Position Arrière')}
+                <div class="no-print w-full flex gap-1 pt-6 border-t" id="st-${id}">
+                    <div class="step-pill flex-1 step-active" onclick="st('${id}',0)">Attente</div>
+                    <div class="step-pill flex-1" onclick="st('${id}',1)">Reçu</div>
+                    <div class="step-pill flex-1" onclick="st('${id}',2)">Prod</div>
+                    <div class="step-pill flex-1" onclick="st('${id}',3)">Fini</div>
                 </div>
-                <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[8px] opacity-20 mt-4 uppercase font-bold">Supprimer de la session</button>
+                <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[7px] font-black opacity-10 mt-4 uppercase hover:opacity-100 transition-opacity tracking-widest">Supprimer la fiche</button>
             `;
             document.getElementById('orderList').prepend(fiche);
         }
 
-        function setStep(id, idx) {
-            const pills = document.getElementById(`s-${id}`).querySelectorAll('.step-pill');
-            pills.forEach((p, i) => p.className = i <= idx ? "step-pill step-active" : "step-pill step-inactive");
+        function st(id, idx) {
+            const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
+            steps.forEach((s, i) => s.className = i <= idx ? "step-pill flex-1 step-active" : "step-pill flex-1");
         }
 
         init();
