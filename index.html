@@ -2,156 +2,167 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Interne - Devis Clients</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atelier S-M | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; color: #1a1a1a; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .stepper-active { background-color: #000; color: white; border-color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        .stepper-line { height: 2px; background: #e5e7eb; flex-grow: 1; margin: 0 10px; margin-top: 14px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; }
+        .apple-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: saturate(180%) blur(20px); border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); }
+        .input-apple { background: #ffffff; border: 1px solid #d2d2d7; border-radius: 12px; padding: 12px 16px; transition: all 0.2s ease; }
+        .input-apple:focus { border-color: #0071e3; outline: none; ring: 3px rgba(0,113,227,0.1); }
+        .btn-apple { background: #0071e3; color: white; border-radius: 20px; font-weight: 500; transition: all 0.2s ease; }
+        .btn-apple:hover { background: #0077ed; }
+        .stepper-dot { width: 10px; height: 10px; border-radius: 50%; background: #d2d2d7; position: relative; }
+        .stepper-dot.active { background: #0071e3; box-shadow: 0 0 0 4px rgba(0,113,227,0.2); }
+        .stepper-line { height: 2px; background: #d2d2d7; flex-grow: 1; }
     </style>
 </head>
-<body class="min-h-screen p-4 lg:p-10">
+<body class="p-6 md:p-12">
 
-    <div class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <div>
-            <h1 class="text-3xl font-extrabold tracking-tighter uppercase italic">Atelier S-M / Logiciel Devis</h1>
-            <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Interface Interne : Mélina • Charlie • Renaud</p>
-        </div>
-        <div class="bg-white px-6 py-2 rounded-full border border-gray-200 shadow-sm">
-            <span class="text-xs font-bold uppercase text-green-600">● Système Opérationnel</span>
-        </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-10">
-        
-        <div class="xl:col-span-4">
-            <div class="glass-card p-8 rounded-3xl shadow-xl sticky top-10">
-                <h2 class="text-xl font-bold mb-6 flex items-center uppercase tracking-tight">
-                    <span class="bg-black text-white w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">＋</span>
-                    Nouveau Devis Client
-                </h2>
-                
-                <form id="quoteForm" class="space-y-5">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nom du Client / Projet</label>
-                            <input type="text" id="clientName" required class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="Ex: Restaurant Le Ti-Gros">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Téléphone</label>
-                            <input type="tel" id="clientPhone" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="06 90...">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deadline Souhaitée</label>
-                            <input type="date" id="deadline" required class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Type de Collection</label>
-                        <select id="collectionType" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none appearance-none font-semibold">
-                            <option value="TEXTILE">Collection Textile (DTF)</option>
-                            <option value="OBJET">Collection Objets (UV)</option>
-                            <option value="GRAVURE">Collection Gravure (Mugs)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Commentaires Particuliers</label>
-                        <textarea id="comments" rows="4" class="w-full bg-gray-50 border-0 rounded-xl p-4 focus:ring-2 focus:ring-black transition outline-none" placeholder="Préciser les couleurs, quantités, urgence..."></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-800 transform active:scale-95 transition-all shadow-2xl">
-                        Enregistrer le Devis
-                    </button>
-                </form>
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-end mb-16">
+            <div>
+                <h1 class="text-4xl font-semibold tracking-tight">Commandes Client</h1>
+                <p class="text-gray-500 text-lg">Prise de vue atelier — Saint-Martin</p>
             </div>
-        </div>
-
-        <div class="xl:col-span-8 space-y-6">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-xl font-bold uppercase tracking-tight">Devis en attente de production</h2>
-                <span id="orderCount" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">0 PROJETS</span>
+            <div class="text-right">
+                <span id="dateDisplay" class="text-sm font-medium text-gray-400 uppercase tracking-widest"></span>
             </div>
+        </header>
 
-            <div id="quoteContainer" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            <div class="lg:col-span-4">
+                <div class="apple-card p-8 shadow-sm">
+                    <h2 class="text-xl font-semibold mb-8">Nouvelle Fiche</h2>
+                    <form id="orderForm" class="space-y-6">
+                        <div class="flex flex-col">
+                            <label class="text-[11px] font-semibold text-gray-400 uppercase mb-2 ml-1">Client</label>
+                            <input type="text" id="client" class="input-apple" placeholder="Nom complet" required>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="text-[11px] font-semibold text-gray-400 uppercase mb-2 ml-1">Contact</label>
+                            <input type="tel" id="phone" class="input-apple" placeholder="Numéro de téléphone">
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="text-[11px] font-semibold text-gray-400 uppercase mb-2 ml-1">Deadline</label>
+                            <input type="date" id="deadline" class="input-apple" required>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="text-[11px] font-semibold text-gray-400 uppercase mb-2 ml-1">Collection</label>
+                            <select id="collection" class="input-apple appearance-none">
+                                <option value="Textile DTF">Collection Textile DTF</option>
+                                <option value="Objets UV">Collection Objets UV</option>
+                                <option value="Gravure">Collection Gravure</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="text-[11px] font-semibold text-gray-400 uppercase mb-2 ml-1">Projet & Notes</label>
+                            <textarea id="notes" class="input-apple min-h-[100px]" placeholder="Détails de personnalisation..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-apple w-full py-4 text-lg">Enregistrer</button>
+                    </form>
                 </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div id="orderList" class="space-y-6">
+                    </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const form = document.getElementById('quoteForm');
-        const container = document.getElementById('quoteContainer');
-        const countSpan = document.getElementById('orderCount');
-        let count = 0;
+        // Affichage date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('fr-FR', options);
+
+        const form = document.getElementById('orderForm');
+        const list = document.getElementById('orderList');
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            count++;
-            countSpan.innerText = `${count} PROJETS`;
-
-            const data = {
-                id: Math.floor(1000 + Math.random() * 9000),
-                client: document.getElementById('clientName').value,
-                phone: document.getElementById('clientPhone').value,
-                deadline: document.getElementById('deadline').value,
-                collection: document.getElementById('collectionType').value,
-                comments: document.getElementById('comments').value
-            };
+            
+            const client = document.getElementById('client').value;
+            const phone = document.getElementById('phone').value;
+            const deadline = document.getElementById('deadline').value;
+            const collection = document.getElementById('collection').value;
+            const notes = document.getElementById('notes').value;
+            const orderId = Math.floor(Math.random() * 9000) + 1000;
 
             const card = document.createElement('div');
-            card.className = "glass-card p-8 rounded-3xl shadow-sm border-l-[12px] border-black transition hover:shadow-xl animate-in slide-in-from-right duration-500";
+            card.className = "apple-card p-8 shadow-sm animate-all duration-500 ease-out transform translate-y-4 opacity-0";
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+
             card.innerHTML = `
-                <div class="flex flex-col md:flex-row justify-between mb-8">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] font-black bg-black text-white px-2 py-0.5 rounded italic">DEVIS #${data.id}</span>
-                            <span class="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Collection ${data.collection}</span>
+                <div class="flex justify-between items-start mb-10">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded-md uppercase tracking-widest">Fiche #${orderId}</span>
+                            <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded-md uppercase tracking-widest">${collection}</span>
                         </div>
-                        <h3 class="text-2xl font-bold tracking-tight">${data.client}</h3>
-                        <div class="flex gap-4 text-xs font-medium text-gray-500">
-                            <span>📞 ${data.phone}</span>
-                            <span class="text-red-500 font-bold">📅 Deadline : ${data.deadline}</span>
-                        </div>
+                        <h3 class="text-2xl font-semibold">${client}</h3>
+                        <p class="text-gray-400 font-medium">${phone}</p>
                     </div>
-                    <div class="mt-4 md:mt-0 max-w-xs">
-                        <p class="text-xs text-gray-600 bg-gray-100 p-3 rounded-xl italic">"${data.comments}"</p>
+                    <div class="text-right">
+                        <p class="text-[11px] font-bold text-gray-400 uppercase mb-1">Échéance</p>
+                        <p class="text-sm font-semibold text-red-500">${deadline}</p>
                     </div>
                 </div>
 
-                <div class="flex items-start w-full">
-                    <div class="flex flex-col items-center flex-1">
-                        <div class="w-7 h-7 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold stepper-active">1</div>
-                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Attente Devis</span>
+                <div class="mb-10 p-4 bg-gray-50 rounded-xl">
+                    <p class="text-gray-600 leading-relaxed text-sm font-medium italic">"${notes}"</p>
+                </div>
+
+                <div class="flex items-center px-4">
+                    <div class="flex flex-col items-center group cursor-pointer" onclick="updateStep(this, 0)">
+                        <div class="stepper-dot active"></div>
+                        <span class="text-[9px] font-bold mt-3 text-black uppercase tracking-tighter">Saisie</span>
                     </div>
                     <div class="stepper-line"></div>
-                    <div class="flex flex-col items-center flex-1 opacity-30">
-                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">2</div>
-                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Validé</span>
+                    <div class="flex flex-col items-center group cursor-pointer" onclick="updateStep(this, 1)">
+                        <div class="stepper-dot"></div>
+                        <span class="text-[9px] font-bold mt-3 text-gray-300 uppercase tracking-tighter">Atelier</span>
                     </div>
                     <div class="stepper-line"></div>
-                    <div class="flex flex-col items-center flex-1 opacity-30">
-                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">3</div>
-                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">En Prod</span>
+                    <div class="flex flex-col items-center group cursor-pointer" onclick="updateStep(this, 2)">
+                        <div class="stepper-dot"></div>
+                        <span class="text-[9px] font-bold mt-3 text-gray-300 uppercase tracking-tighter">Finition</span>
                     </div>
                     <div class="stepper-line"></div>
-                    <div class="flex flex-col items-center flex-1 opacity-30">
-                        <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-[10px] font-bold">4</div>
-                        <span class="text-[9px] mt-2 font-bold uppercase tracking-tighter">Terminé</span>
+                    <div class="flex flex-col items-center group cursor-pointer" onclick="updateStep(this, 3)">
+                        <div class="stepper-dot"></div>
+                        <span class="text-[9px] font-bold mt-3 text-gray-300 uppercase tracking-tighter">Prêt</span>
                     </div>
                 </div>
-                
-                <div class="mt-8 flex justify-end gap-2">
-                    <button class="text-[10px] font-bold uppercase p-2 text-gray-400 hover:text-red-500 transition" onclick="this.closest('.glass-card').remove()">Supprimer</button>
-                    <button class="text-[10px] font-bold uppercase bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 transition">Imprimer Fiche Atelier</button>
+
+                <div class="mt-10 flex justify-end gap-6 pt-6 border-t border-gray-100">
+                    <button class="text-xs font-semibold text-gray-300 hover:text-red-500 transition" onclick="this.closest('.apple-card').remove()">Archiver la fiche</button>
+                    <button class="text-xs font-semibold text-blue-600 hover:opacity-70 transition">Détails techniques →</button>
                 </div>
             `;
-            container.prepend(card);
+
+            list.prepend(card);
             form.reset();
         });
+
+        function updateStep(el, index) {
+            const container = el.parentElement;
+            const dots = container.querySelectorAll('.stepper-dot');
+            const labels = container.querySelectorAll('span');
+            
+            dots.forEach((dot, i) => {
+                if(i <= index) {
+                    dot.classList.add('active');
+                    labels[i].classList.replace('text-gray-300', 'text-black');
+                } else {
+                    dot.classList.remove('active');
+                    labels[i].classList.replace('text-black', 'text-gray-300');
+                }
+            });
+        }
     </script>
 </body>
 </html>
