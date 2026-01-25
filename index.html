@@ -3,30 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA PRODUCTION | ATELIER LUXE</title>
+    <title>OLDA | ATELIER SYSTÈME</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Bebas+Neue&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* Chargement des polices de personnalisation */
         @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
         @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-        body { font-family: 'Montserrat', sans-serif; background: #f5f5f7; color: #1d1d1f; padding-bottom: 80px; }
-        .font-bebas { font-family: 'Bebas Neue', cursive; }
-        .font-edo { font-family: 'EDO', sans-serif; }
-        .font-rodeo { font-family: 'Rodeo', sans-serif; }
+        /* Police Apple System (San Francisco) */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #fbfbfd;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .apple-card { background: #ffffff; border-radius: 18px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
         
-        .input-premium { background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px; padding: 12px; font-weight: 600; outline: none; width: 100%; transition: 0.2s; }
-        .input-premium:focus { border-color: #0071e3; }
-        
-        .color-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px #d2d2d7; transition: 0.2s; cursor: pointer; }
-        .color-btn.active { box-shadow: 0 0 0 2px #0071e3; transform: scale(1.1); }
+        .input-apple { 
+            background: #f5f5f7; border-radius: 12px; border: 1px solid transparent; 
+            padding: 14px; font-weight: 500; font-size: 15px; outline: none; transition: all 0.2s ease;
+        }
+        .input-apple:focus { background: #fff; border-color: #0071e3; box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
 
-        .thumb-preview { width: 60px; height: 60px; border-radius: 8px; border: 1px dashed #d2d2d7; object-fit: contain; background: #fff; }
+        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #d2d2d7; cursor: pointer; transition: 0.2s; }
+        .color-dot.active { box-shadow: 0 0 0 2px #0071e3; transform: scale(1.1); }
 
+        /* Fiche A6 - Format Luxe */
         .fiche-a6 {
-            width: 105mm; height: 148mm; background: white; margin: 30px auto;
-            padding: 10mm; display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; text-align: center; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 105mm; height: 148mm; background: #fff; margin: 40px auto;
+            padding: 12mm; display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; border-radius: 4px; box-shadow: 0 15px 50px rgba(0,0,0,0.08);
         }
 
         @media print {
@@ -35,94 +43,127 @@
             .fiche-a6 { margin: 0; box-shadow: none; page-break-after: always; }
         }
 
-        .step-pill { font-size: 8px; font-weight: 900; padding: 8px; border-radius: 20px; border: 1px solid #e5e5e7; flex: 1; cursor: pointer; text-transform: uppercase; }
-        .step-active { background: #000; color: #fff; border-color: #000; }
+        .step-btn { 
+            font-size: 10px; font-weight: 700; padding: 10px; border-radius: 40px; 
+            background: #f5f5f7; color: #86868b; border: none; flex: 1; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: 0.3s;
+        }
+        .step-btn.active { background: #000; color: #fff; }
+
+        .thumb { width: 64px; height: 64px; border-radius: 12px; border: 1px solid #d2d2d7; object-fit: contain; background: #fff; }
     </style>
 </head>
 <body>
 
-<div class="max-w-xl mx-auto p-4 no-print">
-    <header class="my-6 text-center">
-        <h1 class="text-2xl font-[900] uppercase tracking-tighter italic">Olda <span class="text-blue-600">Production</span></h1>
+<div class="max-w-xl mx-auto p-6 no-print">
+    <header class="mb-10 flex justify-between items-center">
+        <h1 class="text-2xl font-bold tracking-tight">Atelier <span class="font-light opacity-50">Olda</span></h1>
+        <div class="text-[10px] font-bold uppercase tracking-widest opacity-40">Système de Production v2.0</div>
     </header>
 
-    <div class="bg-white p-6 rounded-[24px] shadow-sm space-y-6">
-        <div class="grid grid-cols-2 gap-4">
-            <input type="text" id="client" placeholder="NOM CLIENT" class="input-premium uppercase">
-            <select id="genre" class="input-premium" onchange="updateRefs()"><option value="H">HOMME</option><option value="F">FEMME</option><option value="E">ENFANT</option></select>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-4">
-            <select id="ref" class="input-premium"></select>
-            <select id="taille" class="input-premium font-bold"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+    <div class="apple-card p-8 space-y-8">
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold uppercase opacity-40 ml-1">Client</label>
+                <input type="text" id="client" placeholder="Nom complet" class="input-apple w-full uppercase">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold uppercase opacity-40 ml-1">Collection</label>
+                <select id="genre" class="input-apple w-full" onchange="updateRefs()">
+                    <option value="H">Homme</option>
+                    <option value="F">Femme</option>
+                    <option value="E">Enfant</option>
+                </select>
+            </div>
         </div>
 
-        <div class="p-4 bg-gray-50 rounded-2xl space-y-4 border border-gray-100">
-            <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Avant</span> <span id="vAv" class="text-[10px] font-bold opacity-30">60mm</span></div>
-            <select id="typeAv" class="input-premium" onchange="toggleBox('Av')">
-                <option value="SANS">AUCUN LOGO</option>
-                <option value="PERSO">TEXTE PERSONNALISÉ</option>
-                <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold uppercase opacity-40 ml-1">Référence</label>
+                <select id="ref" class="input-apple w-full"></select>
+            </div>
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold uppercase opacity-40 ml-1">Taille</label>
+                <select id="taille" class="input-apple w-full font-bold">
+                    <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
+                </select>
+            </div>
+        </div>
+
+        <hr class="opacity-10">
+
+        <div class="p-6 bg-[#fbfbfd] rounded-2xl space-y-5 border border-gray-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <span class="text-[12px] font-bold text-blue-600">Position Avant</span>
+                <span id="vAv" class="text-[11px] font-bold opacity-30 tracking-widest">60MM</span>
+            </div>
+            <select id="typeAv" class="input-apple w-full" onchange="toggleBox('Av')">
+                <option value="SANS">Aucun</option>
+                <option value="PERSO">Texte Personnalisé</option>
+                <option value="LOGO CLIENT">Logo Client (Importer)</option>
                 <option value="BEA-16AV">BEA-16AV</option>
             </select>
             
-            <div id="boxAv" class="hidden space-y-3">
-                <div class="flex gap-3 items-center">
-                    <img id="prevAv" class="thumb-preview">
-                    <div class="flex-grow space-y-2">
+            <div id="boxAv" class="hidden space-y-4">
+                <div class="flex gap-4 items-center">
+                    <img id="prevAv" class="thumb">
+                    <div class="flex-1 space-y-2">
                         <input type="file" id="fileAv" class="hidden" accept="image/*" onchange="handleImg(this, 'Av')">
-                        <button onclick="document.getElementById('fileAv').click()" class="w-full py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-bold uppercase">Choisir Logo...</button>
-                        <input type="text" id="valAv" placeholder="Texte perso..." class="input-premium text-sm hidden">
+                        <button onclick="document.getElementById('fileAv').click()" class="w-full py-3 bg-white border border-gray-200 rounded-xl text-[11px] font-bold uppercase tracking-tight">Sélectionner Image</button>
                     </div>
                 </div>
-                <select id="fontAv" class="input-premium text-[10px] hidden">
-                    <option value="font-bebas">BEBAS NEUE</option>
-                    <option value="font-edo">EDO</option>
-                    <option value="font-rodeo">RODEO</option>
+                <input type="text" id="valAv" placeholder="Saisir le texte" class="input-apple w-full text-center hidden">
+                <select id="fontAv" class="input-apple w-full hidden">
+                    <option value="font-bebas">Bebas Neue</option>
+                    <option value="font-edo">EDO (Pinceau)</option>
+                    <option value="font-rodeo">Rodeo</option>
                 </select>
             </div>
-            <div class="flex flex-wrap gap-2 justify-center" id="palAv"></div>
-            <input type="range" id="rangeAv" min="0" max="120" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'mm'">
+            <div class="flex flex-wrap gap-3 justify-center" id="palAv"></div>
+            <input type="range" id="rangeAv" min="0" max="150" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'MM'">
         </div>
 
-        <div class="p-4 bg-gray-50 rounded-2xl space-y-4 border border-gray-100">
-            <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Arrière</span> <span id="vAr" class="text-[10px] font-bold opacity-30">250mm</span></div>
-            <select id="typeAr" class="input-premium" onchange="toggleBox('Ar')">
-                <option value="SANS">AUCUN LOGO</option>
-                <option value="PERSO">TEXTE PERSONNALISÉ</option>
-                <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
+        <div class="p-6 bg-[#fbfbfd] rounded-2xl space-y-5 border border-gray-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <span class="text-[12px] font-bold text-blue-600">Position Arrière</span>
+                <span id="vAr" class="text-[11px] font-bold opacity-30 tracking-widest">250MM</span>
+            </div>
+            <select id="typeAr" class="input-apple w-full" onchange="toggleBox('Ar')">
+                <option value="SANS">Aucun</option>
+                <option value="PERSO">Texte Personnalisé</option>
+                <option value="LOGO CLIENT">Logo Client (Importer)</option>
                 <option value="BEA-16AR">BEA-16AR</option>
             </select>
             
-            <div id="boxAr" class="hidden space-y-3">
-                <div class="flex gap-3 items-center">
-                    <img id="prevAr" class="thumb-preview">
-                    <div class="flex-grow space-y-2">
+            <div id="boxAr" class="hidden space-y-4">
+                <div class="flex gap-4 items-center">
+                    <img id="prevAr" class="thumb">
+                    <div class="flex-1 space-y-2">
                         <input type="file" id="fileAr" class="hidden" accept="image/*" onchange="handleImg(this, 'Ar')">
-                        <button onclick="document.getElementById('fileAr').click()" class="w-full py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-bold uppercase">Choisir Logo...</button>
-                        <input type="text" id="valAr" placeholder="Texte perso..." class="input-premium text-sm hidden">
+                        <button onclick="document.getElementById('fileAr').click()" class="w-full py-3 bg-white border border-gray-200 rounded-xl text-[11px] font-bold uppercase tracking-tight">Sélectionner Image</button>
                     </div>
                 </div>
-                <select id="fontAr" class="input-premium text-[10px] hidden">
-                    <option value="font-bebas">BEBAS NEUE</option>
+                <input type="text" id="valAr" placeholder="Saisir le texte" class="input-apple w-full text-center hidden">
+                <select id="fontAr" class="input-apple w-full hidden">
+                    <option value="font-bebas">Bebas Neue</option>
                     <option value="font-edo">EDO</option>
-                    <option value="font-rodeo">RODEO</option>
+                    <option value="font-rodeo">Rodeo</option>
                 </select>
             </div>
-            <div class="flex flex-wrap gap-2 justify-center" id="palAr"></div>
-            <input type="range" id="rangeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'mm'">
+            <div class="flex flex-wrap gap-3 justify-center" id="palAr"></div>
+            <input type="range" id="rangeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'MM'">
         </div>
 
-        <button onclick="generer()" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all">Générer Fiche A6</button>
+        <button onclick="generer()" class="w-full bg-black text-white py-6 rounded-2xl font-bold uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all text-sm">Générer la Fiche Production</button>
     </div>
 </div>
 
-<div id="fiches" class="flex flex-col items-center gap-8"></div>
+<div id="fiches" class="flex flex-col items-center gap-12 pb-20"></div>
 
 <script>
     const colors = [
         {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Or', v:'#d4af37'}, 
-        {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu', v:'#0071e3'}, {n:'Violet', v:'#8f00ff'}
+        {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu', v:'#0071e3'}, {n:'Rose', v:'#ffb7ce'}
     ];
     let selAv = '#000', selAr = '#000';
     let dataAv = null, dataAr = null;
@@ -132,10 +173,10 @@
             const p = document.getElementById('pal'+pos);
             colors.forEach(c => {
                 const b = document.createElement('button');
-                b.className = `color-btn ${c.n==='Noir'?'active':''}`;
+                b.className = `color-dot ${c.n==='Noir'?'active':''}`;
                 b.style.background = c.v;
                 b.onclick = () => {
-                    p.querySelectorAll('.color-btn').forEach(x => x.classList.remove('active'));
+                    p.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
                     b.classList.add('active');
                     if(pos === 'Av') selAv = c.v; else selAr = c.v;
                 };
@@ -177,50 +218,53 @@
 
     async function generer() {
         const id = Date.now();
-        const client = document.getElementById('client').value || "CLIENT";
+        const client = document.getElementById('client').value || "CLIENT ANONYME";
         const fiche = document.createElement('div');
-        fiche.className = "fiche-a6 shadow-2xl animate-in fade-in zoom-in duration-500";
+        fiche.className = "fiche-a6 animate-in fade-in slide-in-from-bottom-5 duration-700";
 
         const render = (pos, label, color, img) => {
             const type = document.getElementById('type'+pos).value;
             const size = document.getElementById('range'+pos).value;
             let html = '';
             if(type === 'PERSO') {
-                html = `<p class="${document.getElementById('font'+pos).value}" style="color:${color}; font-size:32pt; line-height:1;">${document.getElementById('val'+pos).value || 'TEXTE'}</p>`;
+                html = `<p class="${document.getElementById('font'+pos).value}" style="color:${color}; font-size:36pt; line-height:1;">${document.getElementById('val'+pos).value || 'TEXTE'}</p>`;
             } else if(type === 'LOGO CLIENT') {
-                html = img ? `<img src="${img}" style="max-height:45mm; max-width:85mm; object-fit:contain;">` : '<span class="opacity-20 text-[8px]">LOGO VIDE</span>';
+                html = img ? `<img src="${img}" style="max-height:45mm; max-width:85mm; object-fit:contain;">` : '<span class="opacity-20 text-[9px]">AUCUNE IMAGE</span>';
             } else if(type !== 'SANS') {
-                html = `<p class="font-bebas" style="color:${color}; font-size:40pt;">${type}</p>`;
+                html = `<p class="font-bebas" style="color:${color}; font-size:42pt;">${type}</p>`;
             }
             return `<div class="w-full py-4 border-b border-gray-50 last:border-0">
-                <span class="text-[7px] font-black opacity-20 uppercase mb-2 tracking-widest block">${label} — ${size}mm</span>
+                <span class="text-[8px] font-bold opacity-20 uppercase mb-3 tracking-[0.2em] block">${label} — ${size}MM</span>
                 <div class="h-[48mm] flex items-center justify-center">${html}</div>
             </div>`;
         };
 
         fiche.innerHTML = `
-            <div class="w-full border-b-2 border-black pb-4 text-left">
-                <h2 class="text-4xl font-[900] tracking-tighter leading-none">${client.toUpperCase()}</h2>
-                <p class="text-blue-600 text-[10px] font-black uppercase mt-2 tracking-widest italic">
-                    ${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}
-                </p>
+            <div class="w-full border-b pb-4 text-left flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black tracking-tighter leading-none">${client.toUpperCase()}</h2>
+                    <p class="text-blue-600 text-[10px] font-bold uppercase mt-2 tracking-widest">
+                        COLLECTION ${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}
+                    </p>
+                </div>
+                <div class="text-[9px] font-bold opacity-30">#${id.toString().slice(-4)}</div>
             </div>
-            ${render('Av', 'Position Avant', selAv, dataAv)}
-            ${render('Ar', 'Position Arrière', selAr, dataAr)}
-            <div class="no-print w-full flex gap-1 pt-6 border-t" id="st-${id}">
-                <div class="step-pill step-active text-center" onclick="st('${id}',0)">Attente</div>
-                <div class="step-pill text-center" onclick="st('${id}',1)">Reçu</div>
-                <div class="step-pill text-center" onclick="st('${id}',2)">Prod</div>
-                <div class="step-pill text-center" onclick="st('${id}',3)">Fini</div>
+            ${render('Avant', 'Marquage Avant', selAv, dataAv)}
+            ${render('Arrière', 'Marquage Arrière', selAr, dataAr)}
+            <div class="no-print w-full flex gap-1.5 pt-6 border-t" id="st-${id}">
+                <button class="step-btn active" onclick="st('${id}',0)">Attente</button>
+                <button class="step-btn" onclick="st('${id}',1)">Reçu</button>
+                <button class="step-btn" onclick="st('${id}',2)">Prod</button>
+                <button class="step-btn" onclick="st('${id}',3)">Fini</button>
             </div>
-            <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[7px] font-bold opacity-10 mt-2 uppercase tracking-widest">Supprimer</button>
+            <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[8px] font-bold opacity-20 mt-4 uppercase hover:opacity-100 transition-opacity">Archiver la fiche</button>
         `;
         document.getElementById('fiches').prepend(fiche);
     }
 
     function st(id, idx) {
-        const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
-        steps.forEach((s, i) => s.className = i <= idx ? "step-pill step-active text-center" : "step-pill text-center");
+        const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-btn');
+        steps.forEach((s, i) => s.className = i <= idx ? "step-btn active" : "step-btn");
     }
 
     init();
