@@ -3,208 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA PRODUCTION | GESTION ATELIER</title>
+    <title>OLDA PRODUCTION | FULL INTERFACE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Polices de marquage et Apple System */
         @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
         @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            background: #fbfbfd;
-            color: #1d1d1f;
+            background: #ffffff; color: #000; padding: 20px;
         }
 
-        /* Interface de saisie */
-        .apple-card { background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .input-apple { background: #f5f5f7; border-radius: 12px; border: 1px solid transparent; padding: 14px; font-weight: 500; outline: none; transition: 0.2s; }
-        .input-apple:focus { border-color: #0071e3; background: #fff; }
+        /* --- INTERFACE DE CONFIGURATION (Image 2) --- */
+        .config-header { font-style: italic; font-weight: 900; font-size: 24px; text-transform: uppercase; margin-bottom: 30px; }
+        .label-style { font-size: 12px; font-weight: 800; color: #8e8e93; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .select-apple { background: #e5e5ea; border-radius: 8px; padding: 12px; width: 100%; font-weight: 600; border: none; appearance: none; }
+        .range-blue { width: 100%; height: 6px; background: #0071e3; border-radius: 5px; appearance: none; outline: none; }
 
-        /* Fiche de Production A6 (Design fidèle à l'image fournie) */
+        /* --- FICHE DE PRODUCTION (Image 1) --- */
         .fiche-a6 {
-            width: 105mm; height: 148mm; background: #fff; margin: 30px auto;
-            padding: 12mm; display: flex; flex-direction: column; border-radius: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; border: 1px solid #000;
+            width: 105mm; height: 148mm; background: #fff; margin: 40px auto;
+            padding: 10mm; display: flex; flex-direction: column; border: 1.5px solid #000; border-radius: 45px;
+            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        .mockup-container {
-            width: 100%; height: 55mm;
+        .mockup-visual {
+            width: 100%; height: 50mm;
             background-image: url('main/images/h001blancav.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4mm 0;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            position: relative; display: flex; align-items: center; justify-content: center; margin: 5mm 0;
         }
 
-        .overlay-logo {
-            position: absolute;
-            top: 42%; /* Position poitrine sur le t-shirt */
-            max-width: 50%;
-            text-align: center;
-        }
+        .overlay-text { position: absolute; top: 40%; text-align: center; font-weight: 900; }
 
-        .color-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #d2d2d7; cursor: pointer; transition: 0.2s; }
-        .color-dot.active { box-shadow: 0 0 0 2px #0071e3; transform: scale(1.1); }
-
-        /* Stepper Haute-Gamme */
-        .step-pill { font-size: 10px; font-weight: 700; padding: 10px; border-radius: 30px; background: #f5f5f7; border: none; flex: 1; cursor: pointer; text-transform: uppercase; }
+        .btn-black { background: #000; color: #fff; width: 100%; padding: 20px; border-radius: 12px; font-weight: 800; text-transform: uppercase; margin-top: 20px; }
+        
+        .step-pill { font-size: 10px; font-weight: 700; padding: 10px; border-radius: 30px; background: #f2f2f7; flex: 1; border: none; }
         .step-active { background: #000; color: #fff; }
 
-        @media print {
-            @page { size: A6; margin: 0; }
-            .no-print { display: none !important; }
-            .fiche-a6 { margin: 0; box-shadow: none; page-break-after: always; -webkit-print-color-adjust: exact; border: 1px solid #000; }
-        }
+        @media print { .no-print { display: none !important; } .fiche-a6 { margin: 0; page-break-after: always; } }
     </style>
 </head>
-<body class="pb-20">
+<body>
 
-    <div class="max-w-xl mx-auto p-6 no-print">
-        <header class="mb-8 text-center">
-            <h1 class="text-2xl font-black italic uppercase tracking-tighter">Olda <span class="text-blue-600">Production</span></h1>
-        </header>
-
-        <div class="apple-card p-8 space-y-6">
-            <div class="grid grid-cols-2 gap-4">
-                <input type="text" id="client" placeholder="NOM CLIENT" class="input-apple uppercase">
-                <select id="taille" class="input-apple font-bold">
-                    <option>TAILLE S</option><option>TAILLE M</option><option>TAILLE L</option><option>TAILLE XL</option>
-                </select>
+<div class="max-w-md mx-auto no-print">
+    <h1 class="config-header">OLDA PRODUCTION</h1>
+    
+    <div class="space-y-6">
+        <div class="flex gap-4">
+            <div class="flex-1">
+                <label class="label-style">Nom Client</label>
+                <input type="text" id="client" class="select-apple uppercase" placeholder="PIERRE">
             </div>
-
-            <div class="p-6 bg-[#fbfbfd] rounded-2xl border border-gray-100 space-y-5">
-                <div class="flex justify-between items-center"><span class="text-xs font-bold text-blue-600 uppercase">Marquage Avant</span> <span id="vAv" class="text-[10px] font-bold opacity-30">60MM</span></div>
-                
-                <select id="typeAv" class="input-apple w-full" onchange="toggleBox()">
-                    <option value="SANS">AUCUN</option>
-                    <option value="PERSO">PERSONNALISATION (TEXTE)</option>
-                    <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
-                    <option value="BEA-16AV">BEA-16AV</option>
-                </select>
-
-                <div id="boxAv" class="hidden space-y-4">
-                    <input type="text" id="valAv" placeholder="Saisir le texte" class="input-apple text-center">
-                    <select id="fontAv" class="input-apple text-sm">
-                        <option value="font-sans">Apple System</option>
-                        <option value="font-bebas">Bebas Neue</option>
-                        <option value="font-edo">EDO</option>
-                    </select>
-                    <button onclick="document.getElementById('fileAv').click()" class="w-full py-3 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase">Aller chercher logo client</button>
-                    <input type="file" id="fileAv" class="hidden" accept="image/*" onchange="handleImg(this)">
-                </div>
-
-                <div class="flex flex-wrap gap-3 justify-center" id="palette"></div>
-                <input type="range" id="rangeAv" min="10" max="110" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'MM'">
+            <div class="flex-1">
+                <label class="label-style">Genre</label>
+                <select class="select-apple"><option>HOMME</option><option>FEMME</option></select>
             </div>
-
-            <button onclick="generer()" class="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase tracking-[0.2em] shadow-xl">Générer Fiche de Production</button>
         </div>
+
+        <div class="flex gap-4">
+            <div class="flex-1">
+                <label class="label-style">Collection</label>
+                <select class="select-apple"><option>H-001 (BLANC)</option></select>
+            </div>
+            <div class="flex-1">
+                <label class="label-style">Taille</label>
+                <select id="taille" class="select-apple font-bold"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex justify-between"><label class="label-style">Logo Avant</label><span id="vAv" class="text-[10px] font-bold">60MM</span></div>
+            <select id="typeAv" class="select-apple mb-2"><option value="PERSO">PERSONNALISATION (TEXTE)</option><option value="BEA-16AV">BEA-16AV</option></select>
+            <input type="range" id="rangeAv" min="10" max="150" value="60" class="range-blue" oninput="vAv.innerText=this.value+'MM'">
+            <input type="text" id="valAv" placeholder="Texte Avant" class="select-apple mt-2 text-sm">
+        </div>
+
+        <div>
+            <div class="flex justify-between"><label class="label-style">Logo Arrière</label><span id="vAr" class="text-[10px] font-bold">250MM</span></div>
+            <select id="typeAr" class="select-apple mb-2"><option value="PERSO">PERSONNALISATION (TEXTE)</option></select>
+            <input type="range" id="rangeAr" min="10" max="300" value="250" class="range-blue" oninput="vAr.innerText=this.value+'MM'">
+            <input type="text" id="valAr" placeholder="Texte Arrière" class="select-apple mt-2 text-sm">
+        </div>
+
+        <button onclick="generer()" class="btn-black">Créer Fiche Production</button>
     </div>
+</div>
 
-    <div id="fiches" class="flex flex-col items-center gap-10"></div>
+<div id="fiches"></div>
 
-    <script>
-        const colors = [{n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Bleu Clair', v:'#add8e6'}, {n:'Rouge', v:'#f00'}, {n:'Jaune', v:'#ff0'}];
-        let selColor = '#000', imgData = null;
+<script>
+    function generer() {
+        const id = Math.floor(2000 + Math.random() * 500);
+        const client = document.getElementById('client').value || "PIERRE";
+        const fiche = document.createElement('div');
+        fiche.className = "fiche-a6";
+        
+        const typeAv = document.getElementById('typeAv').value;
+        const txtAv = document.getElementById('valAv').value || "Saint Martin";
+        const sizeAv = document.getElementById('rangeAv').value;
 
-        function init() {
-            const p = document.getElementById('palette');
-            colors.forEach(c => {
-                const b = document.createElement('div');
-                b.className = `color-dot ${c.n==='Noir'?'active':''}`;
-                b.style.background = c.v;
-                b.onclick = () => {
-                    p.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
-                    b.classList.add('active');
-                    selColor = c.v;
-                };
-                p.appendChild(b);
-            });
-        }
+        fiche.innerHTML = `
+            <div class="flex justify-between items-start w-full">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold opacity-30 uppercase">Fiche de Production Officielle</p>
+                    <h2 class="text-4xl font-black tracking-tighter mt-1">${client.toUpperCase()}</h2>
+                    <p class="text-blue-600 text-[11px] font-bold mt-2 uppercase">H-001 — TAILLE ${document.getElementById('taille').value}</p>
+                </div>
+                <div class="text-right">
+                    <h3 class="text-4xl font-bold tracking-tighter">#${id}</h3>
+                    <p class="text-[8px] opacity-30 font-bold mt-1">24/01/2026</p>
+                </div>
+            </div>
 
-        function toggleBox() {
-            document.getElementById('boxAv').classList.toggle('hidden', document.getElementById('typeAv').value === 'SANS');
-        }
+            <div class="mockup-visual">
+                <div class="overlay-text" style="font-size:${sizeAv/2.5}pt;">${typeAv === 'PERSO' ? txtAv : typeAv}</div>
+            </div>
 
-        function handleImg(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => { imgData = e.target.result; };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        function generer() {
-            const id = Math.floor(1000 + Math.random() * 9000);
-            const client = document.getElementById('client').value || "PIERRE";
-            const type = document.getElementById('typeAv').value;
-            const size = document.getElementById('rangeAv').value;
-            const fiche = document.createElement('div');
-            fiche.className = "fiche-a6";
-
-            let content = '';
-            if(type === 'PERSO') {
-                content = `<p class="${document.getElementById('fontAv').value}" style="color:${selColor}; font-size:${size/2}pt; line-height:1;">${document.getElementById('valAv').value || 'Saint Martin'}</p>`;
-            } else if(type === 'LOGO CLIENT') {
-                content = imgData ? `<img src="${imgData}" style="width:${size}mm;">` : '';
-            } else if(type !== 'SANS') {
-                content = `<p class="font-bebas" style="color:${selColor}; font-size:${size/1.5}pt;">${type}</p>`;
-            }
-
-            fiche.innerHTML = `
-                <div class="flex justify-between items-start w-full">
-                    <div class="text-left">
-                        <p class="text-[8px] font-bold opacity-30 uppercase leading-tight">Fiche de Production<br>Officielle</p>
-                        <h2 class="text-4xl font-black tracking-tighter mt-1">${client.toUpperCase()}</h2>
-                        <p class="text-blue-600 text-[11px] font-bold mt-2 uppercase">H-001 — ${document.getElementById('taille').value}</p>
-                    </div>
-                    <div class="text-right">
-                        <h3 class="text-4xl font-bold tracking-tighter">#${id}</h3>
-                        <p class="text-[8px] opacity-30 font-bold uppercase mt-1">24/01/2026</p>
+            <div class="mt-auto">
+                <div class="flex gap-4 border-t pt-4 mb-4">
+                    <div class="flex-1 border-l-2 border-blue-600 pl-3">
+                        <p class="text-[8px] font-bold opacity-30 uppercase">Position Avant</p>
+                        <p class="text-xl font-black leading-tight uppercase">${typeAv === 'PERSO' ? txtAv : typeAv}</p>
+                        <div class="flex gap-1 mt-2">
+                            <span class="bg-gray-100 text-[8px] font-bold px-2 py-1 rounded">LARGEUR: ${sizeAv}MM</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mockup-container">
-                    <div class="overlay-logo">${content}</div>
+                <div class="no-print flex gap-1 mb-4">
+                    <button class="step-pill step-active">Attente</button>
+                    <button class="step-pill">Prod</button>
+                    <button class="step-pill">Fini</button>
                 </div>
-
-                <div class="w-full mt-auto">
-                    <div class="flex gap-4 border-t pt-4 mb-6">
-                         <div class="flex-1 text-left">
-                            <p class="text-[7px] font-bold opacity-30 uppercase mb-1">Position Avant</p>
-                            <p class="text-lg font-black leading-none">${type}</p>
-                            <div class="mt-2 flex gap-1">
-                                <span class="bg-gray-100 text-[7px] font-bold px-2 py-1 rounded">LARGEUR: ${size}MM</span>
-                                <span class="bg-gray-100 text-[7px] font-bold px-2 py-1 rounded">COULEUR: ${colors.find(c => c.v === selColor).n.toUpperCase()}</span>
-                            </div>
-                         </div>
-                    </div>
-                    
-                    <div class="no-print flex gap-1 mb-4" id="st-${id}">
-                        <button class="step-pill step-active" onclick="st('${id}',0)">Attente</button>
-                        <button class="step-pill" onclick="st('${id}',1)">Reçu</button>
-                        <button class="step-pill" onclick="st('${id}',2)">Prod</button>
-                    </div>
-                    
-                    <div class="flex justify-between items-center no-print">
-                        <button onclick="this.closest('.fiche-a6').remove()" class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Supprimer</button>
-                        <button onclick="window.print()" class="bg-black text-white px-8 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest">Imprimer Fiche</button>
-                    </div>
+                
+                <div class="flex justify-between items-center no-print">
+                    <button onclick="this.closest('.fiche-a6').remove()" class="text-red-500 text-[10px] font-bold uppercase">Supprimer</button>
+                    <button onclick="window.print()" class="bg-black text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase">Imprimer Fiche</button>
                 </div>
-            `;
-            document.getElementById('fiches').prepend(fiche);
-        }
-
-        function st(id, idx) {
-            const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
-            steps.forEach((s, i) => s.className = i <= idx ? "step-pill step-active" : "step-pill");
-        }
-
-        init();
-    </script>
+            </div>
+        `;
+        document.getElementById('fiches').prepend(fiche);
+    }
+</script>
 </body>
 </html>
