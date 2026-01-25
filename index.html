@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA PRO | ATELIER</title>
+    <title>OLDA PRODUCTION | ATELIER LUXE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Bebas+Neue&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
         @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
         @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
 
-        body { font-family: 'Montserrat', sans-serif; background: #f5f5f7; color: #1d1d1f; padding-bottom: 100px; }
+        body { font-family: 'Montserrat', sans-serif; background: #f5f5f7; color: #1d1d1f; padding-bottom: 80px; }
         .font-bebas { font-family: 'Bebas Neue', cursive; }
         .font-edo { font-family: 'EDO', sans-serif; }
         .font-rodeo { font-family: 'Rodeo', sans-serif; }
         
-        .input-premium { background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px; padding: 12px; font-weight: 600; outline: none; width: 100%; }
+        .input-premium { background: #fff; border: 1.5px solid #d2d2d7; border-radius: 12px; padding: 12px; font-weight: 600; outline: none; width: 100%; transition: 0.2s; }
+        .input-premium:focus { border-color: #0071e3; }
         
-        .color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px #d2d2d7; transition: 0.2s; }
+        .color-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px #d2d2d7; transition: 0.2s; cursor: pointer; }
         .color-btn.active { box-shadow: 0 0 0 2px #0071e3; transform: scale(1.1); }
+
+        .thumb-preview { width: 60px; height: 60px; border-radius: 8px; border: 1px dashed #d2d2d7; object-fit: contain; background: #fff; }
 
         .fiche-a6 {
             width: 105mm; height: 148mm; background: white; margin: 30px auto;
             padding: 10mm; display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; text-align: center; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            align-items: center; text-align: center; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
 
         @media print {
@@ -32,85 +35,97 @@
             .fiche-a6 { margin: 0; box-shadow: none; page-break-after: always; }
         }
 
-        .step-pill { font-size: 8px; font-weight: 900; padding: 8px; border-radius: 20px; border: 1px solid #e5e5e7; flex: 1; cursor: pointer; transition: 0.3s; }
+        .step-pill { font-size: 8px; font-weight: 900; padding: 8px; border-radius: 20px; border: 1px solid #e5e5e7; flex: 1; cursor: pointer; text-transform: uppercase; }
         .step-active { background: #000; color: #fff; border-color: #000; }
     </style>
 </head>
 <body>
 
-<div class="max-w-xl mx-auto p-6 no-print">
-    <header class="mb-8 text-center">
+<div class="max-w-xl mx-auto p-4 no-print">
+    <header class="my-6 text-center">
         <h1 class="text-2xl font-[900] uppercase tracking-tighter italic">Olda <span class="text-blue-600">Production</span></h1>
     </header>
 
-    <div class="bg-white p-8 rounded-[30px] shadow-sm space-y-6">
+    <div class="bg-white p-6 rounded-[24px] shadow-sm space-y-6">
         <div class="grid grid-cols-2 gap-4">
-            <input type="text" id="client" placeholder="CLIENT" class="input-premium uppercase">
-            <select id="genre" class="input-premium" onchange="updateRefs()"><option value="H">HOMME</option><option value="F">FEMME</option></select>
+            <input type="text" id="client" placeholder="NOM CLIENT" class="input-premium uppercase">
+            <select id="genre" class="input-premium" onchange="updateRefs()"><option value="H">HOMME</option><option value="F">FEMME</option><option value="E">ENFANT</option></select>
         </div>
         
         <div class="grid grid-cols-2 gap-4">
             <select id="ref" class="input-premium"></select>
-            <select id="taille" class="input-premium"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+            <select id="taille" class="input-premium font-bold"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
         </div>
 
-        <hr>
-
-        <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
-            <p class="text-[10px] font-black uppercase text-blue-600">Position Avant</p>
+        <div class="p-4 bg-gray-50 rounded-2xl space-y-4 border border-gray-100">
+            <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Avant</span> <span id="vAv" class="text-[10px] font-bold opacity-30">60mm</span></div>
             <select id="typeAv" class="input-premium" onchange="toggleBox('Av')">
-                <option value="SANS">AUCUN</option>
+                <option value="SANS">AUCUN LOGO</option>
                 <option value="PERSO">TEXTE PERSONNALISÉ</option>
                 <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
                 <option value="BEA-16AV">BEA-16AV</option>
             </select>
-            <div id="boxAv" class="hidden space-y-2">
-                <input type="text" id="valAv" placeholder="Texte..." class="input-premium">
-                <select id="fontAv" class="input-premium text-xs">
+            
+            <div id="boxAv" class="hidden space-y-3">
+                <div class="flex gap-3 items-center">
+                    <img id="prevAv" class="thumb-preview">
+                    <div class="flex-grow space-y-2">
+                        <input type="file" id="fileAv" class="hidden" accept="image/*" onchange="handleImg(this, 'Av')">
+                        <button onclick="document.getElementById('fileAv').click()" class="w-full py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-bold uppercase">Choisir Logo...</button>
+                        <input type="text" id="valAv" placeholder="Texte perso..." class="input-premium text-sm hidden">
+                    </div>
+                </div>
+                <select id="fontAv" class="input-premium text-[10px] hidden">
                     <option value="font-bebas">BEBAS NEUE</option>
                     <option value="font-edo">EDO</option>
                     <option value="font-rodeo">RODEO</option>
                 </select>
-                <input type="file" id="fileAv" class="hidden" accept="image/*" onchange="previewImg('Av')">
-                <button onclick="document.getElementById('fileAv').click()" class="text-[10px] font-bold underline opacity-50">Charger Image Avant</button>
             </div>
             <div class="flex flex-wrap gap-2 justify-center" id="palAv"></div>
+            <input type="range" id="rangeAv" min="0" max="120" value="60" class="w-full accent-black" oninput="document.getElementById('vAv').innerText=this.value+'mm'">
         </div>
 
-        <div class="p-4 bg-gray-50 rounded-2xl space-y-4">
-            <p class="text-[10px] font-black uppercase text-blue-600">Position Arrière</p>
+        <div class="p-4 bg-gray-50 rounded-2xl space-y-4 border border-gray-100">
+            <div class="flex justify-between items-center"><span class="text-[10px] font-black uppercase text-blue-600 italic">Position Arrière</span> <span id="vAr" class="text-[10px] font-bold opacity-30">250mm</span></div>
             <select id="typeAr" class="input-premium" onchange="toggleBox('Ar')">
-                <option value="SANS">AUCUN</option>
+                <option value="SANS">AUCUN LOGO</option>
                 <option value="PERSO">TEXTE PERSONNALISÉ</option>
                 <option value="LOGO CLIENT">LOGO CLIENT (IMAGE)</option>
                 <option value="BEA-16AR">BEA-16AR</option>
             </select>
-            <div id="boxAr" class="hidden space-y-2">
-                <input type="text" id="valAr" placeholder="Texte..." class="input-premium">
-                <select id="fontAr" class="input-premium text-xs">
+            
+            <div id="boxAr" class="hidden space-y-3">
+                <div class="flex gap-3 items-center">
+                    <img id="prevAr" class="thumb-preview">
+                    <div class="flex-grow space-y-2">
+                        <input type="file" id="fileAr" class="hidden" accept="image/*" onchange="handleImg(this, 'Ar')">
+                        <button onclick="document.getElementById('fileAr').click()" class="w-full py-2 bg-white border border-gray-300 rounded-lg text-[10px] font-bold uppercase">Choisir Logo...</button>
+                        <input type="text" id="valAr" placeholder="Texte perso..." class="input-premium text-sm hidden">
+                    </div>
+                </div>
+                <select id="fontAr" class="input-premium text-[10px] hidden">
                     <option value="font-bebas">BEBAS NEUE</option>
                     <option value="font-edo">EDO</option>
                     <option value="font-rodeo">RODEO</option>
                 </select>
-                <input type="file" id="fileAr" class="hidden" accept="image/*" onchange="previewImg('Ar')">
-                <button onclick="document.getElementById('fileAr').click()" class="text-[10px] font-bold underline opacity-50">Charger Image Arrière</button>
             </div>
             <div class="flex flex-wrap gap-2 justify-center" id="palAr"></div>
+            <input type="range" id="rangeAr" min="0" max="350" value="250" class="w-full accent-black" oninput="document.getElementById('vAr').innerText=this.value+'mm'">
         </div>
 
-        <button onclick="generer()" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">Générer Fiche A6</button>
+        <button onclick="generer()" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all">Générer Fiche A6</button>
     </div>
 </div>
 
-<div id="fiches"></div>
+<div id="fiches" class="flex flex-col items-center gap-8"></div>
 
 <script>
     const colors = [
         {n:'Noir', v:'#000'}, {n:'Blanc', v:'#fff'}, {n:'Or', v:'#d4af37'}, 
-        {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu', v:'#0071e3'}
+        {n:'Argent', v:'#c0c0c0'}, {n:'Rouge', v:'#f00'}, {n:'Bleu', v:'#0071e3'}, {n:'Violet', v:'#8f00ff'}
     ];
     let selAv = '#000', selAr = '#000';
-    let imgAv = null, imgAr = null;
+    let dataAv = null, dataAr = null;
 
     function init() {
         ['Av', 'Ar'].forEach(pos => {
@@ -142,59 +157,70 @@
     function toggleBox(pos) {
         const v = document.getElementById('type'+pos).value;
         document.getElementById('box'+pos).classList.toggle('hidden', v === 'SANS' || v.startsWith('BEA'));
+        document.getElementById('val'+pos).classList.toggle('hidden', v !== 'PERSO');
+        document.getElementById('font'+pos).classList.toggle('hidden', v !== 'PERSO');
+        document.getElementById('prev'+pos).classList.toggle('hidden', v === 'PERSO');
+        document.getElementById('file'+pos).parentElement.querySelector('button').classList.toggle('hidden', v === 'PERSO');
     }
 
-    function previewImg(pos) {
-        const file = document.getElementById('file'+pos).files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => { if(pos==='Av') imgAv = e.target.result; else imgAr = e.target.result; };
-        reader.readAsDataURL(file);
+    function handleImg(input, pos) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('prev'+pos).src = e.target.result;
+                if(pos === 'Av') dataAv = e.target.result; else dataAr = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     async function generer() {
         const id = Date.now();
         const client = document.getElementById('client').value || "CLIENT";
         const fiche = document.createElement('div');
-        fiche.className = "fiche-a6 shadow-xl";
+        fiche.className = "fiche-a6 shadow-2xl animate-in fade-in zoom-in duration-500";
 
         const render = (pos, label, color, img) => {
             const type = document.getElementById('type'+pos).value;
+            const size = document.getElementById('range'+pos).value;
             let html = '';
             if(type === 'PERSO') {
                 html = `<p class="${document.getElementById('font'+pos).value}" style="color:${color}; font-size:32pt; line-height:1;">${document.getElementById('val'+pos).value || 'TEXTE'}</p>`;
             } else if(type === 'LOGO CLIENT') {
-                html = img ? `<img src="${img}" style="max-height:40mm; max-width:80mm; object-fit:contain;">` : 'IMAGE VIDE';
+                html = img ? `<img src="${img}" style="max-height:45mm; max-width:85mm; object-fit:contain;">` : '<span class="opacity-20 text-[8px]">LOGO VIDE</span>';
             } else if(type !== 'SANS') {
                 html = `<p class="font-bebas" style="color:${color}; font-size:40pt;">${type}</p>`;
             }
-            return `<div class="w-full flex flex-col items-center">
-                <span class="text-[7px] font-black opacity-20 uppercase mb-2 tracking-widest">${label}</span>
-                <div class="h-[45mm] flex items-center justify-center">${html}</div>
+            return `<div class="w-full py-4 border-b border-gray-50 last:border-0">
+                <span class="text-[7px] font-black opacity-20 uppercase mb-2 tracking-widest block">${label} — ${size}mm</span>
+                <div class="h-[48mm] flex items-center justify-center">${html}</div>
             </div>`;
         };
 
         fiche.innerHTML = `
-            <div class="w-full border-b pb-4 text-left">
+            <div class="w-full border-b-2 border-black pb-4 text-left">
                 <h2 class="text-4xl font-[900] tracking-tighter leading-none">${client.toUpperCase()}</h2>
-                <p class="text-blue-600 text-[9px] font-black uppercase mt-1 tracking-widest">
+                <p class="text-blue-600 text-[10px] font-black uppercase mt-2 tracking-widest italic">
                     ${document.getElementById('ref').value} — TAILLE ${document.getElementById('taille').value}
                 </p>
             </div>
-            ${render('Av', 'AVANT', selAv, imgAv)}
-            ${render('Ar', 'ARRIÈRE', selAr, imgAr)}
-            <div class="no-print w-full flex gap-1 pt-4 border-t" id="st-${id}">
-                <div class="step-pill step-active" onclick="st('${id}',0)">Attente</div>
-                <div class="step-pill" onclick="st('${id}',1)">Reçu</div>
-                <div class="step-pill" onclick="st('${id}',2)">Prod</div>
-                <div class="step-pill" onclick="st('${id}',3)">Fini</div>
+            ${render('Av', 'Position Avant', selAv, dataAv)}
+            ${render('Ar', 'Position Arrière', selAr, dataAr)}
+            <div class="no-print w-full flex gap-1 pt-6 border-t" id="st-${id}">
+                <div class="step-pill step-active text-center" onclick="st('${id}',0)">Attente</div>
+                <div class="step-pill text-center" onclick="st('${id}',1)">Reçu</div>
+                <div class="step-pill text-center" onclick="st('${id}',2)">Prod</div>
+                <div class="step-pill text-center" onclick="st('${id}',3)">Fini</div>
             </div>
+            <button onclick="this.closest('.fiche-a6').remove()" class="no-print text-[7px] font-bold opacity-10 mt-2 uppercase tracking-widest">Supprimer</button>
         `;
         document.getElementById('fiches').prepend(fiche);
     }
 
     function st(id, idx) {
         const steps = document.getElementById(`st-${id}`).querySelectorAll('.step-pill');
-        steps.forEach((s, i) => s.className = i <= idx ? "step-pill step-active" : "step-pill");
+        steps.forEach((s, i) => s.className = i <= idx ? "step-pill step-active text-center" : "step-pill text-center");
     }
 
     init();
