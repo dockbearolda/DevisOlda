@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atelier OLDA | Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; }
+        .apple-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: saturate(180%) blur(20px); border-radius: 28px; border: 1px solid rgba(0,0,0,0.05); }
+        .input-apple { background: #ffffff; border: 1.5px solid #d2d2d7; border-radius: 12px; padding: 10px; width: 100%; font-size: 14px; outline: none; }
+        .input-apple:focus { border-color: #0071e3; ring: 3px rgba(0,113,227,0.1); }
+        .visual-preview { background: #fff; border: 2px solid #0071e3; border-radius: 15px; padding: 10px; text-align: center; }
+        .famille-urgent { background-color: #ff3b30 !important; color: white !important; border-left: 12px solid #000; }
+        .famille-urgent * { color: white !important; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-3xl font-black italic">ATELIER OLDA</h1>
+                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Saint-Martin Management</p>
+            </div>
+            <button onclick="toggleUrgency()" id="urgentBtn" class="bg-gray-200 text-[10px] font-black px-4 py-2 rounded-full uppercase transition-all">Urgence : OFF</button>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <div class="xl:col-span-4">
+                <div class="apple-card p-6 shadow-2xl border-t-8 border-blue-500">
+                    <p class="text-blue-600 font-bold italic mb-6">Mélina, qui est le client ?</p>
+                    
+                    <form id="orderForm" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" id="client" class="input-apple col-span-2" placeholder="Nom du Client" required>
+                            <input type="tel" id="phone" class="input-apple col-span-2" placeholder="Téléphone">
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <p class="text-[9px] font-black text-gray-400 uppercase mb-3">Détails Produits (Max 5)</p>
+                            <div class="grid grid-cols-3 gap-2 mb-2">
+                                <select id="refOlda" class="input-apple text-xs font-bold">
+                                    <optgroup label="Hommes">
+                                        <option value="H-001">H-001</option><option value="H-015">H-015</option>
+                                    </optgroup>
+                                    <optgroup label="Femmes">
+                                        <option value="F-001">F-001</option><option value="F-010">F-010</option>
+                                    </optgroup>
+                                    <optgroup label="Enfant/Bébé">
+                                        <option value="E-001">E-001</option><option value="B-001">B-001</option>
+                                    </optgroup>
+                                </select>
+                                <select id="taille" class="input-apple text-xs">
+                                    <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
+                                </select>
+                                <input type="number" id="qty" class="input-apple text-xs text-center" value="1" min="1" max="5">
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border-2 border-dashed border-gray-200">
+                            <p class="text-[9px] font-black text-gray-400 uppercase mb-4 text-center">Visualisation du marquage</p>
+                            <div class="flex justify-around items-center">
+                                <div class="text-center group cursor-pointer" onclick="selectPos('Cœur')">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-transparent group-active:border-blue-500">👕</div>
+                                    <span class="text-[8px] font-bold">Cœur</span>
+                                </div>
+                                <div class="text-center group cursor-pointer" onclick="selectPos('Droite')">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-transparent group-active:border-blue-500">👕</div>
+                                    <span class="text-[8px] font-bold">Droite</span>
+                                </div>
+                                <div class="text-center group cursor-pointer" onclick="selectPos('Dos')">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-transparent group-active:border-blue-500 shadow-inner">🧥</div>
+                                    <span class="text-[8px] font-bold">Dos</span>
+                                </div>
+                            </div>
+                            <input type="text" id="logoText" class="input-apple mt-4 text-xs" placeholder="Note logos (Cœur, Dos, Taille...)">
+                        </div>
+
+                        <select id="type" class="input-apple font-bold text-blue-600">
+                            <option value="tshirt">👕 T-shirt</option>
+                            <option value="pochette">👝 Pochette</option>
+                            <option value="tasse">☕ Tasse</option>
+                            <option value="portecle">🔑 Porte-clés</option>
+                            <option value="magnet">🧲 Magnet</option>
+                            <option value="autre">📦 Autre produit</option>
+                            <option value="loic">👑 Demande Loïc</option>
+                        </select>
+
+                        <textarea id="notes" class="input-apple text-xs" placeholder="Instructions atelier..."></textarea>
+                        
+                        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+                            Valider la Fiche
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="xl:col-span-8">
+                <div id="orderList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isUrgent = false;
+        function toggleUrgency() {
+            isUrgent = !isUrgent;
+            const btn = document.getElementById('urgentBtn');
+            btn.innerText = isUrgent ? "Urgence : ACTIVE" : "Urgence : OFF";
+            btn.style.background = isUrgent ? "#ff3b30" : "#e5e7eb";
+            btn.style.color = isUrgent ? "white" : "black";
+        }
+
+        function selectPos(pos) {
+            const input = document.getElementById('logoText');
+            input.value += (input.value ? ' + ' : '') + pos;
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const now = new Date();
+            const orderId = `2026-${document.getElementById('client').value.substring(0,3).toUpperCase()}-${now.getDate()}${now.getMonth()+1}-${now.getHours()}h${now.getMinutes()}`;
+            
+            const card = document.createElement('div');
+            card.className = `apple-card p-6 shadow-lg ${isUrgent ? 'famille-urgent' : 'bg-white'} animate-in zoom-in duration-300 relative`;
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <span class="text-[8px] font-black opacity-40">ID: ${orderId}</span>
+                        <h3 class="text-2xl font-black tracking-tight">${document.getElementById('client').value}</h3>
+                        <p class="text-xs font-bold opacity-60 italic">${document.getElementById('qty').value}x ${document.getElementById('refOlda').value} (${document.getElementById('taille').value})</p>
+                    </div>
+                </div>
+                <div class="bg-black/5 p-4 rounded-xl mb-4 text-[11px] font-bold">
+                    <p class="uppercase opacity-40 text-[8px] mb-1">Config Marquage</p>
+                    ${document.getElementById('logoText').value || 'Standard'}
+                </div>
+                <p class="text-xs italic mb-6">"${document.getElementById('notes').value || 'Pas de notes.'}"</p>
+                <div class="flex justify-between items-center text-[9px] font-black opacity-40 border-t pt-4">
+                    <span>${now.toLocaleString()}</span>
+                    <button onclick="this.closest('.apple-card').remove()">TERMINÉ ✓</button>
+                </div>
+            `;
+            document.getElementById('orderList').prepend(card);
+            form.reset();
+            if(isUrgent) toggleUrgency();
+        });
+    </script>
+</body>
+</html>
