@@ -3,672 +3,1246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA | Interface de Commande Premium</title>
+    <title>OLDA | Configuration Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @font-face { font-family: 'EDO'; src: url('https://db.onlinewebfonts.com/t/20e980300062a7813636545166299d6d.woff2') format('woff2'); }
-        @font-face { font-family: 'Rodeo'; src: url('https://db.onlinewebfonts.com/t/92723d90500473a216891a2e994e63f9.woff2') format('woff2'); }
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
-        * { box-sizing: border-box; }
+        :root {
+            --apple-blue: #007AFF;
+            --apple-gray: #8E8E93;
+            --apple-light-gray: #F2F2F7;
+            --apple-dark: #1D1D1F;
+            --apple-red: #FF3B30;
+            --apple-green: #34C759;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #F5F5F7;
             min-height: 100vh;
-            padding: 20px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            margin: 0;
+            transition: var(--transition);
         }
 
         /* === THEMES COLLECTIONS === */
-        .theme-tshirt { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
-        .theme-polo { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
-        .theme-sweat { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
-        .theme-veste { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); }
-        .theme-casquette { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); }
+        .theme-default { background: #F5F5F7; }
+        .theme-tshirt { background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%); }
+        .theme-polo { background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%); }
+        .theme-sweat { background: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 100%); }
+        .theme-veste { background: linear-gradient(180deg, #F3E5F5 0%, #E1BEE7 100%); }
+        .theme-casquette { background: linear-gradient(180deg, #FCE4EC 0%, #F8BBD9 100%); }
 
         /* === MODE URGENCE === */
         .urgence-mode {
-            background: linear-gradient(135deg, #ff1744 0%, #d50000 100%) !important;
-            animation: urgencePulse 1.5s ease-in-out infinite;
+            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%) !important;
         }
 
-        .urgence-mode .order-card {
-            border: 4px solid #fff !important;
-            animation: urgenceBorder 0.8s ease-in-out infinite;
-            box-shadow: 0 0 40px rgba(255, 23, 68, 0.6) !important;
+        .urgence-mode .main-card {
+            border: 2px solid var(--apple-red) !important;
+            animation: urgenceShake 0.5s ease-in-out;
         }
 
-        @keyframes urgencePulse {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.1); }
+        @keyframes urgenceShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
         }
 
-        @keyframes urgenceBorder {
-            0%, 100% { border-color: #fff; box-shadow: 0 0 40px rgba(255, 23, 68, 0.6); }
-            50% { border-color: #ffcdd2; box-shadow: 0 0 60px rgba(255, 23, 68, 0.9); }
-        }
-
-        /* === CARTE PRINCIPALE === */
-        .order-card {
-            background: rgba(255, 255, 255, 0.95);
+        /* === SQUIRCLE CARDS === */
+        .main-card {
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 32px;
-            max-width: 480px;
-            margin: 0 auto;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.4s ease;
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: var(--transition);
         }
 
-        /* === BOUTON URGENCE === */
-        .btn-urgence {
-            background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
-            color: white;
-            font-weight: 800;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* === TYPOGRAPHY APPLE === */
+        .headline-large {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--apple-dark);
+        }
+
+        .headline-medium {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--apple-dark);
+        }
+
+        .label-caption {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--apple-gray);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 18px 32px;
-            border-radius: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .body-text {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--apple-dark);
+        }
+
+        /* === BOUTON URGENCE APPLE === */
+        .btn-urgence {
+            background: var(--apple-red);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 14px 28px;
+            border-radius: 14px;
             border: none;
             cursor: pointer;
-            width: 100%;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(255, 23, 68, 0.35);
-            position: relative;
-            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-urgence::before {
+        .btn-urgence:hover {
+            background: #E53935;
+            transform: scale(1.02);
+        }
+
+        .btn-urgence.active {
+            animation: pulseRed 1.5s infinite;
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(255, 59, 48, 0); }
+        }
+
+        /* === SEGMENTED CONTROL === */
+        .segmented-control {
+            background: rgba(118, 118, 128, 0.12);
+            border-radius: 10px;
+            padding: 2px;
+            display: inline-flex;
+            gap: 2px;
+        }
+
+        .segment-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--apple-dark);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .segment-btn.active {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* === COLOR DOTS APPLE === */
+        .color-dots {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        .color-dot::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: var(--transition);
         }
 
-        .btn-urgence:hover::before { left: 100%; }
-        .btn-urgence:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(255, 23, 68, 0.5); }
-        .btn-urgence.active { animation: pulseUrgence 1s infinite; }
-
-        @keyframes pulseUrgence {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+        .color-dot:hover {
+            transform: scale(1.1);
         }
 
-        /* === INPUTS PREMIUM === */
-        .input-premium {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 14px;
-            padding: 16px 20px;
+        .color-dot.selected::after {
+            border-color: var(--apple-blue);
+        }
+
+        .color-dot.selected {
+            transform: scale(1.15);
+        }
+
+        /* Couleurs */
+        .dot-blanc { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-color: #e0e0e0; }
+        .dot-noir { background: linear-gradient(145deg, #2c2c2c, #1a1a1a); }
+        .dot-rouge { background: linear-gradient(145deg, #FF3B30, #E53935); }
+        .dot-bleu { background: linear-gradient(145deg, #007AFF, #0056CC); }
+        .dot-vert { background: linear-gradient(145deg, #34C759, #2E7D32); }
+        .dot-jaune { background: linear-gradient(145deg, #FFCC00, #FFB300); }
+        .dot-violet { background: linear-gradient(145deg, #AF52DE, #7B1FA2); }
+        .dot-orange { background: linear-gradient(145deg, #FF9500, #F57C00); }
+        .dot-rose { background: linear-gradient(145deg, #FF2D55, #E91E63); }
+
+        /* === PRODUCT PREVIEW === */
+        .product-preview {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .product-mockup {
+            width: 180px;
+            height: 200px;
+            background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .tshirt-shape {
+            width: 140px;
+            height: 160px;
+            background: #fff;
+            border-radius: 4px 4px 20px 20px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .tshirt-shape::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 12px;
+            background: inherit;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .preview-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            max-width: 90%;
+            word-wrap: break-word;
+            transition: var(--transition);
+        }
+
+        .preview-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--apple-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        /* === INPUT APPLE === */
+        .input-apple {
             width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
             font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            font-weight: 400;
+            transition: var(--transition);
             outline: none;
         }
 
-        .input-premium:focus {
-            border-color: #667eea;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        .input-apple:focus {
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
         }
 
-        .input-premium::placeholder { color: #adb5bd; font-weight: 400; }
+        .input-apple::placeholder {
+            color: var(--apple-gray);
+        }
 
-        /* === LABELS === */
-        .label-premium {
+        /* === LOGO CHIPS === */
+        .logo-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .logo-chip {
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(0,0,0,0.1);
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logo-chip:hover {
+            border-color: var(--apple-blue);
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .logo-chip.selected {
+            background: var(--apple-blue);
+            color: white;
+            border-color: var(--apple-blue);
+        }
+
+        /* === FONT SELECTOR === */
+        .font-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .font-btn {
+            padding: 12px 8px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(0,0,0,0.08);
+            background: white;
             font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #6c757d;
-            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .font-btn:hover {
+            border-color: var(--apple-blue);
+        }
+
+        .font-btn.selected {
+            border-color: var(--apple-blue);
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .font-btn .preview {
+            font-size: 16px;
+            margin-bottom: 4px;
             display: block;
         }
 
-        /* === SELECT COLLECTION === */
-        .select-collection {
+        .font-classique .preview { font-family: 'Playfair Display', serif; }
+        .font-moderne .preview { font-family: 'Montserrat', sans-serif; font-weight: 300; }
+        .font-script .preview { font-family: 'Dancing Script', cursive; }
+        .font-urbain .preview { font-family: 'Bebas Neue', sans-serif; }
+        .font-minimaliste .preview { font-family: 'Inter', sans-serif; font-weight: 300; }
+
+        /* === TABS === */
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(118, 118, 128, 0.08);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--apple-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: var(--apple-dark);
+            color: white;
+        }
+
+        /* === PAYMENT SECTION === */
+        .payment-section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .price-display {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--apple-dark);
+            text-align: center;
+        }
+
+        .price-currency {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--apple-gray);
+        }
+
+        .payment-status {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 14px;
+            border: 2px solid rgba(0,0,0,0.08);
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .status-btn:hover {
+            border-color: var(--apple-blue);
+        }
+
+        .status-btn.paid {
+            border-color: var(--apple-green);
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--apple-green);
+        }
+
+        .status-btn.pending {
+            border-color: #FF9500;
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .payment-method {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .method-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(0,0,0,0.08);
+            background: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .method-btn.selected {
+            border-color: var(--apple-blue);
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        /* === BTN GENERATE === */
+        .btn-generate {
+            width: 100%;
+            padding: 18px;
+            border-radius: 14px;
+            border: none;
+            background: var(--apple-dark);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 24px;
+        }
+
+        .btn-generate:hover {
+            background: #000;
+            transform: scale(1.01);
+        }
+
+        /* === COLLECTION SELECTOR === */
+        .collection-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
         }
 
         .collection-btn {
-            padding: 14px 8px;
-            border-radius: 12px;
-            border: 2px solid #e9ecef;
-            background: #fff;
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .collection-btn:hover { border-color: #667eea; transform: translateY(-2px); }
-        .collection-btn.active { background: #667eea; color: #fff; border-color: #667eea; }
-
-        .collection-btn.active.tshirt { background: #1976d2; border-color: #1976d2; }
-        .collection-btn.active.polo { background: #388e3c; border-color: #388e3c; }
-        .collection-btn.active.sweat { background: #f57c00; border-color: #f57c00; }
-        .collection-btn.active.veste { background: #7b1fa2; border-color: #7b1fa2; }
-        .collection-btn.active.casquette { background: #c2185b; border-color: #c2185b; }
-
-        /* === CATEGORIES === */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .category-btn {
             padding: 16px 8px;
-            border-radius: 14px;
-            border: 2px solid #e9ecef;
-            background: #fff;
-            font-weight: 700;
-            font-size: 13px;
+            border-radius: 16px;
+            border: 2px solid rgba(0,0,0,0.06);
+            background: white;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             text-align: center;
         }
 
-        .category-btn .icon { font-size: 24px; margin-bottom: 6px; display: block; }
-        .category-btn:hover { border-color: #667eea; background: #f8f9ff; }
-        .category-btn.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+        .collection-btn .icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 6px;
+        }
 
-        /* === STEPPER REFERENCE === */
-        .stepper-container {
-            background: #f8f9fa;
+        .collection-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .collection-btn.selected {
+            border-color: var(--apple-blue);
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        /* === CATEGORY PILLS === */
+        .category-pills {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .category-pill {
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(118, 118, 128, 0.12);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-pill.selected {
+            background: var(--apple-dark);
+            color: white;
+        }
+
+        /* === REFERENCE STEPPER === */
+        .stepper-glass {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 24px;
             text-align: center;
         }
 
-        .ref-display {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 56px;
-            letter-spacing: 4px;
-            color: #1a1a2e;
-            margin: 16px 0;
-        }
-
-        .stepper-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .stepper-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: none;
-            background: #1a1a2e;
-            color: #fff;
-            font-size: 24px;
+        .ref-large {
+            font-size: 64px;
             font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--apple-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .stepper-btns {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .step-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--apple-dark);
+            color: white;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .stepper-btn:hover { transform: scale(1.1); background: #667eea; }
-        .stepper-btn:active { transform: scale(0.95); }
-
-        .stepper-range {
-            flex: 1;
-            height: 8px;
-            border-radius: 4px;
-            background: #dee2e6;
-            appearance: none;
-            outline: none;
+        .step-btn:hover {
+            background: var(--apple-blue);
+            transform: scale(1.1);
         }
 
-        .stepper-range::-webkit-slider-thumb {
-            appearance: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #1a1a2e;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        /* === BOUTON GENERATION === */
-        .btn-generate {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 22px 32px;
-            border-radius: 16px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(26, 26, 46, 0.3);
-        }
-
-        .btn-generate:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(26, 26, 46, 0.4); }
-
-        /* === SECTION DIVIDER === */
-        .section-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #dee2e6, transparent);
-            margin: 28px 0;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #1a1a2e;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 3px;
-            background: #667eea;
-            margin: 10px auto 0;
-            border-radius: 2px;
-        }
-
-        /* === FICHE ATELIER PREMIUM === */
-        .fiche-atelier {
+        /* === FICHE PRODUCTION === */
+        .fiche-production {
             width: 105mm;
             min-height: 148mm;
-            background: #fff;
-            margin: 40px auto;
-            padding: 8mm;
+            background: white;
+            margin: 32px auto;
+            padding: 24px;
             border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
             position: relative;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
-            border: 2px solid #1a1a2e;
             overflow: hidden;
         }
 
-        .fiche-atelier.urgente {
-            border: 4px solid #ff1744;
-            animation: fichePulse 1s infinite;
+        .fiche-production.urgente {
+            border: 3px solid var(--apple-red);
         }
 
-        .fiche-atelier.urgente::before {
-            content: 'URGENCE';
+        .fiche-production.urgente::before {
+            content: 'URGENT';
             position: absolute;
-            top: 20px;
-            right: -35px;
-            background: #ff1744;
-            color: #fff;
-            padding: 6px 50px;
+            top: 16px;
+            right: -32px;
+            background: var(--apple-red);
+            color: white;
+            padding: 4px 40px;
             font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 2px;
+            font-weight: 700;
             transform: rotate(45deg);
-        }
-
-        @keyframes fichePulse {
-            0%, 100% { box-shadow: 0 30px 80px rgba(255, 23, 68, 0.3); }
-            50% { box-shadow: 0 30px 100px rgba(255, 23, 68, 0.5); }
         }
 
         .fiche-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 5mm;
-            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .fiche-client {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            color: #1a1a2e;
+        .fiche-client-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--apple-dark);
         }
 
         .fiche-id {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 36px;
-            color: #667eea;
-        }
-
-        .fiche-meta {
-            font-size: 9px;
-            color: #6c757d;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .fiche-contact {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 12px;
-            margin: 4mm 0;
-        }
-
-        .fiche-contact-label {
-            font-size: 8px;
-            color: #6c757d;
-            text-transform: uppercase;
+            font-size: 28px;
             font-weight: 700;
-            letter-spacing: 1px;
+            color: var(--apple-blue);
         }
 
-        .fiche-contact-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        .fiche-product {
+        .fiche-ref-display {
             text-align: center;
-            padding: 5mm 0;
-            border-bottom: 2px solid #f0f0f0;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .fiche-ref-large {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 3px;
         }
 
         .fiche-collection-badge {
             display: inline-block;
-            padding: 8px 20px;
-            border-radius: 30px;
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .fiche-customization {
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .fiche-custom-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .fiche-custom-label {
+            font-size: 11px;
+            color: var(--apple-gray);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
         }
 
-        .badge-tshirt { background: #e3f2fd; color: #1976d2; }
-        .badge-polo { background: #e8f5e9; color: #388e3c; }
-        .badge-sweat { background: #fff3e0; color: #f57c00; }
-        .badge-veste { background: #f3e5f5; color: #7b1fa2; }
-        .badge-casquette { background: #fce4ec; color: #c2185b; }
-
-        .fiche-reference {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 64px;
-            letter-spacing: 6px;
-            color: #1a1a2e;
-            line-height: 1;
+        .fiche-custom-value {
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .fiche-category {
-            font-size: 14px;
+        .fiche-payment {
+            padding: 16px 0;
+            text-align: center;
+        }
+
+        .fiche-price {
+            font-size: 32px;
             font-weight: 700;
-            color: #6c757d;
-            text-transform: uppercase;
+        }
+
+        .fiche-payment-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
             margin-top: 8px;
         }
 
-        .fiche-status {
-            display: flex;
-            gap: 8px;
-            margin: 4mm 0;
+        .fiche-status-paid {
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--apple-green);
         }
 
-        .status-pill {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-            background: #f0f0f0;
-            color: #6c757d;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .fiche-status-pending {
+            background: rgba(255, 149, 0, 0.15);
+            color: #FF9500;
         }
-
-        .status-pill.active { background: #1a1a2e; color: #fff; }
-        .status-pill:hover { transform: translateY(-2px); }
 
         .fiche-actions {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding-top: 4mm;
-            border-top: 2px solid #f0f0f0;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
         }
 
-        .btn-delete {
-            color: #ff1744;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
+        .btn-fiche-delete {
             background: none;
             border: none;
+            color: var(--apple-red);
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .btn-print {
-            background: #1a1a2e;
-            color: #fff;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .btn-fiche-print {
+            background: var(--apple-dark);
+            color: white;
             border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .btn-print:hover { background: #667eea; }
+        /* === UPLOAD BTN === */
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 2px dashed rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.5);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--apple-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--apple-blue);
+            color: var(--apple-blue);
+        }
+
+        /* === SECTION SPACING === */
+        .section-spacing {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--apple-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
 
         /* === PRINT === */
         @media print {
             .no-print { display: none !important; }
-            .fiche-atelier {
-                margin: 0;
-                page-break-after: always;
+            body { background: white; padding: 0; }
+            .fiche-production {
                 box-shadow: none;
+                margin: 0;
                 border-radius: 0;
             }
-            body { background: #fff; padding: 0; }
         }
 
-        /* === ANIMATION ENTREE === */
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
+        /* === ANIMATIONS === */
+        .fade-up {
+            animation: fadeUp 0.4s ease forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .collection-grid { grid-template-columns: repeat(3, 1fr); }
+            .font-selector { grid-template-columns: repeat(3, 1fr); }
+            .preview-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body class="theme-tshirt" id="mainBody">
+<body class="theme-default" id="mainBody">
 
-<!-- INTERFACE DE COMMANDE -->
-<div class="order-card no-print fade-in" id="orderCard">
+<div class="max-w-4xl mx-auto p-6 no-print">
 
-    <!-- EN-TETE URGENCE -->
-    <button class="btn-urgence" id="btnUrgence" onclick="toggleUrgence()">
-        ⚡ Commande Urgente
-    </button>
-
-    <div class="section-divider"></div>
-
-    <!-- INFORMATIONS CLIENT -->
-    <div class="section-title">Informations Client</div>
-
-    <div style="display: grid; gap: 16px;">
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-8 fade-up">
         <div>
-            <label class="label-premium">Nom du Client</label>
-            <input type="text" id="clientNom" class="input-premium" placeholder="Entrez le nom du client" style="text-transform: uppercase;">
+            <h1 class="headline-large">OLDA Production</h1>
+            <p class="label-caption mt-1">Interface de Configuration Premium</p>
         </div>
-        <div>
-            <label class="label-premium">Contact Téléphonique</label>
-            <input type="tel" id="clientTel" class="input-premium" placeholder="+590 690 00 00 00">
-        </div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <!-- SELECTION COLLECTION -->
-    <div class="section-title">Collection</div>
-
-    <div class="select-collection">
-        <button class="collection-btn tshirt active" data-collection="tshirt" data-theme="theme-tshirt" onclick="selectCollection(this)">T-Shirt</button>
-        <button class="collection-btn polo" data-collection="polo" data-theme="theme-polo" onclick="selectCollection(this)">Polo</button>
-        <button class="collection-btn sweat" data-collection="sweat" data-theme="theme-sweat" onclick="selectCollection(this)">Sweat</button>
-        <button class="collection-btn veste" data-collection="veste" data-theme="theme-veste" onclick="selectCollection(this)">Veste</button>
-        <button class="collection-btn casquette" data-collection="casquette" data-theme="theme-casquette" onclick="selectCollection(this)">Casquette</button>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <!-- CATEGORIE -->
-    <div class="section-title">Catégorie</div>
-
-    <div class="category-grid">
-        <button class="category-btn active" data-category="H" data-label="Homme" onclick="selectCategory(this)">
-            <span class="icon">👔</span>
-            Homme
-        </button>
-        <button class="category-btn" data-category="F" data-label="Femme" onclick="selectCategory(this)">
-            <span class="icon">👗</span>
-            Femme
-        </button>
-        <button class="category-btn" data-category="E" data-label="Enfant" onclick="selectCategory(this)">
-            <span class="icon">🧒</span>
-            Enfant
-        </button>
-        <button class="category-btn" data-category="B" data-label="Bébé" onclick="selectCategory(this)">
-            <span class="icon">👶</span>
-            Bébé
+        <button class="btn-urgence" id="btnUrgence" onclick="toggleUrgence()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            Urgence
         </button>
     </div>
 
-    <div class="section-divider"></div>
+    <!-- MAIN CARD -->
+    <div class="main-card p-8 fade-up" id="mainCard">
 
-    <!-- STEPPER REFERENCE -->
-    <div class="section-title">Référence de Style</div>
+        <!-- CLIENT INFO -->
+        <div class="section-spacing">
+            <div class="section-title">Informations Client</div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <input type="text" id="clientNom" class="input-apple" placeholder="Nom du client" style="text-transform: uppercase;">
+                </div>
+                <div>
+                    <input type="tel" id="clientTel" class="input-apple" placeholder="+590 690 00 00 00">
+                </div>
+            </div>
+        </div>
 
-    <div class="stepper-container">
-        <div class="fiche-meta">Gamme <span id="gammeLabel">Homme</span></div>
-        <div class="ref-display" id="refDisplay">H001</div>
-        <div class="stepper-controls">
-            <button class="stepper-btn" onclick="changeRef(-1)">−</button>
-            <input type="range" class="stepper-range" id="refRange" min="1" max="15" value="1" oninput="updateRef()">
-            <button class="stepper-btn" onclick="changeRef(1)">+</button>
+        <!-- COLLECTION -->
+        <div class="section-spacing">
+            <div class="section-title">Collection</div>
+            <div class="collection-grid">
+                <button class="collection-btn selected" data-collection="tshirt" data-theme="theme-tshirt" onclick="selectCollection(this)">
+                    <span class="icon">👕</span>
+                    T-Shirt
+                </button>
+                <button class="collection-btn" data-collection="polo" data-theme="theme-polo" onclick="selectCollection(this)">
+                    <span class="icon">🎽</span>
+                    Polo
+                </button>
+                <button class="collection-btn" data-collection="sweat" data-theme="theme-sweat" onclick="selectCollection(this)">
+                    <span class="icon">🧥</span>
+                    Sweat
+                </button>
+                <button class="collection-btn" data-collection="veste" data-theme="theme-veste" onclick="selectCollection(this)">
+                    <span class="icon">🧥</span>
+                    Veste
+                </button>
+                <button class="collection-btn" data-collection="casquette" data-theme="theme-casquette" onclick="selectCollection(this)">
+                    <span class="icon">🧢</span>
+                    Casquette
+                </button>
+            </div>
         </div>
-        <div class="fiche-meta" style="margin-top: 12px;">
-            <span id="categoryPrefix">H</span>001 ——— <span id="categoryPrefix2">H</span>015
+
+        <!-- CATEGORY & REFERENCE -->
+        <div class="section-spacing">
+            <div class="section-title">Catégorie & Référence</div>
+            <div class="category-pills mb-6">
+                <button class="category-pill selected" data-cat="H" data-label="Homme" onclick="selectCategory(this)">Homme</button>
+                <button class="category-pill" data-cat="F" data-label="Femme" onclick="selectCategory(this)">Femme</button>
+                <button class="category-pill" data-cat="E" data-label="Enfant" onclick="selectCategory(this)">Enfant</button>
+                <button class="category-pill" data-cat="B" data-label="Bébé" onclick="selectCategory(this)">Bébé</button>
+            </div>
+            <div class="stepper-glass">
+                <div class="label-caption" id="gammeLabel">Gamme Homme</div>
+                <div class="ref-large" id="refDisplay">H001</div>
+                <div class="stepper-btns">
+                    <button class="step-btn" onclick="changeRef(-1)">−</button>
+                    <input type="range" id="refRange" min="1" max="15" value="1" style="width: 200px; accent-color: var(--apple-blue);" oninput="updateRef()">
+                    <button class="step-btn" onclick="changeRef(1)">+</button>
+                </div>
+            </div>
         </div>
+
+        <!-- PRODUCT PREVIEW -->
+        <div class="section-spacing">
+            <div class="section-title">Visualisation du Produit</div>
+            <div class="tabs-container">
+                <button class="tab-btn active" data-face="avant" onclick="switchFace(this)">Vue Avant</button>
+                <button class="tab-btn" data-face="arriere" onclick="switchFace(this)">Vue Arrière</button>
+            </div>
+            <div class="grid grid-cols-2 gap-6 preview-grid">
+                <div class="product-preview" id="previewAvant">
+                    <div class="preview-label">Avant (Côté Cœur)</div>
+                    <div class="product-mockup">
+                        <div class="tshirt-shape" id="tshirtAvant">
+                            <div class="preview-text" id="textPreviewAvant" style="color: #000;">
+                                <span id="previewContentAvant">Texte</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-preview" id="previewArriere">
+                    <div class="preview-label">Arrière (Dos)</div>
+                    <div class="product-mockup">
+                        <div class="tshirt-shape" id="tshirtArriere">
+                            <div class="preview-text" id="textPreviewArriere" style="color: #000;">
+                                <span id="previewContentArriere">Texte</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOMIZATION -->
+        <div class="section-spacing" id="customSection">
+            <div class="section-title">Configuration du Design — <span id="faceLabel">Avant</span></div>
+
+            <!-- Text Input -->
+            <div class="glass-card p-5 mb-4">
+                <div class="label-caption mb-3">Personnalisation Textuelle</div>
+                <input type="text" id="customText" class="input-apple mb-4" placeholder="Saisissez votre texte..." oninput="updatePreview()">
+
+                <div class="label-caption mb-3">Typographie</div>
+                <div class="font-selector">
+                    <button class="font-btn font-classique selected" data-font="Playfair Display" onclick="selectFont(this)">
+                        <span class="preview">Aa</span>
+                        Classique
+                    </button>
+                    <button class="font-btn font-moderne" data-font="Montserrat" onclick="selectFont(this)">
+                        <span class="preview">Aa</span>
+                        Moderne
+                    </button>
+                    <button class="font-btn font-script" data-font="Dancing Script" onclick="selectFont(this)">
+                        <span class="preview">Aa</span>
+                        Script
+                    </button>
+                    <button class="font-btn font-urbain" data-font="Bebas Neue" onclick="selectFont(this)">
+                        <span class="preview">Aa</span>
+                        Urbain
+                    </button>
+                    <button class="font-btn font-minimaliste" data-font="Inter" onclick="selectFont(this)">
+                        <span class="preview">Aa</span>
+                        Minimal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logos -->
+            <div class="glass-card p-5 mb-4">
+                <div class="label-caption mb-3">Bibliothèque de Logos</div>
+                <button class="upload-btn mb-4" onclick="document.getElementById('logoUpload').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    Télécharger le logo client
+                </button>
+                <input type="file" id="logoUpload" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+
+                <div class="label-caption mb-3">Logos Signature</div>
+                <div class="logo-chips">
+                    <button class="logo-chip" data-logo="BEA-16" onclick="selectLogo(this)">BEA-16</button>
+                    <button class="logo-chip" data-logo="VIN-01" onclick="selectLogo(this)">VIN-01</button>
+                    <button class="logo-chip" data-logo="PAY-01" onclick="selectLogo(this)">PAY-01</button>
+                    <button class="logo-chip" data-logo="SUR-07" onclick="selectLogo(this)">SUR-07</button>
+                    <button class="logo-chip" data-logo="SXM-12" onclick="selectLogo(this)">SXM-12</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Suffixe automatique : -AV (avant) / -AR (arrière)</p>
+            </div>
+
+            <!-- Colors -->
+            <div class="glass-card p-5">
+                <div class="label-caption mb-4">Palette de Couleurs</div>
+                <div class="color-dots">
+                    <div class="color-dot dot-blanc" data-color="#FFFFFF" data-name="Blanc" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-noir selected" data-color="#1a1a1a" data-name="Noir" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-rouge" data-color="#FF3B30" data-name="Rouge" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-bleu" data-color="#007AFF" data-name="Bleu" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-vert" data-color="#34C759" data-name="Vert" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-jaune" data-color="#FFCC00" data-name="Jaune" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-violet" data-color="#AF52DE" data-name="Violet" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-orange" data-color="#FF9500" data-name="Orange" onclick="selectColor(this)"></div>
+                    <div class="color-dot dot-rose" data-color="#FF2D55" data-name="Rose" onclick="selectColor(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="payment-section">
+            <div class="section-title text-center">Finalisation de la Vente</div>
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <span class="price-currency">€</span>
+                <input type="number" id="priceInput" class="price-display text-center bg-transparent border-none outline-none" style="width: 150px;" placeholder="0" value="">
+            </div>
+
+            <div class="label-caption text-center mb-2">État du Règlement</div>
+            <div class="payment-status">
+                <button class="status-btn" data-status="paid" onclick="selectPaymentStatus(this)">
+                    ✓ Réglé
+                </button>
+                <button class="status-btn pending" data-status="pending" onclick="selectPaymentStatus(this)">
+                    ⏳ En attente
+                </button>
+            </div>
+
+            <div class="label-caption text-center mb-2 mt-4">Mode de Paiement</div>
+            <div class="payment-method">
+                <button class="method-btn selected" data-method="cash" onclick="selectPaymentMethod(this)">
+                    💵 Espèces
+                </button>
+                <button class="method-btn" data-method="card" onclick="selectPaymentMethod(this)">
+                    💳 Carte
+                </button>
+            </div>
+        </div>
+
+        <!-- GENERATE -->
+        <button class="btn-generate" onclick="genererFiche()">
+            Créer Fiche de Production
+        </button>
+
     </div>
-
-    <div class="section-divider"></div>
-
-    <!-- BOUTON GENERATION -->
-    <button class="btn-generate" onclick="genererFiche()">
-        Créer Fiche Atelier
-    </button>
 </div>
 
-<!-- CONTAINER FICHES -->
+<!-- FICHES CONTAINER -->
 <div id="fichesContainer"></div>
 
 <script>
-    // === VARIABLES D'ETAT ===
-    let isUrgent = false;
-    let currentCollection = 'tshirt';
-    let currentCategory = 'H';
-    let currentCategoryLabel = 'Homme';
-    let currentRef = 1;
+    // === STATE ===
+    let state = {
+        isUrgent: false,
+        collection: 'tshirt',
+        category: 'H',
+        categoryLabel: 'Homme',
+        ref: 1,
+        currentFace: 'avant',
+        avant: {
+            text: '',
+            font: 'Playfair Display',
+            logo: null,
+            color: '#1a1a1a',
+            colorName: 'Noir'
+        },
+        arriere: {
+            text: '',
+            font: 'Playfair Display',
+            logo: null,
+            color: '#1a1a1a',
+            colorName: 'Noir'
+        },
+        payment: {
+            status: 'pending',
+            method: 'cash',
+            price: 0
+        }
+    };
 
-    // === TOGGLE URGENCE ===
+    // === URGENCE ===
     function toggleUrgence() {
-        isUrgent = !isUrgent;
+        state.isUrgent = !state.isUrgent;
         const body = document.getElementById('mainBody');
         const btn = document.getElementById('btnUrgence');
 
-        if (isUrgent) {
+        if (state.isUrgent) {
             body.classList.add('urgence-mode');
             btn.classList.add('active');
-            btn.innerHTML = '🔴 MODE URGENCE ACTIVÉ';
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> URGENT`;
+            // Haptic feedback
+            if (navigator.vibrate) navigator.vibrate(100);
         } else {
             body.classList.remove('urgence-mode');
             btn.classList.remove('active');
-            btn.innerHTML = '⚡ Commande Urgente';
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Urgence`;
         }
     }
 
-    // === SELECTION COLLECTION ===
+    // === COLLECTION ===
     function selectCollection(el) {
-        document.querySelectorAll('.collection-btn').forEach(btn => btn.classList.remove('active'));
-        el.classList.add('active');
+        document.querySelectorAll('.collection-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        state.collection = el.dataset.collection;
 
         const body = document.getElementById('mainBody');
-        body.className = el.dataset.theme + (isUrgent ? ' urgence-mode' : '');
-        currentCollection = el.dataset.collection;
+        body.className = el.dataset.theme + (state.isUrgent ? ' urgence-mode' : '');
     }
 
-    // === SELECTION CATEGORIE ===
+    // === CATEGORY ===
     function selectCategory(el) {
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        el.classList.add('active');
-
-        currentCategory = el.dataset.category;
-        currentCategoryLabel = el.dataset.label;
-
-        document.getElementById('gammeLabel').textContent = currentCategoryLabel;
-        document.getElementById('categoryPrefix').textContent = currentCategory;
-        document.getElementById('categoryPrefix2').textContent = currentCategory;
-
+        document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        state.category = el.dataset.cat;
+        state.categoryLabel = el.dataset.label;
+        document.getElementById('gammeLabel').textContent = 'Gamme ' + state.categoryLabel;
         updateRefDisplay();
     }
 
-    // === STEPPER REFERENCE ===
+    // === REFERENCE ===
     function changeRef(delta) {
         const range = document.getElementById('refRange');
-        let newVal = parseInt(range.value) + delta;
-        newVal = Math.max(1, Math.min(15, newVal));
-        range.value = newVal;
-        currentRef = newVal;
+        let val = parseInt(range.value) + delta;
+        val = Math.max(1, Math.min(15, val));
+        range.value = val;
+        state.ref = val;
         updateRefDisplay();
     }
 
     function updateRef() {
-        currentRef = parseInt(document.getElementById('refRange').value);
+        state.ref = parseInt(document.getElementById('refRange').value);
         updateRefDisplay();
     }
 
     function updateRefDisplay() {
-        const refStr = currentCategory + String(currentRef).padStart(3, '0');
-        document.getElementById('refDisplay').textContent = refStr;
+        document.getElementById('refDisplay').textContent = state.category + String(state.ref).padStart(3, '0');
     }
 
-    // === GENERATION FICHE ===
+    // === FACE SWITCH ===
+    function switchFace(el) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        state.currentFace = el.dataset.face;
+        document.getElementById('faceLabel').textContent = state.currentFace === 'avant' ? 'Avant' : 'Arrière';
+
+        // Load current face state
+        const faceState = state[state.currentFace];
+        document.getElementById('customText').value = faceState.text;
+
+        // Update font selection
+        document.querySelectorAll('.font-btn').forEach(b => {
+            b.classList.toggle('selected', b.dataset.font === faceState.font);
+        });
+
+        // Update logo selection
+        document.querySelectorAll('.logo-chip').forEach(b => {
+            b.classList.toggle('selected', faceState.logo && b.dataset.logo === faceState.logo);
+        });
+
+        // Update color selection
+        document.querySelectorAll('.color-dot').forEach(d => {
+            d.classList.toggle('selected', d.dataset.color === faceState.color);
+        });
+    }
+
+    // === FONT ===
+    function selectFont(el) {
+        document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        state[state.currentFace].font = el.dataset.font;
+        updatePreview();
+    }
+
+    // === LOGO ===
+    function selectLogo(el) {
+        const wasSelected = el.classList.contains('selected');
+        document.querySelectorAll('.logo-chip').forEach(b => b.classList.remove('selected'));
+
+        if (!wasSelected) {
+            el.classList.add('selected');
+            state[state.currentFace].logo = el.dataset.logo;
+            state[state.currentFace].text = '';
+            document.getElementById('customText').value = '';
+        } else {
+            state[state.currentFace].logo = null;
+        }
+        updatePreview();
+    }
+
+    function handleLogoUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            state[state.currentFace].logo = 'CUSTOM';
+            state[state.currentFace].text = file.name.split('.')[0];
+            updatePreview();
+        }
+    }
+
+    // === COLOR ===
+    function selectColor(el) {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        el.classList.add('selected');
+        state[state.currentFace].color = el.dataset.color;
+        state[state.currentFace].colorName = el.dataset.name;
+        updatePreview();
+    }
+
+    // === UPDATE PREVIEW ===
+    function updatePreview() {
+        const text = document.getElementById('customText').value;
+        state[state.currentFace].text = text;
+
+        // Avant
+        const avantContent = state.avant.logo ?
+            state.avant.logo + '-AV' :
+            (state.avant.text || 'Texte');
+        document.getElementById('previewContentAvant').textContent = avantContent;
+        document.getElementById('textPreviewAvant').style.color = state.avant.color;
+        document.getElementById('textPreviewAvant').style.fontFamily = state.avant.font;
+
+        // Arrière
+        const arriereContent = state.arriere.logo ?
+            state.arriere.logo + '-AR' :
+            (state.arriere.text || 'Texte');
+        document.getElementById('previewContentArriere').textContent = arriereContent;
+        document.getElementById('textPreviewArriere').style.color = state.arriere.color;
+        document.getElementById('textPreviewArriere').style.fontFamily = state.arriere.font;
+    }
+
+    // === PAYMENT ===
+    function selectPaymentStatus(el) {
+        document.querySelectorAll('.status-btn').forEach(b => {
+            b.classList.remove('paid', 'pending');
+        });
+        el.classList.add(el.dataset.status);
+        state.payment.status = el.dataset.status;
+    }
+
+    function selectPaymentMethod(el) {
+        document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        state.payment.method = el.dataset.method;
+    }
+
+    // === GENERATE FICHE ===
     function genererFiche() {
         const clientNom = document.getElementById('clientNom').value || 'CLIENT';
         const clientTel = document.getElementById('clientTel').value || 'Non renseigné';
+        const price = document.getElementById('priceInput').value || '0';
         const id = Math.floor(1000 + Math.random() * 9000);
-        const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const date = new Date().toLocaleDateString('fr-FR');
         const heure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        const reference = currentCategory + String(currentRef).padStart(3, '0');
+        const reference = state.category + String(state.ref).padStart(3, '0');
 
         const collectionNames = {
             tshirt: 'T-Shirt',
@@ -678,60 +1252,83 @@
             casquette: 'Casquette'
         };
 
+        const collectionColors = {
+            tshirt: { bg: '#E3F2FD', text: '#1976D2' },
+            polo: { bg: '#E8F5E9', text: '#388E3C' },
+            sweat: { bg: '#FFF8E1', text: '#F57C00' },
+            veste: { bg: '#F3E5F5', text: '#7B1FA2' },
+            casquette: { bg: '#FCE4EC', text: '#C2185B' }
+        };
+
+        const avantDisplay = state.avant.logo ? state.avant.logo + '-AV' : state.avant.text;
+        const arriereDisplay = state.arriere.logo ? state.arriere.logo + '-AR' : state.arriere.text;
+
         const fiche = document.createElement('div');
-        fiche.className = 'fiche-atelier fade-in' + (isUrgent ? ' urgente' : '');
+        fiche.className = 'fiche-production fade-up' + (state.isUrgent ? ' urgente' : '');
 
         fiche.innerHTML = `
             <div class="fiche-header">
                 <div>
-                    <div class="fiche-meta">Fiche de Production Atelier</div>
-                    <div class="fiche-client">${clientNom.toUpperCase()}</div>
+                    <p class="label-caption">Fiche de Production</p>
+                    <p class="fiche-client-name">${clientNom.toUpperCase()}</p>
+                    <p class="text-sm text-gray-500">${clientTel}</p>
                 </div>
-                <div style="text-align: right;">
-                    <div class="fiche-id">#${id}</div>
-                    <div class="fiche-meta">${date} — ${heure}</div>
+                <div class="text-right">
+                    <p class="fiche-id">#${id}</p>
+                    <p class="label-caption">${date} — ${heure}</p>
                 </div>
             </div>
 
-            <div class="fiche-contact">
-                <div class="fiche-contact-label">Contact Téléphonique</div>
-                <div class="fiche-contact-value">${clientTel}</div>
+            <div class="fiche-ref-display">
+                <span class="fiche-collection-badge" style="background: ${collectionColors[state.collection].bg}; color: ${collectionColors[state.collection].text};">
+                    ${collectionNames[state.collection]}
+                </span>
+                <p class="fiche-ref-large">${reference}</p>
+                <p class="text-sm text-gray-500">${state.categoryLabel}</p>
             </div>
 
-            <div class="fiche-product">
-                <span class="fiche-collection-badge badge-${currentCollection}">${collectionNames[currentCollection]}</span>
-                <div class="fiche-reference">${reference}</div>
-                <div class="fiche-category">${currentCategoryLabel}</div>
+            <div class="fiche-customization">
+                <div class="fiche-custom-row">
+                    <span class="fiche-custom-label">Avant</span>
+                    <span class="fiche-custom-value" style="color: ${state.avant.color}">${avantDisplay || '—'}</span>
+                </div>
+                <div class="fiche-custom-row">
+                    <span class="fiche-custom-label">Couleur Avant</span>
+                    <span class="fiche-custom-value">${state.avant.colorName}</span>
+                </div>
+                <div class="fiche-custom-row">
+                    <span class="fiche-custom-label">Arrière</span>
+                    <span class="fiche-custom-value" style="color: ${state.arriere.color}">${arriereDisplay || '—'}</span>
+                </div>
+                <div class="fiche-custom-row">
+                    <span class="fiche-custom-label">Couleur Arrière</span>
+                    <span class="fiche-custom-value">${state.arriere.colorName}</span>
+                </div>
             </div>
 
-            <div class="fiche-status no-print">
-                <button class="status-pill active" onclick="setStatus(this)">Attente</button>
-                <button class="status-pill" onclick="setStatus(this)">Production</button>
-                <button class="status-pill" onclick="setStatus(this)">Terminé</button>
+            <div class="fiche-payment">
+                <p class="fiche-price">${price} €</p>
+                <span class="fiche-payment-status ${state.payment.status === 'paid' ? 'fiche-status-paid' : 'fiche-status-pending'}">
+                    ${state.payment.status === 'paid' ? '✓ Réglé' : '⏳ En attente'}
+                </span>
+                <p class="text-xs text-gray-400 mt-2">${state.payment.method === 'cash' ? '💵 Espèces' : '💳 Carte'}</p>
             </div>
 
             <div class="fiche-actions no-print">
-                <button class="btn-delete" onclick="this.closest('.fiche-atelier').remove()">Supprimer</button>
-                <button class="btn-print" onclick="window.print()">Imprimer</button>
+                <button class="btn-fiche-delete" onclick="this.closest('.fiche-production').remove()">Supprimer</button>
+                <button class="btn-fiche-print" onclick="window.print()">Imprimer</button>
             </div>
         `;
 
         document.getElementById('fichesContainer').prepend(fiche);
-
-        // Reset form si souhaité
-        // document.getElementById('clientNom').value = '';
-        // document.getElementById('clientTel').value = '';
-    }
-
-    // === STATUS PILLS ===
-    function setStatus(el) {
-        const parent = el.closest('.fiche-status');
-        parent.querySelectorAll('.status-pill').forEach(pill => pill.classList.remove('active'));
-        el.classList.add('active');
     }
 
     // === INIT ===
     updateRefDisplay();
+    updatePreview();
+
+    // Select initial collection theme
+    document.querySelector('.collection-btn[data-collection="tshirt"]').click();
 </script>
 
 </body>
