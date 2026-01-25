@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atelier OLDA | Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f5f5f7; color: #1d1d1f; }
+        .apple-card { background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
+        .input-apple { background: #fbfbfd; border: 1.5px solid #d2d2d7; border-radius: 14px; padding: 12px; font-size: 15px; width: 100%; outline: none; appearance: none; }
+        .input-apple:focus { border-color: #0071e3; background: white; }
+        
+        /* Alignement des points de couleur */
+        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 0 0 1px #d2d2d7; transition: 0.2s; }
+        .color-dot.active { box-shadow: 0 0 0 3px #0071e3; transform: scale(1.1); }
+        .dot-gold { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); }
+        .dot-silver { background: linear-gradient(135deg, #bdc3c7, #eef2f3, #8e9eab); }
+
+        .label-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #86868b; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-md mx-auto">
+        <header class="flex justify-between items-center mb-6 no-print">
+            <h1 class="text-2xl font-black italic uppercase">Atelier <span class="text-blue-600">OLDA</span></h1>
+            <div id="quote" class="text-[10px] font-bold text-blue-500 italic text-right"></div>
+        </header>
+
+        <div class="apple-card p-6 mb-8">
+            <h2 class="text-blue-600 font-bold italic mb-6 text-lg">Mélina, prépare la fiche client :</h2>
+            
+            <form id="orderForm" class="space-y-6">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="label-title ml-1">Client</label>
+                        <input type="text" id="client" class="input-apple font-bold" placeholder="Nom" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="label-title ml-1">WhatsApp</label>
+                        <input type="tel" id="phone" class="input-apple" placeholder="0690..." required>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-2xl space-y-4 border border-gray-100">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="label-title opacity-60">Genre</label>
+                            <select id="genderType" class="input-apple font-bold" onchange="updateRefs()">
+                                <option value="H">Homme</option><option value="F">Femme</option><option value="E">Enfant</option><option value="B">Bébé</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="label-title opacity-60">Réf OLDA</label>
+                            <select id="refOlda" class="input-apple font-bold"></select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="label-title opacity-60">Taille</label>
+                            <select id="taille" class="input-apple"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="label-title opacity-60">Quantité</label>
+                            <input type="number" id="qty" class="input-apple text-center font-bold" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 border-2 border-dashed border-gray-200 rounded-3xl space-y-8">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="label-title text-blue-600">Position Cœur</label>
+                            <span class="text-xl">👕</span>
+                        </div>
+                        <select id="logoAvG" class="input-apple text-sm">
+                            <option value="">Sélectionner Logo...</option>
+                            <option value="BEA-16AV">BEA-16AV</option>
+                            <option value="SUR-07AV">SUR-07AV</option>
+                        </select>
+                        <div class="flex justify-between px-1" id="colorsAvG">
+                            <div class="color-dot bg-black active" onclick="selectColor(this, 'AvG', 'Noir')"></div>
+                            <div class="color-dot bg-white" onclick="selectColor(this, 'AvG', 'Blanc')"></div>
+                            <div class="color-dot dot-gold" onclick="selectColor(this, 'AvG', 'Or')"></div>
+                            <div class="color-dot dot-silver" onclick="selectColor(this, 'AvG', 'Argent')"></div>
+                            <div class="color-dot bg-red-600" onclick="selectColor(this, 'AvG', 'Rouge')"></div>
+                            <div class="color-dot bg-blue-600" onclick="selectColor(this, 'AvG', 'Bleu')"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="label-title text-blue-600">Position Arrière</label>
+                            <span class="text-xl">🧥</span>
+                        </div>
+                        <select id="logoAr" class="input-apple text-sm">
+                            <option value="">Sélectionner Logo...</option>
+                            <option value="BEA-16AR">BEA-16AR</option>
+                            <option value="VIN-01">VIN-01</option>
+                        </select>
+                        <div class="flex justify-between px-1" id="colorsAr">
+                            <div class="color-dot bg-black active" onclick="selectColor(this, 'Ar', 'Noir')"></div>
+                            <div class="color-dot bg-white" onclick="selectColor(this, 'Ar', 'Blanc')"></div>
+                            <div class="color-dot dot-gold" onclick="selectColor(this, 'Ar', 'Or')"></div>
+                            <div class="color-dot dot-silver" onclick="selectColor(this, 'Ar', 'Argent')"></div>
+                            <div class="color-dot bg-red-600" onclick="selectColor(this, 'Ar', 'Rouge')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all">
+                    Transmettre Fiche
+                </button>
+            </form>
+        </div>
+
+        <div id="orderList" class="space-y-6 pb-12"></div>
+    </div>
+
+    <script>
+        const quotes = ["Mélina, tu gères ! ✨", "Encore une pépite ? 🎨", "Saint-Martin va adorer ! 🏝️", "Mélina, la reine d'OLDA ! 👑"];
+        document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
+        let selections = { AvG: 'Noir', Ar: 'Noir' };
+
+        function selectColor(el, pos, color) {
+            el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            selections[pos] = color;
+        }
+
+        function updateRefs() {
+            const gender = document.getElementById('genderType').value;
+            const refSelect = document.getElementById('refOlda');
+            refSelect.innerHTML = '';
+            for(let i=1; i<=15; i++) {
+                let val = `${gender}-${i.toString().padStart(3, '0')}`;
+                let opt = document.createElement('option');
+                opt.value = val; opt.text = val;
+                refSelect.add(opt);
+            }
+        }
+        updateRefs();
+
+        document.getElementById('orderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const client = document.getElementById('client').value;
+            const orderId = `OLDA-${client.substring(0,3).toUpperCase()}-${Math.floor(Math.random()*900)}`;
+            
+            const card = document.createElement('div');
+            card.className = "apple-card p-6 animate-in slide-in-from-bottom duration-500 border-l-8 border-blue-500";
+            card.innerHTML = `
+                <div class="flex justify-between mb-4">
+                    <div>
+                        <p class="label-title opacity-40">Collection</p>
+                        <h3 class="text-2xl font-black uppercase">${client}</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-xl">x${document.getElementById('qty').value}</p>
+                        <p class="text-[10px] font-bold opacity-40">${document.getElementById('refOlda').value} | ${document.getElementById('taille').value}</p>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-xl mb-4 text-xs space-y-1">
+                    <p><b>AVANT:</b> ${document.getElementById('logoAvG').value || 'SANS'} (${selections.AvG})</p>
+                    <p><b>DOS:</b> ${document.getElementById('logoAr').value || 'SANS'} (${selections.Ar})</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="this.closest('.apple-card').remove()" class="flex-1 bg-gray-100 py-3 rounded-xl font-bold text-xs uppercase">Archiver</button>
+                    <button onclick="window.print()" class="flex-1 bg-black text-white py-3 rounded-xl font-bold text-xs uppercase">Imprimer</button>
+                </div>
+            `;
+            document.getElementById('orderList').prepend(card);
+            document.getElementById('orderForm').reset();
+            updateRefs();
+        });
+    </script>
+</body>
+</html>
