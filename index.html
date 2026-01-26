@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Production System</title>
+    <title>OLDA | Production System - Scale 300mm</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
@@ -15,7 +15,7 @@
             --tshirt-color: #FFFFFF; 
         }
 
-        body { background-color: var(--pastel-blue); font-family: 'Inter', sans-serif; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background-color: var(--pastel-blue); font-family: 'Inter', sans-serif; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         body.regle-active { background-color: #E8F5E9; }
         body.urgence-active { background-color: #FFEBEE; }
 
@@ -24,7 +24,7 @@
         .luxury-step.active { color: #000; border-bottom: 2px solid #000; }
 
         .main-card { 
-            width: 100%; max-width: 450px; background: var(--bg-card); border-radius: 24px; padding: 20px; 
+            width: 100%; max-width: 480px; background: var(--bg-card); border-radius: 28px; padding: 25px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee;
         }
 
@@ -35,37 +35,37 @@
         .label { font-size: 9px; font-weight: 800; color: var(--label); text-transform: uppercase; margin-bottom: 3px; display: block; }
         
         .select-apple, .input-apple { 
-            width: 100%; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); 
-            font-size: 13px; font-weight: 600; background-color: #f9f9f9; outline: none;
+            width: 100%; height: 42px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); 
+            font-size: 14px; font-weight: 600; background-color: #f9f9f9; outline: none;
         }
 
         .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; }
         .chip { padding: 8px 0; background: #f2f2f7; border-radius: 8px; font-size: 10px; font-weight: 700; text-align: center; cursor: pointer; }
-        .chip.active { background: var(--apple-blue); color: white; }
+        .chip.active { background: #000; color: white; }
 
-        /* PREVIEW EN COLONNE (L'un sous l'autre) */
-        .preview-container { display: flex; flex-direction: column; gap: 15px; align-items: center; margin: 15px 0; }
+        /* PREVIEW VERTICALE */
+        .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
         
-        /* 300px de large = 300mm réel */
+        /* 300px fixe = 300mm T-shirt */
         .canvas-box { 
-            width: 300px; height: 320px; background: #fff; border-radius: 15px; position: relative; 
+            width: 300px; height: 350px; background: #fff; border-radius: 20px; position: relative; 
             display: flex; justify-content: center; align-items: center; border: 1px solid #f0f0f2; overflow: hidden; 
         }
         .tshirt-shape { 
-            width: 300px; height: 320px; background: var(--tshirt-color); position: absolute; 
+            width: 300px; height: 350px; background: var(--tshirt-color); position: absolute; 
             clip-path: polygon(15% 0%, 85% 0%, 100% 20%, 85% 35%, 80% 30%, 80% 100%, 20% 100%, 20% 30%, 15% 35%, 0% 20%); 
-            z-index: 1; pointer-events: none; transition: 0.3s;
+            z-index: 1; pointer-events: none;
         }
         
         canvas { z-index: 2; cursor: grab; }
-        .view-label { position: absolute; top: 10px; left: 10px; font-size: 8px; font-weight: 800; color: #ccc; z-index: 3; }
+        .view-tag { position: absolute; top: 12px; left: 12px; font-size: 9px; font-weight: 900; color: #bbb; z-index: 3; }
 
-        .range-slider { width: 100%; accent-color: var(--apple-blue); height: 5px; }
-        .footer { border-top: 1px solid #f0f0f2; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .price-total { font-size: 24px; font-weight: 800; }
+        .range-slider { width: 100%; accent-color: #000; height: 5px; }
+        .footer { border-top: 1px solid #f0f0f2; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .price-total { font-size: 26px; font-weight: 800; }
 
-        .btn-confirm { background: #1d1d1f; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-download { background: #fff; color: #1d1d1f; border: 2px solid #1d1d1f; padding: 10px; border-radius: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; font-size: 11px; }
+        .btn-confirm { background: #000; color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-download { background: #fff; color: #000; border: 2px solid #000; padding: 12px; border-radius: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; font-size: 11px; }
     </style>
 </head>
 <body id="body">
@@ -78,15 +78,15 @@
 <div class="main-card" id="capture">
     <div class="header">
         <div class="order-id" id="orderID">ID-000000</div>
-        <div style="display:flex; align-items:center; gap:5px">
+        <div style="display:flex; align-items:center; gap:8px">
             <span class="label" style="margin:0">URGENCE</span>
             <input type="checkbox" id="urgenceToggle" onchange="App.uiUpdate()">
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
         <div class="field"><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div class="field"><span class="label">Tél</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+        <div class="field"><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
     </div>
     
     <div class="target-grid">
@@ -96,46 +96,39 @@
         <div class="chip" onclick="App.setTarget('B', this)">Bébé</div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <div class="field"><span class="label">Ref</span><select id="modelRef" class="select-apple"></select></div>
-        <div class="field">
-            <span class="label">Couleur</span>
-            <select id="tsColor" class="select-apple" onchange="App.renderPreview()">
-                <option value="#FFFFFF">Blanc</option>
-                <option value="#1d1d1f">Noir</option>
-                <option value="#E3F2FD">Bleu</option>
-            </select>
-        </div>
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:12px;">
+        <div class="field"><span class="label">Référence</span><select id="modelRef" class="select-apple"></select></div>
+        <div class="field"><span class="label">Couleur T-Shirt</span><select id="tsColor" class="select-apple" onchange="App.renderPreview()"><option value="#FFFFFF">Blanc</option><option value="#1d1d1f">Noir</option><option value="#EFEBE9">Sable</option></select></div>
     </div>
 
     <div style="display: grid; grid-template-columns: 1.2fr 0.8fr 1fr; gap: 8px;">
         <div class="field"><span class="label">Logo AV</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="TOR-04">TOR-04</option></select></div>
-        <div class="field"><span class="label">Coul.</span><select id="colorAV" class="select-apple" onchange="App.renderPreview()"><option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option></select></div>
-        <div class="field"><span class="label">L: <b id="valAV">80</b>mm</span><input type="range" id="sizeAV" class="range-slider" min="10" max="250" value="80" oninput="App.renderPreview()"></div>
+        <div class="field"><span class="label">Couleur</span><select id="colorAV" class="select-apple" onchange="App.renderPreview()"><option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option></select></div>
+        <div class="field"><span class="label">Taille: <b id="valAV">75</b>mm</span><input type="range" id="sizeAV" class="range-slider" min="65" max="85" value="75" oninput="App.renderPreview()"></div>
     </div>
 
     <div style="display: grid; grid-template-columns: 1.2fr 0.8fr 1fr; gap: 8px;">
         <div class="field"><span class="label">Logo AR</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="WRA-01">WRA-01</option></select></div>
-        <div class="field"><span class="label">Coul.</span><select id="colorAR" class="select-apple" onchange="App.renderPreview()"><option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option></select></div>
-        <div class="field"><span class="label">L: <b id="valAR">180</b>mm</span><input type="range" id="sizeAR" class="range-slider" min="10" max="280" value="180" oninput="App.renderPreview()"></div>
+        <div class="field"><span class="label">Couleur</span><select id="colorAR" class="select-apple" onchange="App.renderPreview()"><option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option></select></div>
+        <div class="field"><span class="label">Taille: <b id="valAR">200</b>mm</span><input type="range" id="sizeAR" class="range-slider" min="50" max="300" value="200" oninput="App.renderPreview()"></div>
     </div>
 
     <div class="preview-container">
-        <div class="canvas-box"><span class="view-label">VUE AVANT (300mm)</span><div class="tshirt-shape"></div><canvas id="canAV"></canvas></div>
-        <div class="canvas-box"><span class="view-label">VUE ARRIERE (300mm)</span><div class="tshirt-shape"></div><canvas id="canAR"></canvas></div>
+        <div class="canvas-box"><span class="view-tag">AVANT (Ref: 300mm)</span><div class="tshirt-shape"></div><canvas id="canAV"></canvas></div>
+        <div class="canvas-box"><span class="view-tag">ARRIÈRE (Ref: 300mm)</span><div class="tshirt-shape"></div><canvas id="canAR"></canvas></div>
     </div>
 
     <div class="footer">
         <div id="totalDisplay" class="price-total">25.00€</div>
-        <div style="font-size:10px; font-weight:800; display:flex; gap:10px;">
+        <div style="font-size:11px; font-weight:800; display:flex; gap:12px;">
             <label><input type="checkbox"> CASH</label>
-            <label style="color:var(--apple-green)"><input type="checkbox" id="regleToggle" onchange="App.uiUpdate()"> REGLÉ</label>
+            <label style="color:var(--apple-green)"><input type="checkbox" id="regleToggle" onchange="App.uiUpdate()"> RÉGLÉ</label>
         </div>
     </div>
 </div>
 
-<button class="btn-confirm" onclick="alert('Validé !')">LANCER LA PRODUCTION</button>
-<button class="btn-download" onclick="App.download()">EXPEDIER LA FICHE PNG</button>
+<button class="btn-confirm">VALIDER LA PRODUCTION</button>
+<button class="btn-download" onclick="App.download()">GÉNÉRER LA FICHE PNG</button>
 
 <input type="file" id="fileAV" style="display:none" onchange="App.previewFile('AV')">
 <input type="file" id="fileAR" style="display:none" onchange="App.previewFile('AR')">
@@ -144,8 +137,8 @@
 const App = {
     state: { target: 'H', cans: { AV: null, AR: null }, imgs: { AV: null, AR: null } },
     init() { 
-        this.state.cans.AV = new fabric.Canvas('canAV', { width: 300, height: 320, selection: false });
-        this.state.cans.AR = new fabric.Canvas('canAR', { width: 300, height: 320, selection: false });
+        this.state.cans.AV = new fabric.Canvas('canAV', { width: 300, height: 350, selection: false });
+        this.state.cans.AR = new fabric.Canvas('canAR', { width: 300, height: 350, selection: false });
         this.renderModels();
         document.getElementById('orderID').innerText = `ORD-${Math.floor(Math.random()*99999)}`;
     },
@@ -182,9 +175,11 @@ const App = {
             const logo = document.getElementById('logo'+side).value;
             const size = parseInt(document.getElementById('size'+side).value);
             document.getElementById('val'+side).innerText = size;
+            
             if(!logo) { can.clear(); return; }
             const obj = can.getActiveObject();
-            const px = obj ? obj.left : 150; const py = obj ? obj.top : 120;
+            const px = obj ? obj.left : (side === 'AV' ? 140 : 150); 
+            const py = obj ? obj.top : (side === 'AV' ? 110 : 150);
             
             if(logo === 'UPLOAD' && this.state.imgs[side]) {
                 fabric.Image.fromURL(this.state.imgs[side], (img) => {
@@ -194,7 +189,7 @@ const App = {
                 });
             } else if(logo !== 'UPLOAD') {
                 can.clear();
-                const t = new fabric.Text(logo, { left: px, top: py, fontSize: size/1.5, fontWeight: '900', fill: document.getElementById('color'+side).value, originX: 'center', originY: 'center', hasControls: false, lockRotation: true });
+                const t = new fabric.Text(logo, { left: px, top: py, fontSize: size/1.2, fontWeight: '900', fill: document.getElementById('color'+side).value, originX: 'center', originY: 'center', hasControls: false, lockRotation: true });
                 can.add(t); can.setActiveObject(t);
             }
         });
@@ -203,7 +198,7 @@ const App = {
         this.state.cans.AV.discardActiveObject().renderAll();
         this.state.cans.AR.discardActiveObject().renderAll();
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
-            const a = document.createElement('a'); a.download = `OLDA_${document.getElementById('orderID').innerText}.png`;
+            const a = document.createElement('a'); a.download = `OLDA_PROD_${document.getElementById('custName').value}.png`;
             a.href = c.toDataURL(); a.click();
         });
     }
