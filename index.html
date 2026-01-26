@@ -3,76 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Production 300mm</title>
+    <title>OLDA | Système Production Auto-Update</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --apple-blue: #007AFF; --bg: #F2F7FF; }
+        :root { --apple-blue: #007AFF; --bg: #F0F2F5; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        .main-card { width: 100%; max-width: 450px; background: #fff; border-radius: 28px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .main-card { width: 100%; max-width: 480px; background: #fff; border-radius: 32px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
+        .select-apple, .input-apple { width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E5E7; font-size: 14px; font-weight: 600; margin-bottom: 12px; outline: none; background: #FBFBFD; }
         
-        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .input-apple, .select-apple { width: 100%; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 14px; font-weight: 600; margin-bottom: 15px; outline: none; }
+        .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
+        .canvas-box { width: 300px; height: 360px; background: #fff; border-radius: 24px; position: relative; border: 1px solid #EEE; overflow: hidden; }
         
-        .preview-container { display: flex; flex-direction: column; gap: 25px; align-items: center; margin: 20px 0; }
-        
-        /* Conteneur 300mm */
-        .canvas-box { 
-            width: 300px; height: 350px; background: #fff; border-radius: 20px; position: relative; 
-            border: 1px solid #eee; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.02);
-        }
-        
-        /* Dessin T-Shirt SVG en code */
-        .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        
+        .tshirt-svg { position: absolute; width: 300px; height: 360px; top: 0; left: 0; z-index: 1; pointer-events: none; }
         canvas { z-index: 2; }
 
-        .size-badge { position: absolute; bottom: 12px; right: 12px; background: #000; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 900; z-index: 10; }
-        .view-label { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: #eee; padding: 3px 8px; border-radius: 5px; z-index: 5; }
+        .size-badge { position: absolute; bottom: 12px; right: 12px; background: #1d1d1f; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; z-index: 10; }
+        .view-label { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 6px; z-index: 5; color: #555; }
 
-        .btn-main { background: #000; color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
+        .btn-main { background: #000; color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="main-card" id="capture">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div><span class="label">Tél</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+        <div><span class="label">Collection T-Shirt</span>
+            <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
+                <option value="#F5F5F7">Blanc (Grisé)</option>
+                <option value="#1A1A1A">Noir Deep</option>
+                <option value="#FFEBEE">Rose Pastel</option>
+                <option value="#F3E5F5">Mauve Pastel</option>
+                <option value="#E8EAF6">Indigo Pastel</option>
+                <option value="#E3F2FD">Bleu Pastel</option>
+                <option value="#E0F2F1">Turquoise Pastel</option>
+                <option value="#E8F5E9">Vert Pastel</option>
+                <option value="#F1F8E9">Citron Pastel</option>
+                <option value="#FFFDE7">Jaune Pastel</option>
+                <option value="#FFF3E0">Orange Pastel</option>
+                <option value="#EFEBE9">Sable Pastel</option>
+                <option value="#ECEFF1">Gris Pastel</option>
+                <option value="#D7CCC8">Brun Pastel</option>
+                <option value="#F0F4C3">Lime Pastel</option>
+                <option value="#CFD8DC">Acier Pastel</option>
+            </select>
+        </div>
+        <div><span class="label">Couleur Marquage</span>
+            <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
+                <option value="#000000">Noir</option>
+                <option value="#FFFFFF">Blanc</option>
+                <option value="#FF3B30">Rouge</option>
+                <option value="#34C759">Vert</option>
+                <option value="#007AFF">Bleu</option>
+                <option value="#FF9500">Orange</option>
+                <option value="#AF52DE">Violet</option>
+                <option value="#FFCC00">Jaune</option>
+                <option value="#A2845E">Or</option>
+                <option value="#8E8E93">Gris</option>
+                <option value="#000080">Marine</option>
+                <option value="#FF1493">Rose Flash</option>
+                <option value="#40E0D0">Turquoise</option>
+                <option value="#8B4513">Marron</option>
+                <option value="#00FF00">Fluo</option>
+                <option value="#5856D6">Indigo</option>
+            </select>
+        </div>
     </div>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Logo AV</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Importer</option><option value="LOGO-1">LOGO-1</option></select></div>
-        <div><span class="label">Logo AR</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Importer</option><option value="LOGO-2">LOGO-2</option></select></div>
+        <div><span class="label">Logo AV</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="OLDA">OLDA</option><option value="ESSENTIAL">ESSENTIAL</option></select></div>
+        <div><span class="label">Logo AR</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="WRA-01">WRA-01</option><option value="BACKPRINT">BACKPRINT</option></select></div>
     </div>
 
     <div class="preview-container">
         <div class="canvas-box">
             <span class="view-label">AVANT</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F9F9F9" stroke="#DDD" stroke-width="2"/>
-            </svg>
+            <svg class="tshirt-svg" viewBox="0 0 300 360"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F5F5F7" stroke="#DDD" stroke-width="1"/></svg>
             <div class="size-badge" id="indAV">0 mm</div>
             <canvas id="canAV"></canvas>
         </div>
-
         <div class="canvas-box">
             <span class="view-label">ARRIÈRE</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F9F9F9" stroke="#DDD" stroke-width="2"/>
-            </svg>
+            <svg class="tshirt-svg" viewBox="0 0 300 360"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F5F5F7" stroke="#DDD" stroke-width="1"/></svg>
             <div class="size-badge" id="indAR">0 mm</div>
             <canvas id="canAR"></canvas>
         </div>
     </div>
 </div>
 
-<button class="btn-main" onclick="App.download()">TÉLÉCHARGER LA FICHE PRODUCTION</button>
-
+<button class="btn-main" onclick="App.download()">GÉNÉRER LA FICHE DE PRODUCTION</button>
 <input type="file" id="fileAV" style="display:none" onchange="App.previewFile('AV')">
 <input type="file" id="fileAR" style="display:none" onchange="App.previewFile('AR')">
 
@@ -80,17 +103,32 @@
 const App = {
     state: { cans: { AV: null, AR: null }, imgs: { AV: null, AR: null } },
     init() { 
-        this.state.cans.AV = this.setupCanvas('canAV', 'indAV', 200, 100); // Positionné vers le cœur
-        this.state.cans.AR = this.setupCanvas('canAR', 'indAR', 150, 150); // Centré dos
+        this.state.cans.AV = this.setupCanvas('canAV', 'indAV');
+        this.state.cans.AR = this.setupCanvas('canAR', 'indAR');
     },
-    setupCanvas(id, indId, defX, defY) {
-        const c = new fabric.Canvas(id, { width: 300, height: 350 });
+    setupCanvas(id, indId) {
+        const c = new fabric.Canvas(id, { width: 300, height: 360 });
         c.on('object:scaling', (e) => {
-            const w = Math.round(e.target.getScaledWidth());
-            document.getElementById(indId).innerText = `${w} mm`;
+            document.getElementById(indId).innerText = `${Math.round(e.target.getScaledWidth())} mm`;
         });
-        c.on('object:moving', () => c.renderAll());
         return c;
+    },
+    updateTsColor() {
+        const col = document.getElementById('tsColorSelect').value;
+        document.getElementById('pathAV').setAttribute('fill', col);
+        document.getElementById('pathAR').setAttribute('fill', col);
+    },
+    updateLogoColor() {
+        const col = document.getElementById('logoColorSelect').value;
+        ['AV', 'AR'].forEach(side => {
+            const can = this.state.cans[side];
+            can.getObjects().forEach(obj => {
+                if (obj.type === 'text') {
+                    obj.set('fill', col);
+                }
+            });
+            can.renderAll();
+        });
     },
     handleLogo(side) {
         if(document.getElementById('logo'+side).value === 'UPLOAD') document.getElementById('file'+side).click();
@@ -107,34 +145,34 @@ const App = {
     renderLogo(side, type) {
         const can = this.state.cans[side];
         can.clear();
+        if (type === "") { document.getElementById('ind'+side).innerText = "0 mm"; return; }
+
+        const color = document.getElementById('logoColorSelect').value;
         const callback = (obj) => {
             obj.set({ 
-                left: side === 'AV' ? 200 : 150, top: side === 'AV' ? 100 : 150, 
-                originX: 'center', originY: 'center', transparentCorners: false, 
-                cornerColor: '#007AFF', cornerSize: 10, cornerStyle: 'circle'
+                left: side==='AV'?195:150, top: 120, originX: 'center', originY: 'center',
+                cornerColor: '#007AFF', cornerSize: 10, cornerStyle: 'circle', transparentCorners: false
             });
-            obj.setControlsVisibility({ mtr: false }); // Pas de rotation
-            can.add(obj);
-            can.setActiveObject(obj);
+            obj.setControlsVisibility({ mtr: false });
+            can.add(obj); can.setActiveObject(obj);
             document.getElementById('ind'+side).innerText = `${Math.round(obj.getScaledWidth())} mm`;
         };
 
         if (type === 'UPLOAD' && this.state.imgs[side]) {
-            fabric.Image.fromURL(this.state.imgs[side], (img) => {
-                img.scaleToWidth(side === 'AV' ? 75 : 180);
-                callback(img);
+            fabric.Image.fromURL(this.state.imgs[side], (img) => { 
+                img.scaleToWidth(side==='AV'?75:180); 
+                callback(img); 
             });
-        } else if (type !== "" && type !== 'UPLOAD') {
-            const t = new fabric.Text(type, { fontSize: 30, fontWeight: '900' });
+        } else {
+            const t = new fabric.Text(type, { fontSize: 35, fontWeight: '900', fill: color });
             callback(t);
         }
     },
     download() {
         this.state.cans.AV.discardActiveObject().renderAll();
         this.state.cans.AR.discardActiveObject().renderAll();
-        html2canvas(document.getElementById('capture')).then(c => {
-            const a = document.createElement('a'); 
-            a.download = `OLDA_PROD_${document.getElementById('custName').value || 'SANS_NOM'}.png`;
+        html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
+            const a = document.createElement('a'); a.download = `OLDA_PROD_${Date.now()}.png`;
             a.href = c.toDataURL(); a.click();
         });
     }
