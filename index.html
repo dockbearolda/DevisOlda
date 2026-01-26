@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Système Production Expert</title>
+    <title>OLDA | Système Production Références</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --apple-blue: #007AFF; --apple-green: #34C759; --bg: #F5F7FA; }
+        :root { --apple-blue: #007AFF; --bg: #F5F7FA; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #1d1d1f; }
         
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); }
-        
+        .main-card { width: 100%; max-width: 520px; background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); }
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .order-tag { font-size: 11px; font-weight: 800; color: var(--apple-blue); background: #E5F1FF; padding: 5px 12px; border-radius: 20px; }
 
@@ -23,23 +22,22 @@
         
         .input-apple, .select-apple { 
             width: 100%; height: 44px; padding: 0 15px; border-radius: 14px; border: 1px solid #EFEEF2; 
-            font-size: 13px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box;
+            font-size: 13px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box; transition: 0.2s;
         }
+        .input-apple:disabled { background: #F2F2F7; color: #AEAEB2; cursor: not-allowed; }
 
         .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .chip { padding: 10px 0; background: #F2F2F7; border-radius: 12px; font-size: 10px; font-weight: 800; text-align: center; cursor: pointer; text-transform: uppercase; }
         .chip.active { background: #000; color: #fff; }
 
         .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
-        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 28px; position: relative; border: 1px solid #F2F2F7; overflow: hidden; }
+        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 28px; position: relative; border: 1px solid #F2F2F7; }
         
         .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
         canvas { z-index: 2; }
         .view-name { position: absolute; top: 15px; left: 15px; font-size: 10px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 8px; z-index: 5; }
 
         .footer { border-top: 1px solid #F2F2F7; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .price { font-size: 26px; font-weight: 900; }
-
         .btn-confirm { background: #000; color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; }
     </style>
 </head>
@@ -47,27 +45,35 @@
 
 <div class="main-card" id="capture">
     <div class="header-row">
-        <div class="order-tag" id="orderID">ORD-77200</div>
-        <div style="display:flex; align-items:center; gap:8px">
-            <span class="label" style="margin:0">URGENCE</span>
-            <input type="checkbox" id="urgCheck">
-        </div>
+        <div class="order-tag" id="orderID">ORD-00000</div>
+        <div style="font-size: 10px; font-weight: 800; opacity: 0.6;">FICHE TECHNIQUE HAUTE DÉFINITION</div>
     </div>
 
     <div class="field-group">
         <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div><span class="label">Référence Produit</span><input type="text" id="prodRef" class="input-apple" placeholder="Ref: TS-2026"></div>
+        <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
     </div>
 
     <div class="target-grid">
-        <div class="chip active" onclick="App.setTarget('Homme', this)">Homme</div>
-        <div class="chip" onclick="App.setTarget('Femme', this)">Femme</div>
-        <div class="chip" onclick="App.setTarget('Enfant', this)">Enfant</div>
-        <div class="chip" onclick="App.setTarget('Bébé', this)">Bébé</div>
+        <div class="chip active" onclick="App.setTarget('H', this)">Homme</div>
+        <div class="chip" onclick="App.setTarget('F', this)">Femme</div>
+        <div class="chip" onclick="App.setTarget('E', this)">Enfant</div>
+        <div class="chip" onclick="App.setTarget('B', this)">Bébé</div>
     </div>
 
     <div class="field-group">
-        <div><span class="label">Collection</span>
+        <div>
+            <span class="label">Référence Collection</span>
+            <select id="refSelect" class="select-apple"></select>
+        </div>
+        <div>
+            <span class="label">Ref. Manuelle <input type="checkbox" id="manualCheck" onchange="App.toggleManual()"></span>
+            <input type="text" id="manualRef" class="input-apple" placeholder="Saisir ref..." disabled>
+        </div>
+    </div>
+
+    <div class="field-group">
+        <div><span class="label">Couleur T-Shirt</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
                 <option value="#FFFFFF">Blanc</option>
                 <option value="#1A1A1A">Noir Deep</option>
@@ -79,7 +85,7 @@
                 <option value="#ECEFF1">Gris Pastel</option>
             </select>
         </div>
-        <div><span class="label">Marquage</span>
+        <div><span class="label">Couleur Marquage</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
@@ -98,49 +104,64 @@
 
     <div class="preview-container">
         <div class="canvas-box">
-            <span class="view-name">AVANT (CŒUR)</span>
+            <span class="view-name">AVANT</span>
             <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD" stroke-width="1"/></svg>
             <canvas id="canAV"></canvas>
         </div>
         <div class="canvas-box">
-            <span class="view-name">ARRIÈRE (DOS)</span>
+            <span class="view-name">ARRIÈRE</span>
             <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD" stroke-width="1"/></svg>
             <canvas id="canAR"></canvas>
         </div>
     </div>
 
     <div class="footer">
-        <div class="price">25.00€</div>
+        <div style="font-size: 24px; font-weight: 900;">25.00€</div>
         <div style="font-size: 10px; font-weight: 800; display:flex; gap:10px">
             <label><input type="checkbox"> CASH</label>
-            <label style="color:var(--apple-green)"><input type="checkbox"> RÉGLÉ</label>
+            <label style="color:#34C759"><input type="checkbox"> RÉGLÉ</label>
         </div>
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE DE PRODUCTION (PNG)</button>
+<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE PNG</button>
 
 <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf" onchange="App.handleFile(event)">
 
 <script>
 const App = {
-    state: { currentSide: 'AV', cans: { AV: null, AR: null } },
+    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null } },
     init() { 
         this.state.cans.AV = this.setupCanvas('canAV');
         this.state.cans.AR = this.setupCanvas('canAR');
+        this.updateRefList();
         document.getElementById('orderID').innerText = 'ORD-' + Math.floor(Math.random()*99999);
     },
     setupCanvas(id) {
-        const c = new fabric.Canvas(id, { width: 300, height: 350, preserveObjectStacking: true });
-        // Garde la perspective (pas de distorsion libre, seulement homothétique)
-        c.on('object:scaling', (e) => {
-            e.target.set({ scaleX: e.target.scaleX, scaleY: e.target.scaleX });
-        });
+        const c = new fabric.Canvas(id, { width: 300, height: 350 });
+        c.on('object:scaling', (e) => { e.target.set({ scaleY: e.target.scaleX }); });
         return c;
     },
-    setTarget(t, el) {
+    setTarget(prefix, el) {
+        this.state.targetPrefix = prefix;
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
+        this.updateRefList();
+    },
+    updateRefList() {
+        const select = document.getElementById('refSelect');
+        select.innerHTML = "";
+        for(let i=1; i<=15; i++) {
+            let val = this.state.targetPrefix + i.toString().padStart(3, '0');
+            let opt = document.createElement('option');
+            opt.value = val; opt.innerText = val;
+            select.appendChild(opt);
+        }
+    },
+    toggleManual() {
+        const isManual = document.getElementById('manualCheck').checked;
+        document.getElementById('manualRef').disabled = !isManual;
+        document.getElementById('refSelect').disabled = isManual;
     },
     updateTsColor() {
         const col = document.getElementById('tsColorSelect').value;
@@ -160,52 +181,45 @@ const App = {
         else if(val !== "") { this.addText(side, val); }
     },
     async handleFile(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        
+        const file = e.target.files[0]; if(!file) return;
         if(file.type === "application/pdf") {
             const reader = new FileReader();
             reader.onload = async () => {
                 const pdf = await pdfjsLib.getDocument({data: new Uint8Array(reader.result)}).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({scale: 1.5});
+                const viewport = page.getViewport({scale: 2});
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height; canvas.width = viewport.width;
                 await page.render({canvasContext: context, viewport: viewport}).promise;
-                this.addImageToCanvas(canvas.toDataURL());
+                this.addImage(canvas.toDataURL());
             };
             reader.readAsArrayBuffer(file);
         } else {
             const reader = new FileReader();
-            reader.onload = (f) => this.addImageToCanvas(f.target.result);
+            reader.onload = (f) => this.addImage(f.target.result);
             reader.readAsDataURL(file);
         }
     },
-    addImageToCanvas(data) {
+    addImage(data) {
         const side = this.state.currentSide;
-        const can = this.state.cans[side];
         fabric.Image.fromURL(data, (img) => {
             img.scaleToWidth(side==='AV'?70:180);
-            img.set({ left: 150, top: 150, originX: 'center', originY: 'center', cornerStyle: 'circle', cornerColor: '#007AFF', transparentCorners: false });
-            can.add(img); can.setActiveObject(img);
+            img.set({ left: 150, top: 150, originX: 'center', originY: 'center', cornerStyle: 'circle', cornerColor: '#007AFF' });
+            this.state.cans[side].add(img).setActiveObject(img);
         });
     },
     addText(side, txt) {
-        const can = this.state.cans[side];
-        const t = new fabric.Text(txt, { 
-            fontSize: 40, fontWeight: '900', fill: document.getElementById('logoColorSelect').value,
-            left: 150, top: 130, originX: 'center', originY: 'center', cornerStyle: 'circle'
-        });
-        can.add(t); can.setActiveObject(t);
+        const t = new fabric.Text(txt, { fontSize: 40, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center' });
+        this.state.cans[side].add(t).setActiveObject(t);
     },
     download() {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
             const a = document.createElement('a');
-            a.download = `OLDA_FICHE_${document.getElementById('custName').value || 'PROD'}.png`;
-            a.href = c.toDataURL("image/png");
-            a.click();
+            const ref = document.getElementById('manualCheck').checked ? document.getElementById('manualRef').value : document.getElementById('refSelect').value;
+            a.download = `OLDA_${ref}_${document.getElementById('custName').value || 'PROD'}.png`;
+            a.href = c.toDataURL("image/png"); a.click();
         });
     }
 };
