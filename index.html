@@ -3,30 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Production Expert</title>
+    <title>OLDA | Production Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; color: #1d1d1f; }
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); box-sizing: border-box; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; align-items: end; }
-        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; letter-spacing: 0.5px; }
-        .mini-check { width: 18px; height: 18px; accent-color: var(--apple-blue); }
-        .input-apple, .select-apple { width: 100%; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #EFEEF2; font-size: 13px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box; }
-        .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .chip { padding: 10px 0; background: #F2F2F7; border-radius: 10px; font-size: 10px; font-weight: 800; text-align: center; cursor: pointer; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
+        
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
+        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        
+        .mini-check { width: 16px; height: 16px; accent-color: var(--apple-blue); margin: 0; }
+        .input-apple, .select-apple { width: 100%; height: 42px; padding: 0 10px; border-radius: 10px; border: 1px solid #EFEEF2; font-size: 12px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box; }
+
+        .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        .chip { padding: 8px 0; background: #F2F2F7; border-radius: 8px; font-size: 9px; font-weight: 800; text-align: center; cursor: pointer; }
         .chip.active { background: #000; color: #fff; }
-        .conditional-zone { display: none; margin-bottom: 12px; }
-        .conditional-zone.visible { display: block; }
-        .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
-        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 28px; position: relative; border: 1px solid #F2F2F7; display: none; }
-        .canvas-box.visible { display: block; }
+
+        /* Preview Layout */
+        .view-section { margin-top: 15px; display: none; }
+        .view-section.visible { display: block; }
+        
+        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 20px; position: relative; border: 1px solid #F2F2F7; margin: 10px auto; overflow: hidden; }
         .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        canvas { z-index: 2; border-radius: 28px; }
-        .btn-confirm { background: #000; color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; }
+        canvas { z-index: 2; }
+
+        .footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
+        .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -58,62 +65,92 @@
             <span class="label">Manuel <input type="checkbox" id="manualCheck" class="mini-check" onchange="App.toggleManual()"></span>
             <input type="text" id="manualRef" class="input-apple" placeholder="..." disabled>
         </div>
-        <div style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 20px; background: #FBFBFD; border-radius: 12px; border: 1px solid #EFEEF2;">
+        <div style="height: 42px; display: flex; align-items: center; justify-content: center; gap: 15px; background: #FBFBFD; border-radius: 10px; border: 1px solid #EFEEF2;">
             <label class="label" style="margin:0"><input type="checkbox" id="checkAV" class="mini-check" onchange="App.toggleView('AV')"> AV</label>
             <label class="label" style="margin:0"><input type="checkbox" id="checkAR" class="mini-check" onchange="App.toggleView('AR')"> AR</label>
         </div>
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Couleur T-Shirt</span>
+        <div><span class="label">Couleur T-Shirt (Pastel)</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
                 <option value="#FFFFFF">Blanc Pure</option>
                 <option value="#1A1A1A">Noir Deep</option>
-                <option value="#FFEBEE">Rose</option>
-                <option value="#E3F2FD">Bleu</option>
+                <option value="#FDFD96">Jaune Pastel</option>
+                <option value="#FFD1DC">Rose Pastel</option>
+                <option value="#B3E5FC">Bleu Ciel</option>
+                <option value="#C1E1C1">Vert Menthe</option>
+                <option value="#E6E6FA">Lavande</option>
+                <option value="#FFDAB9">Pêche</option>
+                <option value="#F5F5DC">Beige</option>
+                <option value="#B0E0E6">Bleu Poudré</option>
+                <option value="#F08080">Corail Douce</option>
+                <option value="#D3D3D3">Gris Clair</option>
+                <option value="#FAF0E6">Lin</option>
+                <option value="#FFF5EE">Coquillage</option>
+                <option value="#F0FFFF">Azure</option>
             </select>
         </div>
-        <div><span class="label">Couleur Marquage</span>
+        <div><span class="label">Couleur Logo (16)</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
-                <option value="#FF3B30">Rouge</option>
-                <option value="#A2845E">Or</option>
+                <option value="#FF3B30">Rouge Apple</option>
+                <option value="#007AFF">Bleu Apple</option>
+                <option value="#34C759">Vert Apple</option>
+                <option value="#FFCC00">Or / Jaune</option>
+                <option value="#AF52DE">Violet</option>
+                <option value="#5856D6">Indigo</option>
+                <option value="#FF9500">Orange</option>
+                <option value="#A2845E">Bronze</option>
+                <option value="#8E8E93">Gris</option>
+                <option value="#C0C0C0">Argent</option>
+                <option value="#FF2D55">Rose Flash</option>
+                <option value="#5AC8FA">Bleu Cyan</option>
+                <option value="#000080">Marine</option>
+                <option value="#556B2F">Olive</option>
             </select>
         </div>
     </div>
 
-    <div id="menuAV" class="conditional-zone">
+    <div id="zoneAV" class="view-section">
         <span class="label">Logo AVANT</span>
         <select id="logoAV" class="select-apple" onchange="App.triggerFile('AV')">
-            <option value="">Sélectionner...</option>
+            <option value="">-- Choisir logo AV --</option>
             <option value="UPLOAD">📁 Parcourir...</option>
-            <option value="OLDA">OLDA</option>
-        </select>
-    </div>
-
-    <div id="menuAR" class="conditional-zone">
-        <span class="label">Logo ARRIÈRE</span>
-        <select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')">
-            <option value="">Sélectionner...</option>
-            <option value="UPLOAD">📁 Parcourir...</option>
+            <option value="BEA-16">BEA-16</option>
+            <option value="SXM-12">SXM-12</option>
             <option value="WRA-01">WRA-01</option>
+            <option value="VIN-01">VIN-01</option>
         </select>
-    </div>
-
-    <div class="preview-container">
-        <div id="boxAV" class="canvas-box">
-            <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/></svg>
+        <div class="canvas-box">
+            <svg class="tshirt-svg" viewBox="0 0 300 350">
+                <path id="pathAV" d="M45,30 L115,15 C130,28 170,28 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+            </svg>
             <canvas id="canAV"></canvas>
         </div>
-        <div id="boxAR" class="canvas-box">
-            <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/></svg>
+    </div>
+
+    <div id="zoneAR" class="view-section">
+        <span class="label">Logo ARRIÈRE</span>
+        <select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')">
+            <option value="">-- Choisir logo AR --</option>
+            <option value="UPLOAD">📁 Parcourir...</option>
+            <option value="BEA-16">BEA-16</option>
+            <option value="SXM-12">SXM-12</option>
+            <option value="WRA-01">WRA-01</option>
+            <option value="VIN-01">VIN-01</option>
+        </select>
+        <div class="canvas-box">
+            <svg class="tshirt-svg" viewBox="0 0 300 350">
+                <path id="pathAR" d="M45,30 L115,15 C130,20 170,20 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+            </svg>
             <canvas id="canAR"></canvas>
         </div>
     </div>
 
-    <div class="footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #EEE; padding-top:15px;">
-        <div style="font-size: 24px; font-weight: 900;"><input type="number" id="priceInput" value="25" style="border:none; width:80px; font-size:24px; font-weight:900;">€</div>
+    <div class="footer">
+        <div style="font-size: 22px; font-weight: 900;"><input type="number" id="priceInput" value="25" style="border:none; width:60px; font-size:22px; font-weight:900;">€</div>
         <div class="label" style="margin:0">
             <label><input type="checkbox" class="mini-check"> CASH</label>
             <label style="color:#34C759; margin-left:10px;"><input type="checkbox" class="mini-check"> RÉGLÉ</label>
@@ -121,7 +158,7 @@
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE PNG</button>
+<button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
 <input type="file" id="fileInput" style="display:none" accept="image/*">
 
 <script>
@@ -132,7 +169,6 @@ const App = {
         this.state.cans.AR = this.setupCanvas('canAR');
         this.updateRefList();
         
-        // Configuration Bouton Supprimer
         fabric.Object.prototype.controls.deleteControl = new fabric.Control({
             x: 0.5, y: -0.5, offsetY: -16, offsetX: 16, cursorStyle: 'pointer',
             mouseUpHandler: (e, t) => { t.target.canvas.remove(t.target); t.target.canvas.requestRenderAll(); },
@@ -143,7 +179,6 @@ const App = {
             }
         });
 
-        // Ecouteur de fichier robuste
         document.getElementById('fileInput').addEventListener('change', (e) => this.handleFile(e));
     },
     setupCanvas(id) {
@@ -153,8 +188,7 @@ const App = {
     },
     toggleView(side) {
         const isChecked = document.getElementById('check'+side).checked;
-        document.getElementById('box'+side).classList.toggle('visible', isChecked);
-        document.getElementById('menu'+side).classList.toggle('visible', isChecked);
+        document.getElementById('zone'+side).classList.toggle('visible', isChecked);
     },
     setTarget(prefix, el) {
         this.state.targetPrefix = prefix;
@@ -189,7 +223,7 @@ const App = {
         const val = document.getElementById('logo'+side).value;
         this.state.currentSide = side; 
         if(val === 'UPLOAD') {
-            document.getElementById('fileInput').value = ""; // Reset pour iPhone
+            document.getElementById('fileInput').value = "";
             document.getElementById('fileInput').click();
         } else if(val !== "") {
             this.addText(side, val);
@@ -199,27 +233,25 @@ const App = {
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (event) => {
-            const data = event.target.result;
-            fabric.Image.fromURL(data, (img) => {
+            fabric.Image.fromURL(event.target.result, (img) => {
                 const side = this.state.currentSide;
                 img.scaleToWidth(side === 'AV' ? 80 : 160);
                 img.set({ left: 150, top: 150, originX: 'center', originY: 'center', padding: 25 });
                 this.state.cans[side].add(img).setActiveObject(img);
-                document.getElementById('logo' + side).value = ""; // Reset select
             });
         };
         reader.readAsDataURL(file);
     },
     addText(side, txt) {
-        const t = new fabric.Text(txt, { fontSize: 40, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center', padding: 25 });
+        const t = new fabric.Text(txt, { fontSize: 35, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center', padding: 25 });
         this.state.cans[side].add(t).setActiveObject(t);
-        document.getElementById('logo' + side).value = ""; // Reset select
     },
     download() {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
             const a = document.createElement('a');
-            a.download = "OLD_FICHE.png"; a.href = c.toDataURL("image/png"); a.click();
+            const ref = document.getElementById('manualCheck').checked ? document.getElementById('manualRef').value : document.getElementById('refSelect').value;
+            a.download = `OLDA_${ref}.png`; a.href = c.toDataURL("image/png"); a.click();
         });
     }
 };
