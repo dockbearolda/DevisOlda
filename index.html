@@ -330,25 +330,39 @@ const App = {
         });
     },
     triggerFile(side) {
-        const val = document.getElementById('logo'+side).value;
-        this.state.currentSide = side; 
+        const selectEl = document.getElementById('logo'+side);
+        const val = selectEl.value;
+        this.state.currentSide = side;
         if(val === 'UPLOAD') {
-            document.getElementById('fileInput').value = "";
-            document.getElementById('fileInput').click();
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = "";
+            fileInput.click();
+            // Réinitialiser le select après ouverture du dialogue
+            selectEl.selectedIndex = 0;
         } else if(val !== "") {
             this.addText(side, val);
+            // Réinitialiser le select après ajout du texte
+            selectEl.selectedIndex = 0;
         }
     },
     handleFile(e) {
-        const file = e.target.files[0]; if(!file) return;
+        const file = e.target.files[0];
+        if(!file) return;
+
         const side = this.state.currentSide;
-        const fileType = file.type;
+        const fileType = file.type || '';
         const fileName = file.name.toLowerCase();
+
+        // S'assurer que la zone est visible
+        const checkbox = document.getElementById('check' + side);
+        if(!checkbox.checked) {
+            checkbox.checked = true;
+            this.toggleView(side);
+        }
 
         // Gestion des PDFs
         if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
             alert('📄 Fichier PDF sélectionné: ' + file.name + '\n\nLe PDF sera converti en image pour l\'aperçu.\nPour une meilleure qualité, exportez votre logo en PNG ou SVG.');
-            // Pour les PDFs, on affiche un placeholder avec le nom du fichier
             const t = new fabric.Text('📄 ' + file.name.substring(0, 15) + (file.name.length > 15 ? '...' : ''), {
                 fontSize: 14, fontWeight: '600', fill: '#666',
                 left: 150, top: 150, originX: 'center', originY: 'center', padding: 25,
@@ -360,16 +374,25 @@ const App = {
 
         // Gestion des images (JPG, PNG, GIF, SVG, WebP, BMP, TIFF)
         const reader = new FileReader();
+        const canvas = this.state.cans[side];
+
         reader.onload = (event) => {
             fabric.Image.fromURL(event.target.result, (img) => {
+                if(!img) {
+                    alert('❌ Impossible de charger cette image. Essayez un autre format.');
+                    return;
+                }
                 img.scaleToWidth(side === 'AV' ? 80 : 160);
                 img.set({ left: 150, top: 180, originX: 'center', originY: 'center', padding: 25 });
-                this.state.cans[side].add(img).setActiveObject(img);
+                canvas.add(img).setActiveObject(img);
+                canvas.renderAll();
             }, { crossOrigin: 'anonymous' });
         };
+
         reader.onerror = () => {
             alert('❌ Erreur lors de la lecture du fichier. Veuillez réessayer avec un autre format.');
         };
+
         reader.readAsDataURL(file);
     },
     addText(side, txt) {
