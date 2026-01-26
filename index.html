@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Production Mobile Expert</title>
+    <title>OLDA | Production Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --apple-blue: #007AFF; --bg: #F5F7FA; }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; color: #1d1d1f; -webkit-tap-highlight-color: transparent; }
+        :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; color: #1d1d1f; }
         
         .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); box-sizing: border-box; }
         
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .order-tag { font-size: 11px; font-weight: 800; color: var(--apple-blue); background: #E5F1FF; padding: 5px 12px; border-radius: 20px; }
 
-        /* Grille alignée */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; align-items: end; }
+        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; letter-spacing: 0.5px; }
         
+        /* Alignement précis de la checkbox */
+        .mini-check { width: 12px; height: 12px; margin: 0; cursor: pointer; }
+
         .input-apple, .select-apple { 
             width: 100%; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #EFEEF2; 
             font-size: 13px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box;
@@ -32,11 +34,16 @@
         .chip.active { background: #000; color: #fff; }
 
         .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
-        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 28px; position: relative; border: 1px solid #F2F2F7; touch-action: none; }
+        .canvas-box { 
+            width: 300px; height: 350px; background: #fff; border-radius: 28px; position: relative; 
+            border: 1px solid #F2F2F7; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
         
-        .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        /* T-shirt avec effet réaliste */
+        .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
         canvas { z-index: 2; border-radius: 28px; }
-        .view-name { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 8px; z-index: 5; }
+        
+        .view-name { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.8); padding: 4px 10px; border-radius: 8px; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         .footer { border-top: 1px solid #F2F2F7; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
         .btn-confirm { background: #000; color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; }
@@ -49,13 +56,13 @@
         <div class="order-tag" id="orderID">ORD-00000</div>
         <div style="display:flex; align-items:center; gap:8px">
             <span class="label" style="margin:0">URGENCE</span>
-            <input type="checkbox" id="urgCheck" style="width:18px; height:18px;">
+            <input type="checkbox" id="urgCheck" class="mini-check">
         </div>
     </div>
 
     <div class="grid-2">
         <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+        <div><span class="label">Prix (€)</span><input type="number" id="priceInput" class="input-apple" value="25"></div>
     </div>
 
     <div class="target-grid">
@@ -67,64 +74,58 @@
 
     <div class="grid-2">
         <div><span class="label">Référence</span><select id="refSelect" class="select-apple"></select></div>
-        <div><span class="label">Prix (€)</span><input type="number" id="priceInput" class="input-apple" value="25"></div>
-    </div>
-
-    <div class="grid-2">
-        <div><span class="label">Taille Textile</span>
-            <select id="sizeSelect" class="select-apple">
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M" selected>M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-            </select>
-        </div>
-        <div><span class="label">Ref. Manuelle <input type="checkbox" id="manualCheck" onchange="App.toggleManual()"></span>
+        <div>
+            <span class="label">Manuel <input type="checkbox" id="manualCheck" class="mini-check" onchange="App.toggleManual()"></span>
             <input type="text" id="manualRef" class="input-apple" placeholder="..." disabled>
         </div>
     </div>
 
     <div class="grid-2">
+        <div><span class="label">Taille Textile</span>
+            <select id="sizeSelect" class="select-apple">
+                <option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option>
+            </select>
+        </div>
         <div><span class="label">Couleur T-Shirt</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
-                <option value="#FFFFFF">Blanc</option>
+                <option value="#FFFFFF">Blanc Pure</option>
                 <option value="#1A1A1A">Noir Deep</option>
                 <option value="#FFEBEE">Rose Pastel</option>
                 <option value="#F3E5F5">Mauve Pastel</option>
                 <option value="#E3F2FD">Bleu Pastel</option>
-                <option value="#E8F5E9">Vert Pastel</option>
-                <option value="#FFFDE7">Jaune Pastel</option>
                 <option value="#ECEFF1">Gris Pastel</option>
-            </select>
-        </div>
-        <div><span class="label">Marquage</span>
-            <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
-                <option value="#000000">Noir</option>
-                <option value="#FFFFFF">Blanc</option>
-                <option value="#FF3B30">Rouge</option>
-                <option value="#34C759">Vert</option>
-                <option value="#007AFF">Bleu</option>
-                <option value="#A2845E">Or</option>
             </select>
         </div>
     </div>
 
     <div class="grid-2">
         <div><span class="label">Logo Avant</span><select id="logoAV" class="select-apple" onchange="App.triggerFile('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Parcourir...</option><option value="OLDA">OLDA</option></select></div>
-        <div><span class="label">Logo Arrière</span><select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Parcourir...</option><option value="WRA-01">WRA-01</option></select></div>
+        <div><span class="label">Marquage</span>
+            <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
+                <option value="#000000">Noir</option>
+                <option value="#FFFFFF">Blanc</option>
+                <option value="#FF3B30">Rouge</option>
+                <option value="#007AFF">Bleu</option>
+                <option value="#A2845E">Or</option>
+            </select>
+        </div>
     </div>
 
     <div class="preview-container">
         <div class="canvas-box">
             <span class="view-name">AVANT</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD" stroke-width="1"/></svg>
+            <svg class="tshirt-svg" viewBox="0 0 300 350">
+                <defs><filter id="f1" x="0" y="0"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dx="0" dy="4"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+                <path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+                <path d="M90,10 C110,25 190,25 210,10" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="2"/>
+            </svg>
             <canvas id="canAV"></canvas>
         </div>
         <div class="canvas-box">
             <span class="view-name">ARRIÈRE</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 350"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD" stroke-width="1"/></svg>
+            <svg class="tshirt-svg" viewBox="0 0 300 350">
+                <path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+            </svg>
             <canvas id="canAR"></canvas>
         </div>
     </div>
@@ -132,13 +133,13 @@
     <div class="footer">
         <div style="font-size: 24px; font-weight: 900;" id="displayPrice">25.00€</div>
         <div style="font-size: 10px; font-weight: 800; display:flex; gap:10px">
-            <label><input type="checkbox"> CASH</label>
-            <label style="color:#34C759"><input type="checkbox"> RÉGLÉ</label>
+            <label><input type="checkbox" class="mini-check"> CASH</label>
+            <label style="color:#34C759"><input type="checkbox" class="mini-check"> RÉGLÉ</label>
         </div>
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
+<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE PNG</button>
 
 <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf" onchange="App.handleFile(event)">
 
@@ -151,17 +152,22 @@ const App = {
         this.updateRefList();
         document.getElementById('orderID').innerText = 'ORD-' + Math.floor(Math.random()*99999);
         document.getElementById('priceInput').oninput = (e) => {
-            document.getElementById('displayPrice').innerText = parseFloat(e.target.value).toFixed(2) + "€";
+            document.getElementById('displayPrice').innerText = parseFloat(e.target.value || 0).toFixed(2) + "€";
         };
+        // Suppression au clic
+        window.addEventListener('keydown', (e) => { if(e.key === "Backspace" || e.key === "Delete") this.deleteActive(); });
     },
     setupCanvas(id) {
-        const c = new fabric.Canvas(id, { 
-            width: 300, height: 350, 
-            allowTouchScrolling: true // Permet de scroller la page si on ne touche pas un objet
-        });
-        // Perspective fixe & Optimisation iPhone
+        const c = new fabric.Canvas(id, { width: 300, height: 350 });
         c.on('object:scaling', (e) => { e.target.set({ scaleY: e.target.scaleX }); });
+        c.on('selection:created', () => { /* Optionnel: vibration iPhone */ });
         return c;
+    },
+    deleteActive() {
+        ['AV', 'AR'].forEach(s => {
+            const active = this.state.cans[s].getActiveObject();
+            if(active) this.state.cans[s].remove(active);
+        });
     },
     setTarget(prefix, el) {
         this.state.targetPrefix = prefix;
@@ -175,14 +181,13 @@ const App = {
         for(let i=1; i<=15; i++) {
             let val = this.state.targetPrefix + i.toString().padStart(3, '0');
             let opt = document.createElement('option');
-            opt.value = val; opt.innerText = val;
-            select.appendChild(opt);
+            opt.value = val; opt.innerText = val; select.appendChild(opt);
         }
     },
     toggleManual() {
-        const isManual = document.getElementById('manualCheck').checked;
-        document.getElementById('manualRef').disabled = !isManual;
-        document.getElementById('refSelect').disabled = isManual;
+        const m = document.getElementById('manualCheck').checked;
+        document.getElementById('manualRef').disabled = !m;
+        document.getElementById('refSelect').disabled = m;
     },
     updateTsColor() {
         const col = document.getElementById('tsColorSelect').value;
@@ -203,34 +208,17 @@ const App = {
     },
     async handleFile(e) {
         const file = e.target.files[0]; if(!file) return;
-        if(file.type === "application/pdf") {
-            const reader = new FileReader();
-            reader.onload = async () => {
-                const pdf = await pdfjsLib.getDocument({data: new Uint8Array(reader.result)}).promise;
-                const page = await pdf.getPage(1);
-                const viewport = page.getViewport({scale: 2});
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height; canvas.width = viewport.width;
-                await page.render({canvasContext: context, viewport: viewport}).promise;
-                this.addImage(canvas.toDataURL());
-            };
-            reader.readAsArrayBuffer(file);
-        } else {
-            const reader = new FileReader();
-            reader.onload = (f) => this.addImage(f.target.result);
-            reader.readAsDataURL(file);
-        }
+        const reader = new FileReader();
+        reader.onload = (f) => this.addImage(f.target.result);
+        reader.readAsDataURL(file);
     },
     addImage(data) {
         const side = this.state.currentSide;
         fabric.Image.fromURL(data, (img) => {
             img.scaleToWidth(side==='AV'?70:180);
-            // "Padding" invisible pour manipuler facilement sur iPhone
             img.set({ 
                 left: 150, top: 150, originX: 'center', originY: 'center', 
-                cornerStyle: 'circle', cornerColor: '#007AFF',
-                padding: 20 // Ajoute une zone tactile autour de l'image
+                cornerStyle: 'circle', cornerColor: '#FF3B30', padding: 25 
             });
             this.state.cans[side].add(img).setActiveObject(img);
         });
@@ -239,8 +227,7 @@ const App = {
         const t = new fabric.Text(txt, { 
             fontSize: 40, fontWeight: '900', 
             fill: document.getElementById('logoColorSelect').value, 
-            left: 150, top: 130, originX: 'center', originY: 'center',
-            padding: 20 
+            left: 150, top: 130, originX: 'center', originY: 'center', padding: 25
         });
         this.state.cans[side].add(t).setActiveObject(t);
     },
@@ -249,8 +236,7 @@ const App = {
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
             const a = document.createElement('a');
             const ref = document.getElementById('manualCheck').checked ? document.getElementById('manualRef').value : document.getElementById('refSelect').value;
-            a.download = `OLDA_${ref}_${document.getElementById('sizeSelect').value}.png`;
-            a.href = c.toDataURL("image/png"); a.click();
+            a.download = `OLDA_${ref}.png`; a.href = c.toDataURL("image/png"); a.click();
         });
     }
 };
