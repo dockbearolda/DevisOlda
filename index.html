@@ -269,7 +269,7 @@
 </div>
 
 <button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
-<input type="file" id="fileInput" style="display:none" accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp,image/bmp,image/tiff,application/pdf,.jpg,.jpeg,.png,.gif,.svg,.webp,.bmp,.tiff,.tif,.pdf">
+<input type="file" id="fileInput" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.bmp,.tiff,.tif,.pdf,image/*,application/pdf" onchange="App.handleFile(event)">
 
 <script>
 const App = {
@@ -288,8 +288,6 @@ const App = {
                 ctx.moveTo(-5,-5); ctx.lineTo(5,5); ctx.moveTo(5,-5); ctx.lineTo(-5,5); ctx.stroke(); ctx.restore();
             }
         });
-
-        document.getElementById('fileInput').addEventListener('change', (e) => this.handleFile(e));
     },
     setupCanvas(id) {
         const c = new fabric.Canvas(id, { width: 300, height: 350 });
@@ -336,12 +334,14 @@ const App = {
         if(val === 'UPLOAD') {
             const fileInput = document.getElementById('fileInput');
             fileInput.value = "";
-            fileInput.click();
-            // Réinitialiser le select après ouverture du dialogue
-            selectEl.selectedIndex = 0;
+            // Utiliser setTimeout pour permettre au clic de fonctionner
+            setTimeout(() => {
+                fileInput.click();
+            }, 10);
+            // Réinitialiser le select après un délai
+            setTimeout(() => { selectEl.selectedIndex = 0; }, 100);
         } else if(val !== "") {
             this.addText(side, val);
-            // Réinitialiser le select après ajout du texte
             selectEl.selectedIndex = 0;
         }
     },
