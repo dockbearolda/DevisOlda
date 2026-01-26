@@ -6,14 +6,13 @@
     <title>OLDA | Production Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; color: #1d1d1f; }
         
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); box-sizing: border-box; }
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); box-sizing: border-box; position: relative; }
         
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .order-tag { font-size: 11px; font-weight: 800; color: var(--apple-blue); background: #E5F1FF; padding: 5px 12px; border-radius: 20px; }
@@ -21,8 +20,7 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; align-items: end; }
         .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; letter-spacing: 0.5px; }
         
-        /* Alignement précis de la checkbox */
-        .mini-check { width: 12px; height: 12px; margin: 0; cursor: pointer; }
+        .mini-check { width: 14px; height: 14px; margin: 0; cursor: pointer; accent-color: var(--apple-blue); }
 
         .input-apple, .select-apple { 
             width: 100%; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid #EFEEF2; 
@@ -39,11 +37,12 @@
             border: 1px solid #F2F2F7; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
         }
         
-        /* T-shirt avec effet réaliste */
-        .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08)); }
         canvas { z-index: 2; border-radius: 28px; }
         
-        .view-name { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.8); padding: 4px 10px; border-radius: 8px; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .view-name { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 8px; z-index: 5; }
+
+        .btn-delete { position: absolute; top: 10px; right: 10px; background: var(--apple-red); color: white; border: none; padding: 8px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; z-index: 10; display: none; cursor: pointer; box-shadow: 0 4px 10px rgba(255,59,48,0.3); }
 
         .footer { border-top: 1px solid #F2F2F7; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
         .btn-confirm { background: #000; color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; }
@@ -52,6 +51,8 @@
 <body>
 
 <div class="main-card" id="capture">
+    <button id="delBtn" class="btn-delete" onclick="App.deleteActive()">SUPPRIMER LOGO</button>
+
     <div class="header-row">
         <div class="order-tag" id="orderID">ORD-00000</div>
         <div style="display:flex; align-items:center; gap:8px">
@@ -100,24 +101,14 @@
 
     <div class="grid-2">
         <div><span class="label">Logo Avant</span><select id="logoAV" class="select-apple" onchange="App.triggerFile('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Parcourir...</option><option value="OLDA">OLDA</option></select></div>
-        <div><span class="label">Marquage</span>
-            <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
-                <option value="#000000">Noir</option>
-                <option value="#FFFFFF">Blanc</option>
-                <option value="#FF3B30">Rouge</option>
-                <option value="#007AFF">Bleu</option>
-                <option value="#A2845E">Or</option>
-            </select>
-        </div>
+        <div><span class="label">Logo Arrière</span><select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Parcourir...</option><option value="WRA-01">WRA-01</option></select></div>
     </div>
 
     <div class="preview-container">
         <div class="canvas-box">
             <span class="view-name">AVANT</span>
             <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <defs><filter id="f1" x="0" y="0"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dx="0" dy="4"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
                 <path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-                <path d="M90,10 C110,25 190,25 210,10" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="2"/>
             </svg>
             <canvas id="canAV"></canvas>
         </div>
@@ -130,6 +121,17 @@
         </div>
     </div>
 
+    <div style="margin-bottom: 15px;">
+        <span class="label">Couleur Marquage</span>
+        <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
+            <option value="#000000">Noir</option>
+            <option value="#FFFFFF">Blanc</option>
+            <option value="#FF3B30">Rouge</option>
+            <option value="#007AFF">Bleu</option>
+            <option value="#A2845E">Or</option>
+        </select>
+    </div>
+
     <div class="footer">
         <div style="font-size: 24px; font-weight: 900;" id="displayPrice">25.00€</div>
         <div style="font-size: 10px; font-weight: 800; display:flex; gap:10px">
@@ -139,9 +141,9 @@
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE PNG</button>
+<button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
 
-<input type="file" id="fileInput" style="display:none" accept="image/*,.pdf" onchange="App.handleFile(event)">
+<input type="file" id="fileInput" style="display:none" accept="image/*" onchange="App.handleFile(event)">
 
 <script>
 const App = {
@@ -154,19 +156,18 @@ const App = {
         document.getElementById('priceInput').oninput = (e) => {
             document.getElementById('displayPrice').innerText = parseFloat(e.target.value || 0).toFixed(2) + "€";
         };
-        // Suppression au clic
-        window.addEventListener('keydown', (e) => { if(e.key === "Backspace" || e.key === "Delete") this.deleteActive(); });
     },
     setupCanvas(id) {
         const c = new fabric.Canvas(id, { width: 300, height: 350 });
         c.on('object:scaling', (e) => { e.target.set({ scaleY: e.target.scaleX }); });
-        c.on('selection:created', () => { /* Optionnel: vibration iPhone */ });
+        c.on('selection:created', () => document.getElementById('delBtn').style.display = 'block');
+        c.on('selection:cleared', () => document.getElementById('delBtn').style.display = 'none');
         return c;
     },
     deleteActive() {
         ['AV', 'AR'].forEach(s => {
             const active = this.state.cans[s].getActiveObject();
-            if(active) this.state.cans[s].remove(active);
+            if(active) { this.state.cans[s].remove(active); document.getElementById('delBtn').style.display = 'none'; }
         });
     },
     setTarget(prefix, el) {
@@ -203,10 +204,11 @@ const App = {
     },
     triggerFile(side) {
         const val = document.getElementById('logo'+side).value;
-        if(val === 'UPLOAD') { this.state.currentSide = side; document.getElementById('fileInput').click(); }
-        else if(val !== "") { this.addText(side, val); }
+        this.state.currentSide = side; 
+        if(val === 'UPLOAD') document.getElementById('fileInput').click();
+        else if(val !== "") this.addText(side, val);
     },
-    async handleFile(e) {
+    handleFile(e) {
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (f) => this.addImage(f.target.result);
