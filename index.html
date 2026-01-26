@@ -28,8 +28,9 @@
         .view-section { margin-top: 15px; display: none; }
         .view-section.visible { display: block; }
         
-        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 20px; position: relative; border: 1px solid #F2F2F7; margin: 10px auto; overflow: hidden; }
+        .canvas-box { width: 300px; height: 350px; background: linear-gradient(145deg, #fafafa 0%, #f0f0f0 100%); border-radius: 20px; position: relative; border: 1px solid #E8E8E8; margin: 10px auto; overflow: hidden; box-shadow: inset 0 2px 8px rgba(0,0,0,0.04); }
         .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .tshirt-svg path.tshirt-body { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
         canvas { z-index: 2; }
 
         .footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
@@ -125,7 +126,63 @@
         </select>
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path id="pathAV" d="M45,30 L115,15 C130,28 170,28 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+                <defs>
+                    <linearGradient id="fabricGradientAV" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
+                        <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.08)"/>
+                    </linearGradient>
+                    <linearGradient id="sleeveShadeAV" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.12)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
+                    </linearGradient>
+                    <filter id="fabricTextureAV" x="0%" y="0%" width="100%" height="100%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
+                        <feDiffuseLighting in="noise" lighting-color="white" surfaceScale="1" result="light">
+                            <feDistantLight azimuth="45" elevation="60"/>
+                        </feDiffuseLighting>
+                        <feBlend in="SourceGraphic" in2="light" mode="multiply"/>
+                    </filter>
+                </defs>
+                <!-- Corps principal du t-shirt -->
+                <path class="tshirt-body" id="pathAV" d="M50,35
+                    Q70,28 110,18
+                    C125,15 135,22 150,28
+                    C165,22 175,15 190,18
+                    Q230,28 250,35
+                    L295,85
+                    Q285,95 265,108
+                    L250,98
+                    Q248,105 248,115
+                    L248,335
+                    Q248,342 240,342
+                    L60,342
+                    Q52,342 52,335
+                    L52,115
+                    Q52,105 50,98
+                    L35,108
+                    Q15,95 5,85
+                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
+                <!-- Overlay texture tissu -->
+                <path d="M50,35 Q70,28 110,18 C125,15 135,22 150,28 C165,22 175,15 190,18 Q230,28 250,35 L295,85 Q285,95 265,108 L250,98 Q248,105 248,115 L248,335 Q248,342 240,342 L60,342 Q52,342 52,335 L52,115 Q52,105 50,98 L35,108 Q15,95 5,85 Z" fill="url(#fabricGradientAV)" opacity="0.6"/>
+                <!-- Col en V/rond détaillé -->
+                <path d="M110,18 C125,15 135,25 150,32 C165,25 175,15 190,18" fill="none" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M112,21 C127,18 137,27 150,33 C163,27 173,18 188,21" fill="none" stroke="#E8E8E8" stroke-width="1"/>
+                <!-- Coutures épaules -->
+                <line x1="110" y1="18" x2="52" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="190" y1="18" x2="248" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
+                <!-- Coutures manches -->
+                <path d="M52,100 Q45,85 35,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                <path d="M248,100 Q255,85 265,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                <!-- Ourlet bas -->
+                <line x1="60" y1="338" x2="240" y2="338" stroke="#E0E0E0" stroke-width="1.5"/>
+                <line x1="62" y1="335" x2="238" y2="335" stroke="#EFEFEF" stroke-width="0.5"/>
+                <!-- Coutures côtés -->
+                <line x1="55" y1="115" x2="55" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
+                <line x1="245" y1="115" x2="245" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
+                <!-- Ombrage subtil manches -->
+                <path d="M50,35 L5,85 L35,108 L50,98 Z" fill="url(#sleeveShadeAV)" opacity="0.3"/>
+                <path d="M250,35 L295,85 L265,108 L250,98 Z" fill="url(#sleeveShadeAV)" opacity="0.3" transform="scale(-1,1) translate(-300,0)"/>
             </svg>
             <canvas id="canAV"></canvas>
         </div>
@@ -143,7 +200,60 @@
         </select>
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path id="pathAR" d="M45,30 L115,15 C130,20 170,20 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+                <defs>
+                    <linearGradient id="fabricGradientAR" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.12)"/>
+                        <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.1)"/>
+                    </linearGradient>
+                    <linearGradient id="sleeveShadeAR" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.12)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
+                    </linearGradient>
+                </defs>
+                <!-- Corps principal du t-shirt (vue arrière) -->
+                <path class="tshirt-body" id="pathAR" d="M50,35
+                    Q70,28 110,18
+                    C130,15 145,18 150,20
+                    C155,18 170,15 190,18
+                    Q230,28 250,35
+                    L295,85
+                    Q285,95 265,108
+                    L250,98
+                    Q248,105 248,115
+                    L248,335
+                    Q248,342 240,342
+                    L60,342
+                    Q52,342 52,335
+                    L52,115
+                    Q52,105 50,98
+                    L35,108
+                    Q15,95 5,85
+                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
+                <!-- Overlay texture tissu -->
+                <path d="M50,35 Q70,28 110,18 C130,15 145,18 150,20 C155,18 170,15 190,18 Q230,28 250,35 L295,85 Q285,95 265,108 L250,98 Q248,105 248,115 L248,335 Q248,342 240,342 L60,342 Q52,342 52,335 L52,115 Q52,105 50,98 L35,108 Q15,95 5,85 Z" fill="url(#fabricGradientAR)" opacity="0.6"/>
+                <!-- Col arrière (plus plat) -->
+                <path d="M110,18 C130,14 145,17 150,19 C155,17 170,14 190,18" fill="none" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M112,21 C132,17 147,19 150,20 C153,19 168,17 188,21" fill="none" stroke="#E8E8E8" stroke-width="1"/>
+                <!-- Couture centrale dos (caractéristique vue arrière) -->
+                <line x1="150" y1="25" x2="150" y2="335" stroke="#F0F0F0" stroke-width="0.8" stroke-dasharray="8,4"/>
+                <!-- Coutures épaules -->
+                <line x1="110" y1="18" x2="52" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="190" y1="18" x2="248" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
+                <!-- Coutures manches -->
+                <path d="M52,100 Q45,85 35,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                <path d="M248,100 Q255,85 265,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                <!-- Ourlet bas -->
+                <line x1="60" y1="338" x2="240" y2="338" stroke="#E0E0E0" stroke-width="1.5"/>
+                <line x1="62" y1="335" x2="238" y2="335" stroke="#EFEFEF" stroke-width="0.5"/>
+                <!-- Coutures côtés -->
+                <line x1="55" y1="115" x2="55" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
+                <line x1="245" y1="115" x2="245" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
+                <!-- Ombrage subtil manches -->
+                <path d="M50,35 L5,85 L35,108 L50,98 Z" fill="url(#sleeveShadeAR)" opacity="0.3"/>
+                <path d="M250,35 L295,85 L265,108 L250,98 Z" fill="url(#sleeveShadeAR)" opacity="0.3" transform="scale(-1,1) translate(-300,0)"/>
+                <!-- Étiquette col (typique vue arrière) -->
+                <rect x="140" y="22" width="20" height="8" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="0.5" rx="1"/>
             </svg>
             <canvas id="canAR"></canvas>
         </div>
@@ -159,7 +269,7 @@
 </div>
 
 <button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
-<input type="file" id="fileInput" style="display:none" accept="image/*">
+<input type="file" id="fileInput" style="display:none" accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp,image/bmp,image/tiff,application/pdf,.jpg,.jpeg,.png,.gif,.svg,.webp,.bmp,.tiff,.tif,.pdf">
 
 <script>
 const App = {
@@ -231,14 +341,34 @@ const App = {
     },
     handleFile(e) {
         const file = e.target.files[0]; if(!file) return;
+        const side = this.state.currentSide;
+        const fileType = file.type;
+        const fileName = file.name.toLowerCase();
+
+        // Gestion des PDFs
+        if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+            alert('📄 Fichier PDF sélectionné: ' + file.name + '\n\nLe PDF sera converti en image pour l\'aperçu.\nPour une meilleure qualité, exportez votre logo en PNG ou SVG.');
+            // Pour les PDFs, on affiche un placeholder avec le nom du fichier
+            const t = new fabric.Text('📄 ' + file.name.substring(0, 15) + (file.name.length > 15 ? '...' : ''), {
+                fontSize: 14, fontWeight: '600', fill: '#666',
+                left: 150, top: 150, originX: 'center', originY: 'center', padding: 25,
+                backgroundColor: '#f5f5f5'
+            });
+            this.state.cans[side].add(t).setActiveObject(t);
+            return;
+        }
+
+        // Gestion des images (JPG, PNG, GIF, SVG, WebP, BMP, TIFF)
         const reader = new FileReader();
         reader.onload = (event) => {
             fabric.Image.fromURL(event.target.result, (img) => {
-                const side = this.state.currentSide;
                 img.scaleToWidth(side === 'AV' ? 80 : 160);
-                img.set({ left: 150, top: 150, originX: 'center', originY: 'center', padding: 25 });
+                img.set({ left: 150, top: 180, originX: 'center', originY: 'center', padding: 25 });
                 this.state.cans[side].add(img).setActiveObject(img);
-            });
+            }, { crossOrigin: 'anonymous' });
+        };
+        reader.onerror = () => {
+            alert('❌ Erreur lors de la lecture du fichier. Veuillez réessayer avec un autre format.');
         };
         reader.readAsDataURL(file);
     },
