@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Système Production Auto-Update</title>
+    <title>OLDA | Système Production Complet</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,8 +13,11 @@
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
         .main-card { width: 100%; max-width: 480px; background: #fff; border-radius: 32px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .order-id { font-size: 11px; font-weight: 700; color: var(--apple-blue); background: #E5F1FF; padding: 4px 10px; border-radius: 20px; }
+
         .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
-        .select-apple, .input-apple { width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E5E7; font-size: 14px; font-weight: 600; margin-bottom: 12px; outline: none; background: #FBFBFD; }
+        .select-apple, .input-apple { width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E5E7; font-size: 14px; font-weight: 600; margin-bottom: 12px; outline: none; background: #FBFBFD; box-sizing: border-box; }
         
         .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
         .canvas-box { width: 300px; height: 360px; background: #fff; border-radius: 24px; position: relative; border: 1px solid #EEE; overflow: hidden; }
@@ -25,14 +28,25 @@
         .size-badge { position: absolute; bottom: 12px; right: 12px; background: #1d1d1f; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; z-index: 10; }
         .view-label { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 6px; z-index: 5; color: #555; }
 
-        .btn-main { background: #000; color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
+        .footer { border-top: 1px solid #EEE; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-main { background: #000; color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="main-card" id="capture">
+    <div class="header-row">
+        <div class="order-id" id="orderID">ORD-00000</div>
+        <div style="font-size: 10px; font-weight: 800; color: #86868B;">ÉCHELLE 1:1 (300mm)</div>
+    </div>
+
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Collection T-Shirt</span>
+        <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
+        <div><span class="label">Tél</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div><span class="label">Collection</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
                 <option value="#F5F5F7">Blanc (Grisé)</option>
                 <option value="#1A1A1A">Noir Deep</option>
@@ -52,7 +66,7 @@
                 <option value="#CFD8DC">Acier Pastel</option>
             </select>
         </div>
-        <div><span class="label">Couleur Marquage</span>
+        <div><span class="label">Marquage</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
@@ -63,20 +77,13 @@
                 <option value="#AF52DE">Violet</option>
                 <option value="#FFCC00">Jaune</option>
                 <option value="#A2845E">Or</option>
-                <option value="#8E8E93">Gris</option>
-                <option value="#000080">Marine</option>
-                <option value="#FF1493">Rose Flash</option>
-                <option value="#40E0D0">Turquoise</option>
-                <option value="#8B4513">Marron</option>
-                <option value="#00FF00">Fluo</option>
-                <option value="#5856D6">Indigo</option>
             </select>
         </div>
     </div>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Logo AV</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="OLDA">OLDA</option><option value="ESSENTIAL">ESSENTIAL</option></select></div>
-        <div><span class="label">Logo AR</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="WRA-01">WRA-01</option><option value="BACKPRINT">BACKPRINT</option></select></div>
+        <div><span class="label">Logo Avant</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="OLDA">OLDA</option></select></div>
+        <div><span class="label">Logo Arrière</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="WRA-01">WRA-01</option></select></div>
     </div>
 
     <div class="preview-container">
@@ -93,9 +100,18 @@
             <canvas id="canAR"></canvas>
         </div>
     </div>
+
+    <div class="footer">
+        <div style="font-size: 24px; font-weight: 900;">25.00€</div>
+        <div style="text-align: right; line-height: 1.2;">
+            <span class="label" style="margin:0">Statut</span>
+            <span style="font-size: 11px; font-weight: 700; color: #34C759;">PRÊT POUR PROD</span>
+        </div>
+    </div>
 </div>
 
-<button class="btn-main" onclick="App.download()">GÉNÉRER LA FICHE DE PRODUCTION</button>
+<button class="btn-main" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
+
 <input type="file" id="fileAV" style="display:none" onchange="App.previewFile('AV')">
 <input type="file" id="fileAR" style="display:none" onchange="App.previewFile('AR')">
 
@@ -105,6 +121,7 @@ const App = {
     init() { 
         this.state.cans.AV = this.setupCanvas('canAV', 'indAV');
         this.state.cans.AR = this.setupCanvas('canAR', 'indAR');
+        document.getElementById('orderID').innerText = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
     },
     setupCanvas(id, indId) {
         const c = new fabric.Canvas(id, { width: 300, height: 360 });
@@ -121,13 +138,10 @@ const App = {
     updateLogoColor() {
         const col = document.getElementById('logoColorSelect').value;
         ['AV', 'AR'].forEach(side => {
-            const can = this.state.cans[side];
-            can.getObjects().forEach(obj => {
-                if (obj.type === 'text') {
-                    obj.set('fill', col);
-                }
+            this.state.cans[side].getObjects().forEach(obj => {
+                if (obj.type === 'text') obj.set('fill', col);
             });
-            can.renderAll();
+            this.state.cans[side].renderAll();
         });
     },
     handleLogo(side) {
@@ -145,7 +159,7 @@ const App = {
     renderLogo(side, type) {
         const can = this.state.cans[side];
         can.clear();
-        if (type === "") { document.getElementById('ind'+side).innerText = "0 mm"; return; }
+        if (!type) { document.getElementById('ind'+side).innerText = "0 mm"; return; }
 
         const color = document.getElementById('logoColorSelect').value;
         const callback = (obj) => {
@@ -160,10 +174,9 @@ const App = {
 
         if (type === 'UPLOAD' && this.state.imgs[side]) {
             fabric.Image.fromURL(this.state.imgs[side], (img) => { 
-                img.scaleToWidth(side==='AV'?75:180); 
-                callback(img); 
+                img.scaleToWidth(side==='AV'?75:180); callback(img); 
             });
-        } else {
+        } else if(type !== 'UPLOAD') {
             const t = new fabric.Text(type, { fontSize: 35, fontWeight: '900', fill: color });
             callback(t);
         }
@@ -172,7 +185,8 @@ const App = {
         this.state.cans.AV.discardActiveObject().renderAll();
         this.state.cans.AR.discardActiveObject().renderAll();
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
-            const a = document.createElement('a'); a.download = `OLDA_PROD_${Date.now()}.png`;
+            const a = document.createElement('a'); 
+            a.download = `OLDA_PROD_${document.getElementById('custName').value || 'ID'}.png`;
             a.href = c.toDataURL(); a.click();
         });
     }
