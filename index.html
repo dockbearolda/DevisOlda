@@ -35,6 +35,11 @@
 
         .footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
         .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
+
+        .upload-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #007AFF; color: white; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 700; transition: background 0.2s; }
+        .upload-btn:hover { background: #0056b3; }
+        .upload-btn:active { background: #004094; }
     </style>
 </head>
 <body>
@@ -71,6 +76,14 @@
             <label class="label" style="margin:0"><input type="checkbox" id="checkAR" class="mini-check" onchange="App.toggleView('AR')"> AR</label>
         </div>
     </div>
+
+    <!-- Boutons d'upload toujours visibles -->
+    <div class="upload-section">
+        <label for="fileInputAV" class="upload-btn">📁 Logo AVANT</label>
+        <label for="fileInputAR" class="upload-btn">📁 Logo ARRIÈRE</label>
+    </div>
+    <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
+    <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
 
     <div class="grid-2">
         <div><span class="label">Couleur T-Shirt (Pastel)</span>
@@ -269,7 +282,6 @@
 </div>
 
 <button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
-<input type="file" id="fileInput" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.bmp,.tiff,.tif,.pdf,image/*,application/pdf" onchange="App.handleFile(event)">
 
 <script>
 const App = {
@@ -332,24 +344,18 @@ const App = {
         const val = selectEl.value;
         this.state.currentSide = side;
         if(val === 'UPLOAD') {
-            const fileInput = document.getElementById('fileInput');
-            fileInput.value = "";
-            // Utiliser setTimeout pour permettre au clic de fonctionner
-            setTimeout(() => {
-                fileInput.click();
-            }, 10);
-            // Réinitialiser le select après un délai
-            setTimeout(() => { selectEl.selectedIndex = 0; }, 100);
+            // Déclencher le clic sur le nouvel input file
+            document.getElementById('fileInput' + side).click();
+            selectEl.selectedIndex = 0;
         } else if(val !== "") {
             this.addText(side, val);
             selectEl.selectedIndex = 0;
         }
     },
-    handleFile(e) {
+    handleFileUpload(side, e) {
         const file = e.target.files[0];
         if(!file) return;
 
-        const side = this.state.currentSide;
         const fileType = file.type || '';
         const fileName = file.name.toLowerCase();
 
@@ -362,38 +368,39 @@ const App = {
 
         // Gestion des PDFs
         if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
-            alert('📄 Fichier PDF sélectionné: ' + file.name + '\n\nLe PDF sera converti en image pour l\'aperçu.\nPour une meilleure qualité, exportez votre logo en PNG ou SVG.');
-            const t = new fabric.Text('📄 ' + file.name.substring(0, 15) + (file.name.length > 15 ? '...' : ''), {
-                fontSize: 14, fontWeight: '600', fill: '#666',
-                left: 150, top: 150, originX: 'center', originY: 'center', padding: 25,
-                backgroundColor: '#f5f5f5'
+            alert('📄 Fichier PDF sélectionné: ' + file.name + '\n\nNote: Le PDF sera représenté par son nom.\nPour afficher l\'image, exportez en PNG ou JPG.');
+            const t = new fabric.Text('📄 ' + file.name.substring(0, 12) + (file.name.length > 12 ? '...' : ''), {
+                fontSize: 12, fontWeight: '600', fill: '#666',
+                left: 150, top: 180, originX: 'center', originY: 'center', padding: 20,
+                backgroundColor: '#f0f0f0'
             });
             this.state.cans[side].add(t).setActiveObject(t);
+            this.state.cans[side].renderAll();
             return;
         }
 
-        // Gestion des images (JPG, PNG, GIF, SVG, WebP, BMP, TIFF)
+        // Gestion des images
         const reader = new FileReader();
         const canvas = this.state.cans[side];
 
-        reader.onload = (event) => {
-            fabric.Image.fromURL(event.target.result, (img) => {
+        reader.onload = (evt) => {
+            fabric.Image.fromURL(evt.target.result, (img) => {
                 if(!img) {
-                    alert('❌ Impossible de charger cette image. Essayez un autre format.');
+                    alert('Impossible de charger cette image.');
                     return;
                 }
                 img.scaleToWidth(side === 'AV' ? 80 : 160);
                 img.set({ left: 150, top: 180, originX: 'center', originY: 'center', padding: 25 });
                 canvas.add(img).setActiveObject(img);
                 canvas.renderAll();
-            }, { crossOrigin: 'anonymous' });
-        };
-
-        reader.onerror = () => {
-            alert('❌ Erreur lors de la lecture du fichier. Veuillez réessayer avec un autre format.');
+            });
         };
 
         reader.readAsDataURL(file);
+    },
+    handleFile(e) {
+        // Ancienne fonction - redirige vers la nouvelle
+        this.handleFileUpload(this.state.currentSide, e);
     },
     addText(side, txt) {
         const t = new fabric.Text(txt, { fontSize: 35, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center', padding: 25 });
