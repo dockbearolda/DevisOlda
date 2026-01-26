@@ -2,1214 +2,307 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA | Configurateur Premium</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OLDA | Production & Collection System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    
     <style>
         :root {
-            --apple-blue: #007AFF;
-            --apple-red: #FF3B30;
-            --apple-green: #34C759;
-            --apple-orange: #FF9500;
-            --apple-dark: #1D1D1F;
-            --apple-gray: #86868B;
-            --apple-light: #F5F5F7;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --apple-blue: #007AFF; --apple-red: #FF3B30; --apple-green: #34C759;
+            --pastel-blue: #F2F7FF; --label: #86868B; --bg-card: #ffffff;
+            --tshirt-color: #FFFFFF; 
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
-            background: var(--apple-light);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            transition: var(--transition);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* === THEMES === */
-        .theme-tshirt { background: linear-gradient(180deg, #E8F4FD 0%, #D0E8F9 100%); }
-        .theme-polo { background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%); }
-        .theme-sweat { background: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 100%); }
-        .theme-veste { background: linear-gradient(180deg, #F3E5F5 0%, #E1BEE7 100%); }
-        .theme-casquette { background: linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 100%); }
-
-        /* === MODE URGENCE === */
-        .urgence-active {
-            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%) !important;
-        }
-
-        .urgence-active .main-container {
-            border-color: var(--apple-red) !important;
-            box-shadow: 0 0 0 1px var(--apple-red), 0 40px 80px -20px rgba(255, 59, 48, 0.3) !important;
-        }
-
-        .urgence-active .urgence-btn {
-            background: var(--apple-red);
-            color: white;
-            animation: pulse-urgence 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-urgence {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
-            50% { box-shadow: 0 0 0 16px rgba(255, 59, 48, 0); }
-        }
-
-        /* === CONTAINER PRINCIPAL === */
-        .main-container {
-            width: 100%;
-            max-width: 520px;
-            background: var(--card-bg);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        /* === HEADER === */
-        .header {
-            padding: 24px 28px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--apple-dark);
-            letter-spacing: -0.5px;
-        }
-
-        .logo span {
-            color: var(--apple-gray);
-            font-weight: 400;
-        }
-
-        .urgence-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: none;
-            background: rgba(255, 59, 48, 0.1);
-            color: var(--apple-red);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .urgence-btn:hover {
-            background: rgba(255, 59, 48, 0.15);
-            transform: scale(1.02);
-        }
-
-        .urgence-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* === CONTENT === */
-        .content {
-            padding: 28px;
-        }
-
-        .section {
-            margin-bottom: 32px;
-        }
-
-        .section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 12px;
-        }
-
-        /* === INPUTS === */
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: rgba(255, 255, 255, 0.6);
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--apple-dark);
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .input-field::placeholder {
-            color: var(--apple-gray);
-            font-weight: 400;
-        }
-
-        .input-field:focus {
-            border-color: var(--apple-blue);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-        }
-
-        /* === COLLECTION SELECTOR === */
-        .collection-selector {
-            display: flex;
-            gap: 8px;
-        }
-
-        .collection-btn {
-            flex: 1;
-            padding: 14px 8px;
-            border-radius: 14px;
-            border: 1.5px solid rgba(0, 0, 0, 0.06);
-            background: white;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .collection-btn .icon {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .collection-btn:hover {
-            border-color: rgba(0, 0, 0, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .collection-btn.active {
-            border-color: var(--apple-blue);
-            background: rgba(0, 122, 255, 0.08);
-            color: var(--apple-blue);
-        }
-
-        /* === CATEGORY SELECTOR === */
-        .category-selector {
-            display: flex;
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 12px;
-            padding: 3px;
-        }
-
-        .category-btn {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--apple-gray);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .category-btn.active {
-            background: white;
-            color: var(--apple-dark);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        /* === REFERENCE STEPPER === */
-        .stepper-container {
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stepper-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .stepper-value {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--apple-dark);
-            letter-spacing: 2px;
-            margin-bottom: 16px;
-        }
-
-        .stepper-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .stepper-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: var(--apple-dark);
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stepper-btn:hover {
-            background: var(--apple-blue);
-            transform: scale(1.08);
-        }
-
-        .stepper-range {
-            flex: 1;
-            max-width: 180px;
-            height: 4px;
-            border-radius: 2px;
-            background: rgba(0, 0, 0, 0.1);
-            appearance: none;
-            outline: none;
-        }
-
-        .stepper-range::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--apple-dark);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* === PRODUCT PREVIEW === */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .preview-card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-        }
-
-        .preview-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .preview-mockup {
-            width: 100%;
-            height: 120px;
-            background: linear-gradient(180deg, #FAFAFA 0%, #F0F0F0 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .preview-tshirt {
-            width: 70px;
-            height: 80px;
-            background: white;
-            border-radius: 2px 2px 16px 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .preview-tshirt::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 8px;
-            background: white;
-            border-radius: 0 0 12px 12px;
-        }
-
-        .preview-text {
-            font-size: 10px;
-            font-weight: 600;
-            text-align: center;
-            padding: 4px;
-            transition: var(--transition);
-        }
-
-        /* === FACE TABS === */
-        .face-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .face-tab {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(0, 0, 0, 0.04);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--apple-gray);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .face-tab.active {
-            background: var(--apple-dark);
-            color: white;
-        }
-
-        /* === CUSTOMIZATION === */
-        .custom-card {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 12px;
-        }
-
-        .custom-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            margin-bottom: 12px;
-        }
+        body { background-color: var(--pastel-blue); font-family: 'Inter', sans-serif; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: background 0.3s; }
+        body.regle-active { background-color: #E8F5E9; }
+        body.urgence-active { background-color: #FFEBEE; }
 
-        /* === FONT SELECTOR === */
-        .font-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-        }
-
-        .font-btn {
-            padding: 10px 4px;
-            border-radius: 10px;
-            border: 1.5px solid rgba(0, 0, 0, 0.06);
-            background: white;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .font-btn:hover {
-            border-color: var(--apple-blue);
-        }
-
-        .font-btn.active {
-            border-color: var(--apple-blue);
-            background: rgba(0, 122, 255, 0.08);
-        }
-
-        .font-btn .sample {
-            font-size: 16px;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .font-btn .name {
-            font-size: 8px;
-            color: var(--apple-gray);
-            font-weight: 500;
-        }
-
-        .font-classique .sample { font-family: 'Playfair Display', serif; }
-        .font-moderne .sample { font-family: 'Montserrat', sans-serif; font-weight: 300; }
-        .font-script .sample { font-family: 'Dancing Script', cursive; }
-        .font-urbain .sample { font-family: 'Bebas Neue', sans-serif; }
-        .font-minimal .sample { font-family: 'Inter', sans-serif; font-weight: 300; }
-
-        /* === LOGO SELECTOR === */
-        .logo-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .logo-chip {
-            padding: 8px 14px;
-            border-radius: 16px;
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
-            background: white;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .logo-chip:hover {
-            border-color: var(--apple-blue);
-        }
-
-        .logo-chip.active {
-            background: var(--apple-blue);
-            border-color: var(--apple-blue);
-            color: white;
-        }
-
-        .suffix-note {
-            font-size: 10px;
-            color: var(--apple-gray);
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        /* === COLOR DOTS === */
-        .color-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .color-dot {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .color-dot::after {
-            content: '';
-            position: absolute;
-            inset: -5px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            transition: var(--transition);
-        }
-
-        .color-dot:hover {
-            transform: scale(1.15);
-        }
-
-        .color-dot.active::after {
-            border-color: var(--apple-blue);
-        }
-
-        .color-dot.active {
-            transform: scale(1.2);
-        }
-
-        .dot-blanc { background: linear-gradient(145deg, #FFFFFF, #E8E8E8); }
-        .dot-noir { background: linear-gradient(145deg, #3A3A3C, #1C1C1E); }
-        .dot-rouge { background: linear-gradient(145deg, #FF453A, #D70015); }
-        .dot-bleu { background: linear-gradient(145deg, #0A84FF, #0056B3); }
-        .dot-vert { background: linear-gradient(145deg, #32D74B, #248A3D); }
-        .dot-jaune { background: linear-gradient(145deg, #FFD60A, #B59400); }
-        .dot-violet { background: linear-gradient(145deg, #BF5AF2, #8944AB); }
-        .dot-orange { background: linear-gradient(145deg, #FF9F0A, #C77800); }
-        .dot-rose { background: linear-gradient(145deg, #FF375F, #D30F45); }
-
-        /* === PAYMENT === */
-        .payment-card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .price-input-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            margin-bottom: 20px;
-        }
-
-        .price-currency {
-            font-size: 28px;
-            font-weight: 300;
-            color: var(--apple-gray);
-        }
-
-        .price-input {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--apple-dark);
-            border: none;
-            background: transparent;
-            width: 140px;
-            text-align: center;
-            outline: none;
-        }
-
-        .price-input::placeholder {
-            color: #D1D1D6;
-        }
-
-        .payment-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .payment-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
-            background: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
-        .payment-btn:hover {
-            border-color: rgba(0, 0, 0, 0.15);
+        /* --- NOUVEAU STEPPER HAUT DE GAMME --- */
+        .luxury-stepper {
+            display: flex; gap: 30px; margin-bottom: 30px; font-family: 'Inter'; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
         }
+        .luxury-step { color: #ccc; border-bottom: 2px solid transparent; padding-bottom: 5px; }
+        .luxury-step.active { color: #000; border-bottom: 2px solid #000; }
 
-        .payment-btn.active-green {
-            background: rgba(52, 199, 89, 0.1);
-            border-color: var(--apple-green);
-            color: var(--apple-green);
+        .main-card { 
+            width: 100%; max-width: 550px; background: var(--bg-card); border-radius: 32px; padding: 25px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent; position: relative;
         }
+        .main-card.is-paid { border-color: var(--apple-green); background: #fafffa; }
 
-        .payment-btn.active-orange {
-            background: rgba(255, 149, 0, 0.1);
-            border-color: var(--apple-orange);
-            color: var(--apple-orange);
-        }
-
-        .payment-btn.active-blue {
-            background: rgba(0, 122, 255, 0.08);
-            border-color: var(--apple-blue);
-            color: var(--apple-blue);
-        }
-
-        /* === GENERATE BTN === */
-        .generate-btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: 14px;
-            border: none;
-            background: var(--apple-dark);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 8px;
-        }
-
-        .generate-btn:hover {
-            background: #000;
-            transform: scale(1.01);
-        }
-
-        /* === FICHE PRODUCTION === */
-        .fiche {
-            width: 105mm;
-            min-height: 148mm;
-            background: white;
-            margin: 32px auto;
-            padding: 24px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .fiche.urgente {
-            border: 3px solid var(--apple-red);
-        }
-
-        .fiche.urgente::before {
-            content: 'URGENT';
-            position: absolute;
-            top: 18px;
-            right: -30px;
-            background: var(--apple-red);
-            color: white;
-            padding: 4px 36px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            transform: rotate(45deg);
-        }
-
-        .fiche-header {
-            display: flex;
-            justify-content: space-between;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #F0F0F0;
-            margin-bottom: 16px;
-        }
-
-        .fiche-client {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--apple-dark);
-        }
-
-        .fiche-meta {
-            font-size: 11px;
-            color: var(--apple-gray);
-        }
-
-        .fiche-id {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--apple-blue);
-        }
-
-        .fiche-product {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #F0F0F0;
-            margin-bottom: 16px;
-        }
-
-        .fiche-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f0f0f2; padding-bottom: 15px; }
+        .order-id { font-size: 12px; font-weight: 700; color: var(--apple-blue); background: #E5F1FF; padding: 4px 10px; border-radius: 20px; }
 
-        .fiche-ref {
-            font-size: 42px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--apple-dark);
+        .field { margin-bottom: 12px; }
+        .label { font-size: 10px; font-weight: 800; color: var(--label); text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 0.8px; }
+        
+        .select-apple, .input-apple { 
+            width: 100%; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); 
+            font-size: 14px; font-weight: 600; background-color: #f9f9f9; outline: none;
         }
 
-        .fiche-category {
-            font-size: 13px;
-            color: var(--apple-gray);
-            font-weight: 500;
-        }
-
-        .fiche-details {
-            padding: 12px 0;
-            border-bottom: 1px solid #F0F0F0;
-        }
-
-        .fiche-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-        }
-
-        .fiche-label {
-            font-size: 11px;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-        }
-
-        .fiche-value {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--apple-dark);
-        }
-
-        .fiche-payment {
-            text-align: center;
-            padding: 16px 0;
-        }
-
-        .fiche-price {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--apple-dark);
-        }
-
-        .fiche-status {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .fiche-status.paid {
-            background: rgba(52, 199, 89, 0.15);
-            color: var(--apple-green);
-        }
-
-        .fiche-status.pending {
-            background: rgba(255, 149, 0, 0.15);
-            color: var(--apple-orange);
-        }
-
-        .fiche-actions {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 16px;
-            border-top: 1px solid #F0F0F0;
-        }
+        .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .chip { padding: 10px 0; background: #f2f2f7; border-radius: 10px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.2s; }
+        .chip.active { background: var(--apple-blue); color: white; }
 
-        .fiche-btn-delete {
-            background: none;
-            border: none;
-            color: var(--apple-red);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
+        /* --- CANVAS INTERACTIF --- */
+        .preview-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .tshirt-canvas-wrapper { 
+            aspect-ratio: 1/1; background: #fff; border-radius: 24px; position: relative; 
+            border: 1px solid #f0f0f2; overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
-
-        .fiche-btn-print {
-            background: var(--apple-dark);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
+        
+        /* On garde ton clip-path mais on l'utilise en fond du canvas */
+        .tshirt-bg-shape { 
+            width: 90%; height: 95%; background: var(--tshirt-color); 
+            clip-path: polygon(25% 0%, 75% 0%, 100% 20%, 85% 35%, 80% 30%, 80% 100%, 20% 100%, 20% 30%, 15% 35%, 0% 20%);
+            position: absolute; z-index: 1; transition: background 0.3s;
         }
 
-        /* === PRINT === */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .fiche { box-shadow: none; margin: 0; border-radius: 0; }
-        }
+        canvas { position: absolute; top: 0; left: 0; z-index: 2; cursor: crosshair; }
 
-        /* === ANIMATION === */
-        .fade-in {
-            animation: fadeIn 0.4s ease;
-        }
+        .footer { border-top: 1px solid #f0f0f2; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .price-total { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .btn-confirm { background: #1d1d1f; color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 15px; font-size: 15px; }
+        .btn-download { background: #fff; color: #1d1d1f; border: 2px solid #1d1d1f; padding: 12px; border-radius: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; font-size: 12px; }
     </style>
 </head>
-<body class="theme-tshirt" id="body">
+<body id="body">
 
-<div class="main-container no-print fade-in">
-    <!-- HEADER -->
+<div class="luxury-stepper">
+    <div class="luxury-step">01. Modèle</div>
+    <div class="luxury-step active">02. Personnalisation</div>
+    <div class="luxury-step">03. Production</div>
+</div>
+
+<div class="main-card" id="capture">
     <div class="header">
-        <div class="logo">OLDA <span>Production</span></div>
-        <button class="urgence-btn" id="urgenceBtn" onclick="toggleUrgence()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
-            Urgence
-        </button>
+        <div>
+            <span class="label">Numéro Commande</span>
+            <div class="order-id" id="orderID">2026-Shop-000001</div>
+        </div>
+        <div style="text-align: right;">
+            <span class="label">Urgence</span>
+            <input type="checkbox" id="urgenceToggle" onchange="App.uiUpdate()">
+        </div>
     </div>
 
-    <div class="content">
-        <!-- CLIENT -->
-        <div class="section">
-            <div class="section-label">Client</div>
-            <div class="input-row">
-                <input type="text" id="clientNom" class="input-field" placeholder="Nom" style="text-transform: uppercase;">
-                <input type="tel" id="clientTel" class="input-field" placeholder="Téléphone">
-            </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div class="field"><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom..."></div>
+        <div class="field"><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06..."></div>
+    </div>
+    
+    <div class="target-grid">
+        <div class="chip active" onclick="App.setTarget('H', this)">Homme</div>
+        <div class="chip" onclick="App.setTarget('F', this)">Femme</div>
+        <div class="chip" onclick="App.setTarget('E', this)">Enfant</div>
+        <div class="chip" onclick="App.setTarget('B', this)">Bébé</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:12px;">
+        <div class="field"><span class="label">Référence Collection</span><select id="modelRef" class="select-apple" onchange="App.renderPreview()"></select></div>
+        <div class="field">
+            <span class="label">Couleur T-Shirt</span>
+            <select id="tshirtColorSelect" class="select-apple" onchange="App.updateTshirtColor()">
+                <option value="#FFFFFF">Blanc Neige</option>
+                <option value="#E3F2FD">Bleu Ciel</option>
+                <option value="#F1F8E9">Vert Menthe</option>
+                <option value="#1d1d1f">Noir Deep</option>
+            </select>
         </div>
+    </div>
 
-        <!-- COLLECTION -->
-        <div class="section">
-            <div class="section-label">Collection</div>
-            <div class="collection-selector">
-                <button class="collection-btn active" data-col="tshirt" data-theme="theme-tshirt" onclick="selectCollection(this)">
-                    <span class="icon">👕</span>T-Shirt
-                </button>
-                <button class="collection-btn" data-col="polo" data-theme="theme-polo" onclick="selectCollection(this)">
-                    <span class="icon">🎽</span>Polo
-                </button>
-                <button class="collection-btn" data-col="sweat" data-theme="theme-sweat" onclick="selectCollection(this)">
-                    <span class="icon">🧥</span>Sweat
-                </button>
-                <button class="collection-btn" data-col="veste" data-theme="theme-veste" onclick="selectCollection(this)">
-                    <span class="icon">🧥</span>Veste
-                </button>
-                <button class="collection-btn" data-col="casquette" data-theme="theme-casquette" onclick="selectCollection(this)">
-                    <span class="icon">🧢</span>Casq.
-                </button>
-            </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="field">
+            <span class="label">Logo AV (Cliquer Preview pour bouger)</span>
+            <select id="logoAV" class="select-apple" onchange="App.handleLogoChange('AV')">
+                <option value="">-- Aucun --</option>
+                <option value="UPLOAD">📁 Importer Image...</option>
+                <option value="TOR-04">TOR-04</option>
+                <option value="SXM-12">SXM-12</option>
+            </select>
+            <input type="file" id="fileAV" style="display:none" accept="image/*" onchange="App.previewFile('AV')">
         </div>
+        <div class="field"><span class="label">Prix de base (€)</span><select id="basePrice" class="select-apple" onchange="App.updateTotal()"><option value="15">15€</option><option value="25" selected>25€</option></select></div>
+    </div>
 
-        <!-- CATEGORY -->
-        <div class="section">
-            <div class="section-label">Catégorie</div>
-            <div class="category-selector">
-                <button class="category-btn active" data-cat="H" data-label="Homme" onclick="selectCategory(this)">Homme</button>
-                <button class="category-btn" data-cat="F" data-label="Femme" onclick="selectCategory(this)">Femme</button>
-                <button class="category-btn" data-cat="E" data-label="Enfant" onclick="selectCategory(this)">Enfant</button>
-                <button class="category-btn" data-cat="B" data-label="Bébé" onclick="selectCategory(this)">Bébé</button>
-            </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="field">
+            <span class="label">Logo AR</span>
+            <select id="logoAR" class="select-apple" onchange="App.handleLogoChange('AR')">
+                <option value="">-- Aucun --</option>
+                <option value="UPLOAD">📁 Importer Image...</option>
+                <option value="WRA-01">WRA-01</option>
+            </select>
+            <input type="file" id="fileAR" style="display:none" accept="image/*" onchange="App.previewFile('AR')">
         </div>
+        <div class="field"><span class="label">Perso (€)</span><select id="persoPrice" class="select-apple" onchange="App.updateTotal()"><option value="0">0€</option><option value="10">+10€</option></select></div>
+    </div>
 
-        <!-- REFERENCE -->
-        <div class="section">
-            <div class="section-label">Référence</div>
-            <div class="stepper-container">
-                <div class="stepper-label" id="gammeLabel">Gamme Homme</div>
-                <div class="stepper-value" id="refDisplay">H001</div>
-                <div class="stepper-controls">
-                    <button class="stepper-btn" onclick="changeRef(-1)">−</button>
-                    <input type="range" class="stepper-range" id="refRange" min="1" max="15" value="1" oninput="updateRef()">
-                    <button class="stepper-btn" onclick="changeRef(1)">+</button>
-                </div>
-            </div>
+    <div class="preview-container">
+        <div class="tshirt-canvas-wrapper">
+            <div class="tshirt-bg-shape"></div>
+            <canvas id="canvasAV"></canvas>
+            <span style="position:absolute; bottom:5px; font-size:8px; z-index:3; color:#aaa">VUE AVANT</span>
         </div>
-
-        <!-- PREVIEW -->
-        <div class="section">
-            <div class="section-label">Aperçu</div>
-            <div class="preview-grid">
-                <div class="preview-card">
-                    <div class="preview-label">Vue Avant (Cœur)</div>
-                    <div class="preview-mockup">
-                        <div class="preview-tshirt">
-                            <div class="preview-text" id="previewAvant" style="color: #1D1D1F;">Texte</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="preview-card">
-                    <div class="preview-label">Vue Arrière</div>
-                    <div class="preview-mockup">
-                        <div class="preview-tshirt">
-                            <div class="preview-text" id="previewArriere" style="color: #1D1D1F;">Texte</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="tshirt-canvas-wrapper">
+            <div class="tshirt-bg-shape"></div>
+            <canvas id="canvasAR"></canvas>
+            <span style="position:absolute; bottom:5px; font-size:8px; z-index:3; color:#aaa">VUE ARRIERE</span>
         </div>
+    </div>
 
-        <!-- CUSTOMIZATION -->
-        <div class="section">
-            <div class="section-label">Personnalisation</div>
-            <div class="face-tabs">
-                <button class="face-tab active" data-face="avant" onclick="switchFace(this)">Avant</button>
-                <button class="face-tab" data-face="arriere" onclick="switchFace(this)">Arrière</button>
-            </div>
-
-            <!-- Text & Font -->
-            <div class="custom-card">
-                <div class="custom-title">Texte & Typographie</div>
-                <input type="text" id="customText" class="input-field" placeholder="Saisissez votre texte..." oninput="updatePreview()" style="margin-bottom: 12px;">
-                <div class="font-grid">
-                    <button class="font-btn font-classique active" data-font="Playfair Display" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Classique</span>
-                    </button>
-                    <button class="font-btn font-moderne" data-font="Montserrat" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Moderne</span>
-                    </button>
-                    <button class="font-btn font-script" data-font="Dancing Script" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Script</span>
-                    </button>
-                    <button class="font-btn font-urbain" data-font="Bebas Neue" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Urbain</span>
-                    </button>
-                    <button class="font-btn font-minimal" data-font="Inter" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Minimal</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Logos -->
-            <div class="custom-card">
-                <div class="custom-title">Logos Signature</div>
-                <div class="logo-grid">
-                    <button class="logo-chip" data-logo="BEA-16" onclick="selectLogo(this)">BEA-16</button>
-                    <button class="logo-chip" data-logo="VIN-01" onclick="selectLogo(this)">VIN-01</button>
-                    <button class="logo-chip" data-logo="PAY-01" onclick="selectLogo(this)">PAY-01</button>
-                    <button class="logo-chip" data-logo="SUR-07" onclick="selectLogo(this)">SUR-07</button>
-                    <button class="logo-chip" data-logo="SXM-12" onclick="selectLogo(this)">SXM-12</button>
-                </div>
-                <div class="suffix-note">Suffixe automatique : -AV (avant) / -AR (arrière)</div>
-            </div>
-
-            <!-- Colors -->
-            <div class="custom-card">
-                <div class="custom-title">Couleur</div>
-                <div class="color-dots">
-                    <div class="color-dot dot-blanc" data-color="#FFFFFF" data-name="Blanc" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-noir active" data-color="#1D1D1F" data-name="Noir" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-rouge" data-color="#FF3B30" data-name="Rouge" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-bleu" data-color="#007AFF" data-name="Bleu" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-vert" data-color="#34C759" data-name="Vert" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-jaune" data-color="#FFD60A" data-name="Jaune" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-violet" data-color="#BF5AF2" data-name="Violet" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-orange" data-color="#FF9500" data-name="Orange" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-rose" data-color="#FF375F" data-name="Rose" onclick="selectColor(this)"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAYMENT -->
-        <div class="section">
-            <div class="section-label">Paiement</div>
-            <div class="payment-card">
-                <div class="price-input-container">
-                    <span class="price-currency">€</span>
-                    <input type="number" id="priceInput" class="price-input" placeholder="0">
-                </div>
-                <div class="payment-row">
-                    <button class="payment-btn" data-status="paid" onclick="selectStatus(this)">✓ Réglé</button>
-                    <button class="payment-btn active-orange" data-status="pending" onclick="selectStatus(this)">⏳ En attente</button>
-                </div>
-                <div class="payment-row">
-                    <button class="payment-btn active-blue" data-method="cash" onclick="selectMethod(this)">💵 Cash</button>
-                    <button class="payment-btn" data-method="card" onclick="selectMethod(this)">💳 Carte</button>
-                </div>
-                <button class="generate-btn" onclick="genererFiche()">Créer Fiche Production</button>
-            </div>
+    <div class="footer">
+        <div class="price-total" id="totalDisplay">25.00€</div>
+        <div style="display:flex; gap:12px; font-size:12px; font-weight:800;">
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox"> CASH</label>
+            <label style="display:flex; align-items:center; gap:4px; color:var(--apple-green)"><input type="checkbox" id="regleToggle" onchange="App.uiUpdate()"> RÉGLÉ</label>
         </div>
     </div>
 </div>
 
-<div id="fichesContainer"></div>
+<div style="width:100%; max-width:550px;">
+    <button class="btn-confirm" onclick="alert('Commande validée pour la Collection !')">VALIDER LA PRODUCTION</button>
+    <button class="btn-download" onclick="App.download()">📥 ENREGISTRER LA FICHE PNG</button>
+</div>
 
 <script>
-    const state = {
-        urgence: false,
-        collection: 'tshirt',
-        category: 'H',
-        categoryLabel: 'Homme',
-        ref: 1,
-        face: 'avant',
-        avant: { text: '', font: 'Playfair Display', logo: null, color: '#1D1D1F', colorName: 'Noir' },
-        arriere: { text: '', font: 'Playfair Display', logo: null, color: '#1D1D1F', colorName: 'Noir' },
-        payment: { status: 'pending', method: 'cash' }
-    };
+const App = {
+    state: { 
+        target: 'H', 
+        canvases: { AV: null, AR: null } 
+    },
 
-    function toggleUrgence() {
-        state.urgence = !state.urgence;
-        document.getElementById('body').classList.toggle('urgence-active', state.urgence);
-        document.getElementById('urgenceBtn').innerHTML = state.urgence
-            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> URGENT'
-            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Urgence';
-        if (navigator.vibrate && state.urgence) navigator.vibrate(100);
-    }
+    init() { 
+        this.initCanvases();
+        this.renderModels(); 
+        this.updateTotal();
+        document.getElementById('orderID').innerText = `2026-Shop-${Math.floor(Math.random() * 900000 + 100000)}`;
+    },
 
-    function selectCollection(el) {
-        document.querySelectorAll('.collection-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        state.collection = el.dataset.col;
-        const body = document.getElementById('body');
-        body.className = el.dataset.theme + (state.urgence ? ' urgence-active' : '');
-    }
+    initCanvases() {
+        const setup = (id) => {
+            const c = new fabric.Canvas(id, {
+                width: 250,
+                height: 250,
+                allowTouchScrolling: true
+            });
+            // Style des poignées "Luxe"
+            fabric.Object.prototype.set({
+                transparentCorners: false,
+                cornerColor: '#007AFF',
+                cornerStyle: 'circle',
+                cornerSize: 8,
+                borderColor: '#007AFF'
+            });
+            return c;
+        };
+        this.state.canvases.AV = setup('canvasAV');
+        this.state.canvases.AR = setup('canvasAR');
+    },
 
-    function selectCategory(el) {
-        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        state.category = el.dataset.cat;
-        state.categoryLabel = el.dataset.label;
-        document.getElementById('gammeLabel').textContent = 'Gamme ' + state.categoryLabel;
-        updateRefDisplay();
-    }
+    updateTshirtColor() {
+        document.documentElement.style.setProperty('--tshirt-color', document.getElementById('tshirtColorSelect').value);
+    },
 
-    function changeRef(d) {
-        state.ref = Math.max(1, Math.min(15, state.ref + d));
-        document.getElementById('refRange').value = state.ref;
-        updateRefDisplay();
-    }
+    setTarget(t, el) { 
+        this.state.target = t; 
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); 
+        el.classList.add('active'); 
+        this.renderModels(); 
+    },
 
-    function updateRef() {
-        state.ref = parseInt(document.getElementById('refRange').value);
-        updateRefDisplay();
-    }
-
-    function updateRefDisplay() {
-        document.getElementById('refDisplay').textContent = state.category + String(state.ref).padStart(3, '0');
-    }
-
-    function switchFace(el) {
-        document.querySelectorAll('.face-tab').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        state.face = el.dataset.face;
-        const f = state[state.face];
-        document.getElementById('customText').value = f.text;
-        document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.dataset.font === f.font));
-        document.querySelectorAll('.logo-chip').forEach(b => b.classList.toggle('active', f.logo && b.dataset.logo === f.logo));
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', d.dataset.color === f.color));
-    }
-
-    function selectFont(el) {
-        document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        state[state.face].font = el.dataset.font;
-        updatePreview();
-    }
-
-    function selectLogo(el) {
-        const wasActive = el.classList.contains('active');
-        document.querySelectorAll('.logo-chip').forEach(b => b.classList.remove('active'));
-        if (!wasActive) {
-            el.classList.add('active');
-            state[state.face].logo = el.dataset.logo;
-            state[state.face].text = '';
-            document.getElementById('customText').value = '';
-        } else {
-            state[state.face].logo = null;
+    renderModels() {
+        const sel = document.getElementById('modelRef'); sel.innerHTML = '';
+        for(let i=1; i<=15; i++) { 
+            let val = this.state.target + String(i).padStart(3, '0'); 
+            sel.options.add(new Option(val, val)); 
         }
-        updatePreview();
-    }
+    },
 
-    function selectColor(el) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-        el.classList.add('active');
-        state[state.face].color = el.dataset.color;
-        state[state.face].colorName = el.dataset.name;
-        updatePreview();
-    }
+    uiUpdate() {
+        const isPaid = document.getElementById('regleToggle').checked;
+        const isUrg = document.getElementById('urgenceToggle').checked;
+        document.getElementById('body').className = (isPaid ? 'regle-active ' : '') + (isUrg ? 'urgence-active' : '');
+        document.getElementById('capture').className = 'main-card' + (isPaid ? ' is-paid' : '');
+    },
 
-    function updatePreview() {
-        state[state.face].text = document.getElementById('customText').value;
+    handleLogoChange(side) {
+        const val = document.getElementById('logo' + side).value;
+        if(val === 'UPLOAD') {
+            document.getElementById('file' + side).click();
+        } else if (val !== "") {
+            this.addTextLogo(side, val);
+        } else {
+            this.state.canvases[side].clear();
+        }
+    },
 
-        const av = state.avant;
-        const ar = state.arriere;
-
-        const avContent = av.logo ? av.logo + '-AV' : (av.text || 'Texte');
-        const arContent = ar.logo ? ar.logo + '-AR' : (ar.text || 'Texte');
-
-        const previewAv = document.getElementById('previewAvant');
-        const previewAr = document.getElementById('previewArriere');
-
-        previewAv.textContent = avContent;
-        previewAv.style.color = av.color;
-        previewAv.style.fontFamily = av.font;
-
-        previewAr.textContent = arContent;
-        previewAr.style.color = ar.color;
-        previewAr.style.fontFamily = ar.font;
-    }
-
-    function selectStatus(el) {
-        document.querySelectorAll('.payment-btn[data-status]').forEach(b => {
-            b.classList.remove('active-green', 'active-orange');
+    addTextLogo(side, text) {
+        const canvas = this.state.canvases[side];
+        canvas.clear();
+        const txt = new fabric.Text(text, {
+            left: 125,
+            top: 100,
+            fontSize: 25,
+            fontWeight: '800',
+            fontFamily: 'Inter',
+            originX: 'center',
+            fill: '#000000'
         });
-        el.classList.add(el.dataset.status === 'paid' ? 'active-green' : 'active-orange');
-        state.payment.status = el.dataset.status;
+        canvas.add(txt);
+        canvas.setActiveObject(txt);
+    },
+
+    previewFile(side) {
+        const file = document.getElementById('file' + side).files[0];
+        const canvas = this.state.canvases[side];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                fabric.Image.fromURL(e.target.result, (img) => {
+                    canvas.clear();
+                    img.scaleToWidth(80);
+                    img.set({ left: 85, top: 80 });
+                    canvas.add(img);
+                    canvas.setActiveObject(img);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    },
+
+    updateTotal() {
+        const total = parseFloat(document.getElementById('basePrice').value) + parseFloat(document.getElementById('persoPrice').value);
+        document.getElementById('totalDisplay').innerText = total.toFixed(2) + '€';
+    },
+
+    download() {
+        // Désactiver les cadres de sélection pour la photo
+        this.state.canvases.AV.discardActiveObject().renderAll();
+        this.state.canvases.AR.discardActiveObject().renderAll();
+
+        html2canvas(document.getElementById('capture'), { 
+            scale: 3,
+            useCORS: true,
+            allowTaint: true 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `OLDA_PROD_${document.getElementById('orderID').innerText}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
     }
+};
 
-    function selectMethod(el) {
-        document.querySelectorAll('.payment-btn[data-method]').forEach(b => b.classList.remove('active-blue'));
-        el.classList.add('active-blue');
-        state.payment.method = el.dataset.method;
-    }
-
-    function genererFiche() {
-        const nom = document.getElementById('clientNom').value || 'CLIENT';
-        const tel = document.getElementById('clientTel').value || '—';
-        const prix = document.getElementById('priceInput').value || '0';
-        const id = Math.floor(1000 + Math.random() * 9000);
-        const date = new Date().toLocaleDateString('fr-FR');
-        const heure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        const ref = state.category + String(state.ref).padStart(3, '0');
-
-        const cols = { tshirt: { bg: '#E3F2FD', c: '#1976D2', n: 'T-Shirt' }, polo: { bg: '#E8F5E9', c: '#388E3C', n: 'Polo' }, sweat: { bg: '#FFF8E1', c: '#F57C00', n: 'Sweat' }, veste: { bg: '#F3E5F5', c: '#7B1FA2', n: 'Veste' }, casquette: { bg: '#FCE4EC', c: '#C2185B', n: 'Casquette' } };
-        const col = cols[state.collection];
-
-        const avDisplay = state.avant.logo ? state.avant.logo + '-AV' : state.avant.text;
-        const arDisplay = state.arriere.logo ? state.arriere.logo + '-AR' : state.arriere.text;
-
-        const fiche = document.createElement('div');
-        fiche.className = 'fiche fade-in' + (state.urgence ? ' urgente' : '');
-        fiche.innerHTML = `
-            <div class="fiche-header">
-                <div>
-                    <div class="fiche-meta">Fiche Production</div>
-                    <div class="fiche-client">${nom.toUpperCase()}</div>
-                    <div class="fiche-meta">${tel}</div>
-                </div>
-                <div style="text-align:right;">
-                    <div class="fiche-id">#${id}</div>
-                    <div class="fiche-meta">${date} — ${heure}</div>
-                </div>
-            </div>
-            <div class="fiche-product">
-                <span class="fiche-badge" style="background:${col.bg};color:${col.c};">${col.n}</span>
-                <div class="fiche-ref">${ref}</div>
-                <div class="fiche-category">${state.categoryLabel}</div>
-            </div>
-            <div class="fiche-details">
-                <div class="fiche-row"><span class="fiche-label">Avant</span><span class="fiche-value" style="color:${state.avant.color}">${avDisplay || '—'}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Couleur Avant</span><span class="fiche-value">${state.avant.colorName}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Arrière</span><span class="fiche-value" style="color:${state.arriere.color}">${arDisplay || '—'}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Couleur Arrière</span><span class="fiche-value">${state.arriere.colorName}</span></div>
-            </div>
-            <div class="fiche-payment">
-                <div class="fiche-price">${prix} €</div>
-                <span class="fiche-status ${state.payment.status === 'paid' ? 'paid' : 'pending'}">${state.payment.status === 'paid' ? '✓ Réglé' : '⏳ En attente'}</span>
-                <div class="fiche-meta" style="margin-top:8px;">${state.payment.method === 'cash' ? '💵 Espèces' : '💳 Carte'}</div>
-            </div>
-            <div class="fiche-actions no-print">
-                <button class="fiche-btn-delete" onclick="this.closest('.fiche').remove()">Supprimer</button>
-                <button class="fiche-btn-print" onclick="window.print()">Imprimer</button>
-            </div>
-        `;
-        document.getElementById('fichesContainer').prepend(fiche);
-    }
-
-    updateRefDisplay();
-    updatePreview();
+window.onload = () => App.init();
 </script>
-
 </body>
 </html>
