@@ -3,52 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLDA | Système Production Complet</title>
+    <title>OLDA | Système Production Expert</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --apple-blue: #007AFF; --bg: #F0F2F5; }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        :root { --apple-blue: #007AFF; --bg: #F5F7FA; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #1d1d1f; }
         
-        .main-card { width: 100%; max-width: 480px; background: #fff; border-radius: 32px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .order-id { font-size: 11px; font-weight: 700; color: var(--apple-blue); background: #E5F1FF; padding: 4px 10px; border-radius: 20px; }
+        /* Stepper Haute Gamme */
+        .luxury-stepper { display: flex; gap: 30px; margin-bottom: 25px; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .step { color: #AEAEB2; position: relative; padding-bottom: 5px; }
+        .step.active { color: #000; border-bottom: 2px solid #000; }
 
-        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
-        .select-apple, .input-apple { width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid #E5E5E7; font-size: 14px; font-weight: 600; margin-bottom: 12px; outline: none; background: #FBFBFD; box-sizing: border-box; }
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 35px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); }
         
-        .preview-container { display: flex; flex-direction: column; gap: 20px; align-items: center; margin: 20px 0; }
-        .canvas-box { width: 300px; height: 360px; background: #fff; border-radius: 24px; position: relative; border: 1px solid #EEE; overflow: hidden; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .order-tag { font-size: 11px; font-weight: 800; color: var(--apple-blue); background: #E5F1FF; padding: 5px 12px; border-radius: 20px; }
+
+        .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
         
-        .tshirt-svg { position: absolute; width: 300px; height: 360px; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .input-apple, .select-apple { 
+            width: 100%; height: 46px; padding: 0 15px; border-radius: 14px; border: 1px solid #EFEEF2; 
+            font-size: 14px; font-weight: 600; background: #FBFBFD; outline: none; transition: 0.2s; box-sizing: border-box;
+        }
+        .input-apple:focus { border-color: var(--apple-blue); background: #fff; }
+
+        .preview-container { display: flex; flex-direction: column; gap: 25px; align-items: center; margin: 25px 0; }
+        .canvas-box { 
+            width: 300px; height: 380px; background: #fff; border-radius: 28px; position: relative; 
+            border: 1px solid #F2F2F7; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+        
+        .tshirt-svg { position: absolute; width: 300px; height: 380px; top: 0; left: 0; z-index: 1; pointer-events: none; }
         canvas { z-index: 2; }
 
-        .size-badge { position: absolute; bottom: 12px; right: 12px; background: #1d1d1f; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; z-index: 10; }
-        .view-label { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 6px; z-index: 5; color: #555; }
+        .mm-badge { position: absolute; bottom: 15px; right: 15px; background: #000; color: #fff; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 900; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .view-name { position: absolute; top: 15px; left: 15px; font-size: 11px; font-weight: 900; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 8px; z-index: 5; color: #1d1d1f; }
 
-        .footer { border-top: 1px solid #EEE; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-main { background: #000; color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 700; cursor: pointer; width: 100%; font-size: 15px; margin-top: 15px; }
+        .footer { border-top: 1px solid #F2F2F7; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .price { font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+
+        .btn-confirm { background: #000; color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+        .btn-confirm:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
+<div class="luxury-stepper">
+    <div class="step active">01. Personnalisation</div>
+    <div class="step">02. Production</div>
+</div>
+
 <div class="main-card" id="capture">
     <div class="header-row">
-        <div class="order-id" id="orderID">ORD-00000</div>
-        <div style="font-size: 10px; font-weight: 800; color: #86868B;">ÉCHELLE 1:1 (300mm)</div>
+        <div class="order-tag" id="orderID">ORD-77291</div>
+        <div style="font-size: 10px; font-weight: 800; color: #34C759;">ÉCHELLE RÉELLE 1:1</div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div><span class="label">Tél</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+    <div class="field-group">
+        <div><span class="label">Nom du Client</span><input type="text" id="custName" class="input-apple" placeholder="Ex: Jean Dupont"></div>
+        <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06 .. .. .. .."></div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Collection</span>
+    <div class="field-group">
+        <div>
+            <span class="label">Collection T-Shirt</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
-                <option value="#F5F5F7">Blanc (Grisé)</option>
+                <option value="#F2F2F7">Blanc (Grisé)</option>
                 <option value="#1A1A1A">Noir Deep</option>
                 <option value="#FFEBEE">Rose Pastel</option>
                 <option value="#F3E5F5">Mauve Pastel</option>
@@ -66,7 +90,8 @@
                 <option value="#CFD8DC">Acier Pastel</option>
             </select>
         </div>
-        <div><span class="label">Marquage</span>
+        <div>
+            <span class="label">Couleur Marquage</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
@@ -76,41 +101,41 @@
                 <option value="#FF9500">Orange</option>
                 <option value="#AF52DE">Violet</option>
                 <option value="#FFCC00">Jaune</option>
-                <option value="#A2845E">Or</option>
+                <option value="#A2845E">Or Métal</option>
             </select>
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div><span class="label">Logo Avant</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="OLDA">OLDA</option></select></div>
-        <div><span class="label">Logo Arrière</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Image</option><option value="WRA-01">WRA-01</option></select></div>
+    <div class="field-group">
+        <div><span class="label">Logo Avant (Cœur)</span><select id="logoAV" class="select-apple" onchange="App.handleLogo('AV')"><option value="">Aucun</option><option value="UPLOAD">📁 Importer Image</option><option value="OLDA">OLDA</option><option value="ESSENTIAL">ESSENTIAL</option></select></div>
+        <div><span class="label">Logo Arrière (Dos)</span><select id="logoAR" class="select-apple" onchange="App.handleLogo('AR')"><option value="">Aucun</option><option value="UPLOAD">📁 Importer Image</option><option value="WRA-01">WRA-01</option><option value="BACKPRINT">BACKPRINT</option></select></div>
     </div>
 
     <div class="preview-container">
         <div class="canvas-box">
-            <span class="view-label">AVANT</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 360"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F5F5F7" stroke="#DDD" stroke-width="1"/></svg>
-            <div class="size-badge" id="indAV">0 mm</div>
+            <span class="view-name">AVANT</span>
+            <svg class="tshirt-svg" viewBox="0 0 300 380"><path id="pathAV" d="M45,30 L90,10 C110,35 190,35 210,10 L255,30 L300,90 L260,110 L245,100 L245,360 L55,360 L55,100 L40,110 L0,90 Z" fill="#F2F2F7" stroke="#E5E5E7" stroke-width="1"/></svg>
+            <div class="mm-badge" id="indAV">0 mm</div>
             <canvas id="canAV"></canvas>
         </div>
         <div class="canvas-box">
-            <span class="view-label">ARRIÈRE</span>
-            <svg class="tshirt-svg" viewBox="0 0 300 360"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#F5F5F7" stroke="#DDD" stroke-width="1"/></svg>
-            <div class="size-badge" id="indAR">0 mm</div>
+            <span class="view-name">ARRIÈRE</span>
+            <svg class="tshirt-svg" viewBox="0 0 300 380"><path id="pathAR" d="M45,30 L90,10 C110,15 190,15 210,10 L255,30 L300,90 L260,110 L245,100 L245,360 L55,360 L55,100 L40,110 L0,90 Z" fill="#F2F2F7" stroke="#E5E5E7" stroke-width="1"/></svg>
+            <div class="mm-badge" id="indAR">0 mm</div>
             <canvas id="canAR"></canvas>
         </div>
     </div>
 
     <div class="footer">
-        <div style="font-size: 24px; font-weight: 900;">25.00€</div>
-        <div style="text-align: right; line-height: 1.2;">
-            <span class="label" style="margin:0">Statut</span>
-            <span style="font-size: 11px; font-weight: 700; color: #34C759;">PRÊT POUR PROD</span>
+        <div class="price">25.00€</div>
+        <div style="text-align: right">
+            <span class="label" style="margin:0">Statut Fiche</span>
+            <div style="font-size: 12px; font-weight: 800; color: #000;">PRODUCTION OK</div>
         </div>
     </div>
 </div>
 
-<button class="btn-main" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
+<button class="btn-confirm" onclick="App.download()">GÉNÉRER LA FICHE DE PRODUCTION (PNG)</button>
 
 <input type="file" id="fileAV" style="display:none" onchange="App.previewFile('AV')">
 <input type="file" id="fileAR" style="display:none" onchange="App.previewFile('AR')">
@@ -124,7 +149,7 @@ const App = {
         document.getElementById('orderID').innerText = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
     },
     setupCanvas(id, indId) {
-        const c = new fabric.Canvas(id, { width: 300, height: 360 });
+        const c = new fabric.Canvas(id, { width: 300, height: 380 });
         c.on('object:scaling', (e) => {
             document.getElementById(indId).innerText = `${Math.round(e.target.getScaledWidth())} mm`;
         });
@@ -164,7 +189,7 @@ const App = {
         const color = document.getElementById('logoColorSelect').value;
         const callback = (obj) => {
             obj.set({ 
-                left: side==='AV'?195:150, top: 120, originX: 'center', originY: 'center',
+                left: side==='AV'?200:150, top: 130, originX: 'center', originY: 'center',
                 cornerColor: '#007AFF', cornerSize: 10, cornerStyle: 'circle', transparentCorners: false
             });
             obj.setControlsVisibility({ mtr: false });
