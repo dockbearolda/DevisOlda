@@ -2,432 +2,324 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLDA | Configurateur Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>OLDA | Configurateur</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --apple-blue: #007AFF;
-            --apple-red: #FF3B30;
-            --apple-green: #34C759;
-            --apple-orange: #FF9500;
-            --apple-dark: #1D1D1F;
-            --apple-gray: #86868B;
-            --apple-light: #F5F5F7;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --blue: #007AFF;
+            --red: #FF3B30;
+            --green: #34C759;
+            --orange: #FF9500;
+            --dark: #1D1D1F;
+            --gray: #86868B;
+            --gray-light: #E5E5EA;
+            --bg: #F5F5F7;
+            --card: rgba(255,255,255,0.8);
+            --glass: rgba(255,255,255,0.6);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
-            background: var(--apple-light);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            transition: var(--transition);
+            padding: 24px 16px;
+            transition: background 0.5s ease;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* === THEMES === */
-        .theme-tshirt { background: linear-gradient(180deg, #E8F4FD 0%, #D0E8F9 100%); }
-        .theme-polo { background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%); }
+        /* Themes */
+        .theme-tshirt { background: linear-gradient(180deg, #E8F4FD 0%, #D4EDFC 100%); }
+        .theme-polo { background: linear-gradient(180deg, #E8F5E9 0%, #D4ECD6 100%); }
         .theme-sweat { background: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 100%); }
-        .theme-veste { background: linear-gradient(180deg, #F3E5F5 0%, #E1BEE7 100%); }
-        .theme-casquette { background: linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 100%); }
+        .theme-veste { background: linear-gradient(180deg, #F3E5F5 0%, #E8D5EB 100%); }
+        .theme-casquette { background: linear-gradient(180deg, #FCE4EC 0%, #F8D0DC 100%); }
 
-        /* === MODE URGENCE === */
+        /* Urgence */
         .urgence-active {
             background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%) !important;
         }
-
-        .urgence-active .main-container {
-            border-color: var(--apple-red) !important;
-            box-shadow: 0 0 0 1px var(--apple-red), 0 40px 80px -20px rgba(255, 59, 48, 0.3) !important;
+        .urgence-active .card {
+            box-shadow: 0 0 0 2px var(--red), 0 20px 60px -10px rgba(255,59,48,0.25) !important;
+        }
+        .urgence-active .btn-urgence {
+            background: var(--red);
+            color: #fff;
         }
 
-        .urgence-active .urgence-btn {
-            background: var(--apple-red);
-            color: white;
-            animation: pulse-urgence 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-urgence {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
-            50% { box-shadow: 0 0 0 16px rgba(255, 59, 48, 0); }
-        }
-
-        /* === CONTAINER PRINCIPAL === */
-        .main-container {
-            width: 100%;
-            max-width: 520px;
-            background: var(--card-bg);
+        /* Card */
+        .card {
+            max-width: 420px;
+            margin: 0 auto;
+            background: var(--card);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
             overflow: hidden;
-            transition: var(--transition);
+            box-shadow: 0 20px 60px -10px rgba(0,0,0,0.08);
+            transition: box-shadow 0.4s ease;
         }
 
-        /* === HEADER === */
+        /* Header */
         .header {
-            padding: 24px 28px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--apple-dark);
-            letter-spacing: -0.5px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--dark);
         }
 
-        .logo span {
-            color: var(--apple-gray);
-            font-weight: 400;
-        }
-
-        .urgence-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
+        .btn-urgence {
+            padding: 8px 16px;
             border-radius: 20px;
             border: none;
-            background: rgba(255, 59, 48, 0.1);
-            color: var(--apple-red);
+            background: rgba(255,59,48,0.1);
+            color: var(--red);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
         }
 
-        .urgence-btn:hover {
-            background: rgba(255, 59, 48, 0.15);
-            transform: scale(1.02);
-        }
-
-        .urgence-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* === CONTENT === */
-        .content {
-            padding: 28px;
-        }
-
+        /* Section */
         .section {
-            margin-bottom: 32px;
+            padding: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .section:last-child {
-            margin-bottom: 0;
+            border-bottom: none;
         }
 
-        .section-label {
+        .section-title {
             font-size: 11px;
             font-weight: 600;
-            color: var(--apple-gray);
+            color: var(--gray);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             margin-bottom: 12px;
         }
 
-        /* === INPUTS === */
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .input-field {
+        /* Input */
+        .input {
             width: 100%;
             padding: 14px 16px;
             border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--gray-light);
+            background: #fff;
             font-size: 15px;
             font-weight: 500;
-            color: var(--apple-dark);
-            transition: var(--transition);
+            color: var(--dark);
             outline: none;
+            transition: all 0.2s ease;
         }
 
-        .input-field::placeholder {
-            color: var(--apple-gray);
+        .input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        }
+
+        .input::placeholder {
+            color: var(--gray);
             font-weight: 400;
         }
 
-        .input-field:focus {
-            border-color: var(--apple-blue);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-        }
-
-        /* === COLLECTION SELECTOR === */
-        .collection-selector {
-            display: flex;
-            gap: 8px;
-        }
-
-        .collection-btn {
-            flex: 1;
-            padding: 14px 8px;
-            border-radius: 14px;
-            border: 1.5px solid rgba(0, 0, 0, 0.06);
-            background: white;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .collection-btn .icon {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .collection-btn:hover {
-            border-color: rgba(0, 0, 0, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .collection-btn.active {
-            border-color: var(--apple-blue);
-            background: rgba(0, 122, 255, 0.08);
-            color: var(--apple-blue);
-        }
-
-        /* === CATEGORY SELECTOR === */
-        .category-selector {
-            display: flex;
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 12px;
-            padding: 3px;
-        }
-
-        .category-btn {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--apple-gray);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .category-btn.active {
-            background: white;
-            color: var(--apple-dark);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        /* === REFERENCE STEPPER === */
-        .stepper-container {
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stepper-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .stepper-value {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--apple-dark);
-            letter-spacing: 2px;
-            margin-bottom: 16px;
-        }
-
-        .stepper-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .stepper-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: var(--apple-dark);
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stepper-btn:hover {
-            background: var(--apple-blue);
-            transform: scale(1.08);
-        }
-
-        .stepper-range {
-            flex: 1;
-            max-width: 180px;
-            height: 4px;
-            border-radius: 2px;
-            background: rgba(0, 0, 0, 0.1);
-            appearance: none;
-            outline: none;
-        }
-
-        .stepper-range::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--apple-dark);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* === PRODUCT PREVIEW === */
-        .preview-grid {
+        .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .preview-card {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-        }
-
-        .preview-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--apple-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .preview-mockup {
-            width: 100%;
-            height: 120px;
-            background: linear-gradient(180deg, #FAFAFA 0%, #F0F0F0 100%);
-            border-radius: 12px;
+        /* Segmented Control */
+        .segmented {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            background: rgba(0,0,0,0.04);
+            border-radius: 10px;
+            padding: 2px;
         }
 
-        .preview-tshirt {
-            width: 70px;
-            height: 80px;
-            background: white;
-            border-radius: 2px 2px 16px 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        .seg-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.25s ease;
         }
 
-        .preview-tshirt::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 8px;
-            background: white;
-            border-radius: 0 0 12px 12px;
+        .seg-btn.active {
+            background: #fff;
+            color: var(--dark);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
-        .preview-text {
-            font-size: 10px;
-            font-weight: 600;
-            text-align: center;
-            padding: 4px;
-            transition: var(--transition);
-        }
-
-        /* === FACE TABS === */
-        .face-tabs {
+        /* Collection Pills */
+        .pills {
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .face-tab {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(0, 0, 0, 0.04);
+        .pill {
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--gray-light);
+            background: #fff;
             font-size: 13px;
             font-weight: 600;
-            color: var(--apple-gray);
+            color: var(--dark);
             cursor: pointer;
-            transition: var(--transition);
+            white-space: nowrap;
+            transition: all 0.2s ease;
         }
 
-        .face-tab.active {
-            background: var(--apple-dark);
-            color: white;
+        .pill.active {
+            background: var(--dark);
+            border-color: var(--dark);
+            color: #fff;
         }
 
-        /* === CUSTOMIZATION === */
-        .custom-card {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 16px;
-            padding: 20px;
+        /* iOS Wheel Picker */
+        .wheel-picker {
+            height: 160px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
+        }
+
+        .wheel-picker::before,
+        .wheel-picker::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .wheel-picker::before {
+            top: 0;
+            background: linear-gradient(to bottom, rgba(245,245,247,0.95), transparent);
+        }
+
+        .wheel-picker::after {
+            bottom: 0;
+            background: linear-gradient(to top, rgba(245,245,247,0.95), transparent);
+        }
+
+        .wheel-highlight {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            right: 12px;
+            height: 36px;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.04);
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .wheel-scroll {
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 62px 0;
+        }
+
+        .wheel-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .wheel-item {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--gray);
+            scroll-snap-align: center;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .wheel-item.selected {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Steps */
+        .step {
+            background: var(--glass);
+            border-radius: 14px;
+            padding: 16px;
             margin-bottom: 12px;
         }
 
-        .custom-title {
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--dark);
+            color: #fff;
             font-size: 12px;
             font-weight: 600;
-            color: var(--apple-dark);
-            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* === FONT SELECTOR === */
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Font Grid */
         .font-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -437,384 +329,396 @@
         .font-btn {
             padding: 10px 4px;
             border-radius: 10px;
-            border: 1.5px solid rgba(0, 0, 0, 0.06);
-            background: white;
+            border: 1.5px solid var(--gray-light);
+            background: #fff;
             cursor: pointer;
-            transition: var(--transition);
             text-align: center;
-        }
-
-        .font-btn:hover {
-            border-color: var(--apple-blue);
+            transition: all 0.2s ease;
         }
 
         .font-btn.active {
-            border-color: var(--apple-blue);
-            background: rgba(0, 122, 255, 0.08);
+            border-color: var(--blue);
+            background: rgba(0,122,255,0.06);
         }
 
         .font-btn .sample {
-            font-size: 16px;
+            font-size: 18px;
             display: block;
             margin-bottom: 2px;
+            color: var(--dark);
         }
 
         .font-btn .name {
             font-size: 8px;
-            color: var(--apple-gray);
+            color: var(--gray);
             font-weight: 500;
         }
 
-        .font-classique .sample { font-family: 'Playfair Display', serif; }
-        .font-moderne .sample { font-family: 'Montserrat', sans-serif; font-weight: 300; }
-        .font-script .sample { font-family: 'Dancing Script', cursive; }
-        .font-urbain .sample { font-family: 'Bebas Neue', sans-serif; }
-        .font-minimal .sample { font-family: 'Inter', sans-serif; font-weight: 300; }
+        .f-classique .sample { font-family: 'Playfair Display', serif; }
+        .f-moderne .sample { font-family: 'Montserrat', sans-serif; font-weight: 300; }
+        .f-script .sample { font-family: 'Dancing Script', cursive; }
+        .f-urbain .sample { font-family: 'Bebas Neue', sans-serif; }
+        .f-minimal .sample { font-family: 'Inter', sans-serif; font-weight: 300; }
 
-        /* === LOGO SELECTOR === */
-        .logo-grid {
+        /* Design Chips */
+        .chips {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
 
-        .logo-chip {
-            padding: 8px 14px;
-            border-radius: 16px;
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
-            background: white;
-            font-size: 12px;
+        .chip {
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--gray-light);
+            background: #fff;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--apple-dark);
+            color: var(--dark);
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
         }
 
-        .logo-chip:hover {
-            border-color: var(--apple-blue);
+        .chip.active {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
         }
 
-        .logo-chip.active {
-            background: var(--apple-blue);
-            border-color: var(--apple-blue);
-            color: white;
-        }
-
-        .suffix-note {
-            font-size: 10px;
-            color: var(--apple-gray);
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        /* === COLOR DOTS === */
-        .color-dots {
+        /* Color Dots */
+        .dots {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
-        .color-dot {
-            width: 28px;
-            height: 28px;
+        .dot {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            transition: var(--transition);
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .color-dot::after {
+        .dot::after {
             content: '';
             position: absolute;
             inset: -5px;
             border-radius: 50%;
             border: 2px solid transparent;
-            transition: var(--transition);
+            transition: border-color 0.2s ease;
         }
 
-        .color-dot:hover {
+        .dot:hover {
+            transform: scale(1.1);
+        }
+
+        .dot.active {
             transform: scale(1.15);
         }
 
-        .color-dot.active::after {
-            border-color: var(--apple-blue);
+        .dot.active::after {
+            border-color: var(--blue);
         }
 
-        .color-dot.active {
-            transform: scale(1.2);
+        .d-blanc { background: linear-gradient(145deg, #fff, #f0f0f0); }
+        .d-noir { background: linear-gradient(145deg, #3a3a3c, #1c1c1e); }
+        .d-rouge { background: linear-gradient(145deg, #ff453a, #d70015); }
+        .d-bleu { background: linear-gradient(145deg, #0a84ff, #0056b3); }
+        .d-vert { background: linear-gradient(145deg, #32d74b, #248a3d); }
+        .d-jaune { background: linear-gradient(145deg, #ffd60a, #b59400); }
+        .d-violet { background: linear-gradient(145deg, #bf5af2, #8944ab); }
+        .d-orange { background: linear-gradient(145deg, #ff9f0a, #c77800); }
+        .d-rose { background: linear-gradient(145deg, #ff375f, #d30f45); }
+
+        /* Textarea */
+        .textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-light);
+            background: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--dark);
+            resize: none;
+            outline: none;
+            transition: all 0.2s ease;
         }
 
-        .dot-blanc { background: linear-gradient(145deg, #FFFFFF, #E8E8E8); }
-        .dot-noir { background: linear-gradient(145deg, #3A3A3C, #1C1C1E); }
-        .dot-rouge { background: linear-gradient(145deg, #FF453A, #D70015); }
-        .dot-bleu { background: linear-gradient(145deg, #0A84FF, #0056B3); }
-        .dot-vert { background: linear-gradient(145deg, #32D74B, #248A3D); }
-        .dot-jaune { background: linear-gradient(145deg, #FFD60A, #B59400); }
-        .dot-violet { background: linear-gradient(145deg, #BF5AF2, #8944AB); }
-        .dot-orange { background: linear-gradient(145deg, #FF9F0A, #C77800); }
-        .dot-rose { background: linear-gradient(145deg, #FF375F, #D30F45); }
-
-        /* === PAYMENT === */
-        .payment-card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
+        .textarea:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
         }
 
-        .price-input-container {
+        .textarea::placeholder {
+            color: var(--gray);
+        }
+
+        /* Payment */
+        .price-row {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .price-currency {
-            font-size: 28px;
+        .price-symbol {
+            font-size: 24px;
             font-weight: 300;
-            color: var(--apple-gray);
+            color: var(--gray);
         }
 
         .price-input {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 700;
-            color: var(--apple-dark);
+            color: var(--dark);
             border: none;
             background: transparent;
-            width: 140px;
+            width: 120px;
             text-align: center;
             outline: none;
         }
 
         .price-input::placeholder {
-            color: #D1D1D6;
+            color: #d1d1d6;
         }
 
-        .payment-row {
+        .pay-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .payment-btn {
+        .pay-btn {
             flex: 1;
             padding: 14px;
             border-radius: 12px;
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
-            background: white;
+            border: 1.5px solid var(--gray-light);
+            background: #fff;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
         }
 
-        .payment-btn:hover {
-            border-color: rgba(0, 0, 0, 0.15);
+        .pay-btn.green {
+            background: rgba(52,199,89,0.1);
+            border-color: var(--green);
+            color: var(--green);
         }
 
-        .payment-btn.active-green {
-            background: rgba(52, 199, 89, 0.1);
-            border-color: var(--apple-green);
-            color: var(--apple-green);
+        .pay-btn.orange {
+            background: rgba(255,149,0,0.1);
+            border-color: var(--orange);
+            color: var(--orange);
         }
 
-        .payment-btn.active-orange {
-            background: rgba(255, 149, 0, 0.1);
-            border-color: var(--apple-orange);
-            color: var(--apple-orange);
+        .pay-btn.blue {
+            background: rgba(0,122,255,0.08);
+            border-color: var(--blue);
+            color: var(--blue);
         }
 
-        .payment-btn.active-blue {
-            background: rgba(0, 122, 255, 0.08);
-            border-color: var(--apple-blue);
-            color: var(--apple-blue);
-        }
-
-        /* === GENERATE BTN === */
-        .generate-btn {
+        /* Submit */
+        .btn-submit {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border-radius: 14px;
             border: none;
-            background: var(--apple-dark);
-            color: white;
+            background: var(--dark);
+            color: #fff;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             margin-top: 8px;
         }
 
-        .generate-btn:hover {
-            background: #000;
-            transform: scale(1.01);
+        .btn-submit:active {
+            transform: scale(0.98);
         }
 
-        /* === FICHE PRODUCTION === */
+        /* Fiche */
         .fiche {
-            width: 105mm;
-            min-height: 148mm;
-            background: white;
-            margin: 32px auto;
-            padding: 24px;
+            max-width: 420px;
+            margin: 24px auto;
+            background: #fff;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            padding: 24px;
+            box-shadow: 0 20px 60px -10px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .fiche.urgente {
-            border: 3px solid var(--apple-red);
+            border: 2px solid var(--red);
         }
 
         .fiche.urgente::before {
             content: 'URGENT';
             position: absolute;
-            top: 18px;
-            right: -30px;
-            background: var(--apple-red);
-            color: white;
-            padding: 4px 36px;
+            top: 16px;
+            right: -28px;
+            background: var(--red);
+            color: #fff;
+            padding: 4px 32px;
             font-size: 9px;
             font-weight: 700;
             letter-spacing: 1px;
             transform: rotate(45deg);
         }
 
-        .fiche-header {
+        .fiche-row {
             display: flex;
             justify-content: space-between;
             padding-bottom: 16px;
-            border-bottom: 1px solid #F0F0F0;
+            border-bottom: 1px solid #f0f0f0;
             margin-bottom: 16px;
         }
 
         .fiche-client {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            color: var(--apple-dark);
+            color: var(--dark);
         }
 
         .fiche-meta {
             font-size: 11px;
-            color: var(--apple-gray);
+            color: var(--gray);
         }
 
         .fiche-id {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--apple-blue);
+            color: var(--blue);
         }
 
-        .fiche-product {
+        .fiche-center {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #F0F0F0;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
             margin-bottom: 16px;
         }
 
         .fiche-badge {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 16px;
+            padding: 6px 14px;
+            border-radius: 14px;
             font-size: 11px;
             font-weight: 600;
             margin-bottom: 8px;
         }
 
         .fiche-ref {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
             letter-spacing: 2px;
-            color: var(--apple-dark);
+            color: var(--dark);
         }
 
-        .fiche-category {
+        .fiche-cat {
             font-size: 13px;
-            color: var(--apple-gray);
+            color: var(--gray);
             font-weight: 500;
         }
 
-        .fiche-details {
-            padding: 12px 0;
-            border-bottom: 1px solid #F0F0F0;
-        }
-
-        .fiche-row {
+        .fiche-detail {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 8px 0;
         }
 
         .fiche-label {
             font-size: 11px;
-            color: var(--apple-gray);
+            color: var(--gray);
             text-transform: uppercase;
         }
 
         .fiche-value {
             font-size: 13px;
             font-weight: 600;
-            color: var(--apple-dark);
+            color: var(--dark);
         }
 
-        .fiche-payment {
+        .fiche-notes {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .fiche-notes-title {
+            font-size: 10px;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .fiche-notes-text {
+            font-size: 13px;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .fiche-price {
             text-align: center;
             padding: 16px 0;
         }
 
-        .fiche-price {
+        .fiche-price-value {
             font-size: 32px;
             font-weight: 700;
-            color: var(--apple-dark);
+            color: var(--dark);
         }
 
         .fiche-status {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 16px;
+            padding: 6px 14px;
+            border-radius: 14px;
             font-size: 11px;
             font-weight: 600;
             margin-top: 8px;
         }
 
-        .fiche-status.paid {
-            background: rgba(52, 199, 89, 0.15);
-            color: var(--apple-green);
-        }
-
-        .fiche-status.pending {
-            background: rgba(255, 149, 0, 0.15);
-            color: var(--apple-orange);
-        }
+        .fiche-status.paid { background: rgba(52,199,89,0.12); color: var(--green); }
+        .fiche-status.pending { background: rgba(255,149,0,0.12); color: var(--orange); }
 
         .fiche-actions {
             display: flex;
             justify-content: space-between;
             padding-top: 16px;
-            border-top: 1px solid #F0F0F0;
+            border-top: 1px solid #f0f0f0;
         }
 
-        .fiche-btn-delete {
+        .btn-delete {
             background: none;
             border: none;
-            color: var(--apple-red);
+            color: var(--red);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .fiche-btn-print {
-            background: var(--apple-dark);
-            color: white;
+        .btn-print {
+            background: var(--dark);
+            color: #fff;
             border: none;
             padding: 10px 20px;
             border-radius: 10px;
@@ -823,203 +727,181 @@
             cursor: pointer;
         }
 
-        /* === PRINT === */
+        /* Print */
         @media print {
             .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .fiche { box-shadow: none; margin: 0; border-radius: 0; }
+            body { background: #fff; padding: 0; }
+            .fiche { box-shadow: none; margin: 0; }
         }
 
-        /* === ANIMATION === */
-        .fade-in {
-            animation: fadeIn 0.4s ease;
+        /* Face Tabs */
+        .face-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        .face-tab {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(0,0,0,0.04);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .face-tab.active {
+            background: var(--dark);
+            color: #fff;
         }
     </style>
 </head>
 <body class="theme-tshirt" id="body">
 
-<div class="main-container no-print fade-in">
-    <!-- HEADER -->
+<div class="card no-print">
+    <!-- Header -->
     <div class="header">
-        <div class="logo">OLDA <span>Production</span></div>
-        <button class="urgence-btn" id="urgenceBtn" onclick="toggleUrgence()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
-            Urgence
-        </button>
+        <div class="logo">OLDA</div>
+        <button class="btn-urgence" id="btnUrgence" onclick="toggleUrgence()">⚡ Urgence</button>
     </div>
 
-    <div class="content">
-        <!-- CLIENT -->
-        <div class="section">
-            <div class="section-label">Client</div>
-            <div class="input-row">
-                <input type="text" id="clientNom" class="input-field" placeholder="Nom" style="text-transform: uppercase;">
-                <input type="tel" id="clientTel" class="input-field" placeholder="Téléphone">
-            </div>
+    <!-- Client -->
+    <div class="section">
+        <div class="section-title">Client</div>
+        <div class="input-row">
+            <input type="text" class="input" id="clientNom" placeholder="Nom" style="text-transform:uppercase">
+            <input type="tel" class="input" id="clientTel" placeholder="Téléphone">
+        </div>
+    </div>
+
+    <!-- Collection -->
+    <div class="section">
+        <div class="section-title">Collection</div>
+        <div class="pills">
+            <button class="pill active" data-col="tshirt" data-theme="theme-tshirt" onclick="selectCollection(this)">T-Shirt</button>
+            <button class="pill" data-col="polo" data-theme="theme-polo" onclick="selectCollection(this)">Polo</button>
+            <button class="pill" data-col="sweat" data-theme="theme-sweat" onclick="selectCollection(this)">Sweat</button>
+            <button class="pill" data-col="veste" data-theme="theme-veste" onclick="selectCollection(this)">Veste</button>
+            <button class="pill" data-col="casquette" data-theme="theme-casquette" onclick="selectCollection(this)">Casquette</button>
+        </div>
+    </div>
+
+    <!-- Category -->
+    <div class="section">
+        <div class="section-title">Catégorie</div>
+        <div class="segmented">
+            <button class="seg-btn active" data-cat="H" data-label="Homme" onclick="selectCategory(this)">Homme</button>
+            <button class="seg-btn" data-cat="F" data-label="Femme" onclick="selectCategory(this)">Femme</button>
+            <button class="seg-btn" data-cat="E" data-label="Enfant" onclick="selectCategory(this)">Enfant</button>
+            <button class="seg-btn" data-cat="B" data-label="Bébé" onclick="selectCategory(this)">Bébé</button>
+        </div>
+    </div>
+
+    <!-- Reference Wheel -->
+    <div class="section">
+        <div class="section-title">Référence</div>
+        <div class="wheel-picker">
+            <div class="wheel-highlight"></div>
+            <div class="wheel-scroll" id="wheelScroll"></div>
+        </div>
+    </div>
+
+    <!-- Personnalisation -->
+    <div class="section">
+        <div class="section-title">Personnalisation</div>
+
+        <div class="face-tabs">
+            <button class="face-tab active" data-face="avant" onclick="switchFace(this)">Avant</button>
+            <button class="face-tab" data-face="arriere" onclick="switchFace(this)">Arrière</button>
         </div>
 
-        <!-- COLLECTION -->
-        <div class="section">
-            <div class="section-label">Collection</div>
-            <div class="collection-selector">
-                <button class="collection-btn active" data-col="tshirt" data-theme="theme-tshirt" onclick="selectCollection(this)">
-                    <span class="icon">👕</span>T-Shirt
+        <!-- Étape 1: Texte -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-label">Texte & Typographie</div>
+            </div>
+            <input type="text" class="input" id="customText" placeholder="Saisissez votre texte..." style="margin-bottom:12px" oninput="updateState()">
+            <div class="font-grid">
+                <button class="font-btn f-classique active" data-font="Playfair Display" onclick="selectFont(this)">
+                    <span class="sample">Aa</span><span class="name">Classique</span>
                 </button>
-                <button class="collection-btn" data-col="polo" data-theme="theme-polo" onclick="selectCollection(this)">
-                    <span class="icon">🎽</span>Polo
+                <button class="font-btn f-moderne" data-font="Montserrat" onclick="selectFont(this)">
+                    <span class="sample">Aa</span><span class="name">Moderne</span>
                 </button>
-                <button class="collection-btn" data-col="sweat" data-theme="theme-sweat" onclick="selectCollection(this)">
-                    <span class="icon">🧥</span>Sweat
+                <button class="font-btn f-script" data-font="Dancing Script" onclick="selectFont(this)">
+                    <span class="sample">Aa</span><span class="name">Script</span>
                 </button>
-                <button class="collection-btn" data-col="veste" data-theme="theme-veste" onclick="selectCollection(this)">
-                    <span class="icon">🧥</span>Veste
+                <button class="font-btn f-urbain" data-font="Bebas Neue" onclick="selectFont(this)">
+                    <span class="sample">Aa</span><span class="name">Urbain</span>
                 </button>
-                <button class="collection-btn" data-col="casquette" data-theme="theme-casquette" onclick="selectCollection(this)">
-                    <span class="icon">🧢</span>Casq.
+                <button class="font-btn f-minimal" data-font="Inter" onclick="selectFont(this)">
+                    <span class="sample">Aa</span><span class="name">Minimal</span>
                 </button>
             </div>
         </div>
 
-        <!-- CATEGORY -->
-        <div class="section">
-            <div class="section-label">Catégorie</div>
-            <div class="category-selector">
-                <button class="category-btn active" data-cat="H" data-label="Homme" onclick="selectCategory(this)">Homme</button>
-                <button class="category-btn" data-cat="F" data-label="Femme" onclick="selectCategory(this)">Femme</button>
-                <button class="category-btn" data-cat="E" data-label="Enfant" onclick="selectCategory(this)">Enfant</button>
-                <button class="category-btn" data-cat="B" data-label="Bébé" onclick="selectCategory(this)">Bébé</button>
+        <!-- Étape 2: Design -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-label">Choix du Design</div>
+            </div>
+            <div class="chips">
+                <button class="chip" data-logo="BEA-16" onclick="selectDesign(this)">BEA-16</button>
+                <button class="chip" data-logo="VIN-01" onclick="selectDesign(this)">VIN-01</button>
+                <button class="chip" data-logo="PAY-01" onclick="selectDesign(this)">PAY-01</button>
+                <button class="chip" data-logo="SUR-07" onclick="selectDesign(this)">SUR-07</button>
+                <button class="chip" data-logo="SXM-12" onclick="selectDesign(this)">SXM-12</button>
             </div>
         </div>
 
-        <!-- REFERENCE -->
-        <div class="section">
-            <div class="section-label">Référence</div>
-            <div class="stepper-container">
-                <div class="stepper-label" id="gammeLabel">Gamme Homme</div>
-                <div class="stepper-value" id="refDisplay">H001</div>
-                <div class="stepper-controls">
-                    <button class="stepper-btn" onclick="changeRef(-1)">−</button>
-                    <input type="range" class="stepper-range" id="refRange" min="1" max="15" value="1" oninput="updateRef()">
-                    <button class="stepper-btn" onclick="changeRef(1)">+</button>
-                </div>
+        <!-- Étape 3: Couleur -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-label">Couleur</div>
+            </div>
+            <div class="dots">
+                <div class="dot d-blanc" data-color="#FFFFFF" data-name="Blanc" onclick="selectColor(this)"></div>
+                <div class="dot d-noir active" data-color="#1D1D1F" data-name="Noir" onclick="selectColor(this)"></div>
+                <div class="dot d-rouge" data-color="#FF3B30" data-name="Rouge" onclick="selectColor(this)"></div>
+                <div class="dot d-bleu" data-color="#007AFF" data-name="Bleu" onclick="selectColor(this)"></div>
+                <div class="dot d-vert" data-color="#34C759" data-name="Vert" onclick="selectColor(this)"></div>
+                <div class="dot d-jaune" data-color="#FFD60A" data-name="Jaune" onclick="selectColor(this)"></div>
+                <div class="dot d-violet" data-color="#BF5AF2" data-name="Violet" onclick="selectColor(this)"></div>
+                <div class="dot d-orange" data-color="#FF9500" data-name="Orange" onclick="selectColor(this)"></div>
+                <div class="dot d-rose" data-color="#FF375F" data-name="Rose" onclick="selectColor(this)"></div>
             </div>
         </div>
+    </div>
 
-        <!-- PREVIEW -->
-        <div class="section">
-            <div class="section-label">Aperçu</div>
-            <div class="preview-grid">
-                <div class="preview-card">
-                    <div class="preview-label">Vue Avant (Cœur)</div>
-                    <div class="preview-mockup">
-                        <div class="preview-tshirt">
-                            <div class="preview-text" id="previewAvant" style="color: #1D1D1F;">Texte</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="preview-card">
-                    <div class="preview-label">Vue Arrière</div>
-                    <div class="preview-mockup">
-                        <div class="preview-tshirt">
-                            <div class="preview-text" id="previewArriere" style="color: #1D1D1F;">Texte</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Instructions Atelier -->
+    <div class="section">
+        <div class="section-title">Instructions de Production</div>
+        <textarea class="textarea" id="instructions" placeholder="Notes pour l'atelier..."></textarea>
+    </div>
+
+    <!-- Payment -->
+    <div class="section">
+        <div class="section-title">Paiement</div>
+        <div class="price-row">
+            <span class="price-symbol">€</span>
+            <input type="number" class="price-input" id="priceInput" placeholder="0">
         </div>
-
-        <!-- CUSTOMIZATION -->
-        <div class="section">
-            <div class="section-label">Personnalisation</div>
-            <div class="face-tabs">
-                <button class="face-tab active" data-face="avant" onclick="switchFace(this)">Avant</button>
-                <button class="face-tab" data-face="arriere" onclick="switchFace(this)">Arrière</button>
-            </div>
-
-            <!-- Text & Font -->
-            <div class="custom-card">
-                <div class="custom-title">Texte & Typographie</div>
-                <input type="text" id="customText" class="input-field" placeholder="Saisissez votre texte..." oninput="updatePreview()" style="margin-bottom: 12px;">
-                <div class="font-grid">
-                    <button class="font-btn font-classique active" data-font="Playfair Display" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Classique</span>
-                    </button>
-                    <button class="font-btn font-moderne" data-font="Montserrat" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Moderne</span>
-                    </button>
-                    <button class="font-btn font-script" data-font="Dancing Script" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Script</span>
-                    </button>
-                    <button class="font-btn font-urbain" data-font="Bebas Neue" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Urbain</span>
-                    </button>
-                    <button class="font-btn font-minimal" data-font="Inter" onclick="selectFont(this)">
-                        <span class="sample">Aa</span>
-                        <span class="name">Minimal</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Logos -->
-            <div class="custom-card">
-                <div class="custom-title">Logos Signature</div>
-                <div class="logo-grid">
-                    <button class="logo-chip" data-logo="BEA-16" onclick="selectLogo(this)">BEA-16</button>
-                    <button class="logo-chip" data-logo="VIN-01" onclick="selectLogo(this)">VIN-01</button>
-                    <button class="logo-chip" data-logo="PAY-01" onclick="selectLogo(this)">PAY-01</button>
-                    <button class="logo-chip" data-logo="SUR-07" onclick="selectLogo(this)">SUR-07</button>
-                    <button class="logo-chip" data-logo="SXM-12" onclick="selectLogo(this)">SXM-12</button>
-                </div>
-                <div class="suffix-note">Suffixe automatique : -AV (avant) / -AR (arrière)</div>
-            </div>
-
-            <!-- Colors -->
-            <div class="custom-card">
-                <div class="custom-title">Couleur</div>
-                <div class="color-dots">
-                    <div class="color-dot dot-blanc" data-color="#FFFFFF" data-name="Blanc" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-noir active" data-color="#1D1D1F" data-name="Noir" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-rouge" data-color="#FF3B30" data-name="Rouge" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-bleu" data-color="#007AFF" data-name="Bleu" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-vert" data-color="#34C759" data-name="Vert" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-jaune" data-color="#FFD60A" data-name="Jaune" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-violet" data-color="#BF5AF2" data-name="Violet" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-orange" data-color="#FF9500" data-name="Orange" onclick="selectColor(this)"></div>
-                    <div class="color-dot dot-rose" data-color="#FF375F" data-name="Rose" onclick="selectColor(this)"></div>
-                </div>
-            </div>
+        <div class="pay-row">
+            <button class="pay-btn" data-status="paid" onclick="selectStatus(this)">✓ Réglé</button>
+            <button class="pay-btn orange" data-status="pending" onclick="selectStatus(this)">⏳ En attente</button>
         </div>
-
-        <!-- PAYMENT -->
-        <div class="section">
-            <div class="section-label">Paiement</div>
-            <div class="payment-card">
-                <div class="price-input-container">
-                    <span class="price-currency">€</span>
-                    <input type="number" id="priceInput" class="price-input" placeholder="0">
-                </div>
-                <div class="payment-row">
-                    <button class="payment-btn" data-status="paid" onclick="selectStatus(this)">✓ Réglé</button>
-                    <button class="payment-btn active-orange" data-status="pending" onclick="selectStatus(this)">⏳ En attente</button>
-                </div>
-                <div class="payment-row">
-                    <button class="payment-btn active-blue" data-method="cash" onclick="selectMethod(this)">💵 Cash</button>
-                    <button class="payment-btn" data-method="card" onclick="selectMethod(this)">💳 Carte</button>
-                </div>
-                <button class="generate-btn" onclick="genererFiche()">Créer Fiche Production</button>
-            </div>
+        <div class="pay-row">
+            <button class="pay-btn blue" data-method="cash" onclick="selectMethod(this)">💵 Cash</button>
+            <button class="pay-btn" data-method="card" onclick="selectMethod(this)">💳 Carte</button>
         </div>
+        <button class="btn-submit" onclick="genererFiche()">Créer Fiche Production</button>
     </div>
 </div>
 
@@ -1033,124 +915,132 @@
         categoryLabel: 'Homme',
         ref: 1,
         face: 'avant',
-        avant: { text: '', font: 'Playfair Display', logo: null, color: '#1D1D1F', colorName: 'Noir' },
-        arriere: { text: '', font: 'Playfair Display', logo: null, color: '#1D1D1F', colorName: 'Noir' },
+        avant: { text: '', font: 'Playfair Display', design: null, color: '#1D1D1F', colorName: 'Noir' },
+        arriere: { text: '', font: 'Playfair Display', design: null, color: '#1D1D1F', colorName: 'Noir' },
         payment: { status: 'pending', method: 'cash' }
     };
+
+    // Build Wheel
+    function buildWheel() {
+        const wheel = document.getElementById('wheelScroll');
+        wheel.innerHTML = '';
+        for (let i = 1; i <= 15; i++) {
+            const item = document.createElement('div');
+            item.className = 'wheel-item' + (i === state.ref ? ' selected' : '');
+            item.textContent = state.category + String(i).padStart(3, '0');
+            item.dataset.ref = i;
+            item.onclick = () => scrollToRef(i);
+            wheel.appendChild(item);
+        }
+        setTimeout(() => scrollToRef(state.ref, false), 50);
+    }
+
+    function scrollToRef(ref, smooth = true) {
+        state.ref = ref;
+        const wheel = document.getElementById('wheelScroll');
+        const items = wheel.querySelectorAll('.wheel-item');
+        items.forEach((item, idx) => {
+            item.classList.toggle('selected', idx + 1 === ref);
+            item.textContent = state.category + String(idx + 1).padStart(3, '0');
+        });
+        const target = items[ref - 1];
+        if (target) {
+            wheel.scrollTo({ top: target.offsetTop - 62, behavior: smooth ? 'smooth' : 'auto' });
+        }
+    }
+
+    // Wheel scroll detection
+    document.getElementById('wheelScroll').addEventListener('scrollend', function() {
+        const items = this.querySelectorAll('.wheel-item');
+        const center = this.scrollTop + 80;
+        let closest = 1;
+        let minDist = Infinity;
+        items.forEach((item, idx) => {
+            const dist = Math.abs(item.offsetTop - center);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = idx + 1;
+            }
+        });
+        if (closest !== state.ref) {
+            scrollToRef(closest);
+        }
+    });
 
     function toggleUrgence() {
         state.urgence = !state.urgence;
         document.getElementById('body').classList.toggle('urgence-active', state.urgence);
-        document.getElementById('urgenceBtn').innerHTML = state.urgence
-            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> URGENT'
-            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Urgence';
-        if (navigator.vibrate && state.urgence) navigator.vibrate(100);
+        document.getElementById('btnUrgence').textContent = state.urgence ? '🔴 URGENT' : '⚡ Urgence';
+        if (navigator.vibrate && state.urgence) navigator.vibrate(50);
     }
 
     function selectCollection(el) {
-        document.querySelectorAll('.collection-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
         state.collection = el.dataset.col;
-        const body = document.getElementById('body');
-        body.className = el.dataset.theme + (state.urgence ? ' urgence-active' : '');
+        document.getElementById('body').className = el.dataset.theme + (state.urgence ? ' urgence-active' : '');
     }
 
     function selectCategory(el) {
-        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
         state.category = el.dataset.cat;
         state.categoryLabel = el.dataset.label;
-        document.getElementById('gammeLabel').textContent = 'Gamme ' + state.categoryLabel;
-        updateRefDisplay();
-    }
-
-    function changeRef(d) {
-        state.ref = Math.max(1, Math.min(15, state.ref + d));
-        document.getElementById('refRange').value = state.ref;
-        updateRefDisplay();
-    }
-
-    function updateRef() {
-        state.ref = parseInt(document.getElementById('refRange').value);
-        updateRefDisplay();
-    }
-
-    function updateRefDisplay() {
-        document.getElementById('refDisplay').textContent = state.category + String(state.ref).padStart(3, '0');
+        buildWheel();
     }
 
     function switchFace(el) {
-        document.querySelectorAll('.face-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.face-tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         state.face = el.dataset.face;
+        loadFaceState();
+    }
+
+    function loadFaceState() {
         const f = state[state.face];
         document.getElementById('customText').value = f.text;
         document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.dataset.font === f.font));
-        document.querySelectorAll('.logo-chip').forEach(b => b.classList.toggle('active', f.logo && b.dataset.logo === f.logo));
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', d.dataset.color === f.color));
+        document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', f.design && c.dataset.logo === f.design));
+        document.querySelectorAll('.dot').forEach(d => d.classList.toggle('active', d.dataset.color === f.color));
+    }
+
+    function updateState() {
+        state[state.face].text = document.getElementById('customText').value;
     }
 
     function selectFont(el) {
         document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
         state[state.face].font = el.dataset.font;
-        updatePreview();
     }
 
-    function selectLogo(el) {
+    function selectDesign(el) {
         const wasActive = el.classList.contains('active');
-        document.querySelectorAll('.logo-chip').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         if (!wasActive) {
             el.classList.add('active');
-            state[state.face].logo = el.dataset.logo;
-            state[state.face].text = '';
-            document.getElementById('customText').value = '';
+            state[state.face].design = el.dataset.logo;
         } else {
-            state[state.face].logo = null;
+            state[state.face].design = null;
         }
-        updatePreview();
     }
 
     function selectColor(el) {
-        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
         el.classList.add('active');
         state[state.face].color = el.dataset.color;
         state[state.face].colorName = el.dataset.name;
-        updatePreview();
-    }
-
-    function updatePreview() {
-        state[state.face].text = document.getElementById('customText').value;
-
-        const av = state.avant;
-        const ar = state.arriere;
-
-        const avContent = av.logo ? av.logo + '-AV' : (av.text || 'Texte');
-        const arContent = ar.logo ? ar.logo + '-AR' : (ar.text || 'Texte');
-
-        const previewAv = document.getElementById('previewAvant');
-        const previewAr = document.getElementById('previewArriere');
-
-        previewAv.textContent = avContent;
-        previewAv.style.color = av.color;
-        previewAv.style.fontFamily = av.font;
-
-        previewAr.textContent = arContent;
-        previewAr.style.color = ar.color;
-        previewAr.style.fontFamily = ar.font;
     }
 
     function selectStatus(el) {
-        document.querySelectorAll('.payment-btn[data-status]').forEach(b => {
-            b.classList.remove('active-green', 'active-orange');
-        });
-        el.classList.add(el.dataset.status === 'paid' ? 'active-green' : 'active-orange');
+        document.querySelectorAll('.pay-btn[data-status]').forEach(b => b.classList.remove('green', 'orange'));
+        el.classList.add(el.dataset.status === 'paid' ? 'green' : 'orange');
         state.payment.status = el.dataset.status;
     }
 
     function selectMethod(el) {
-        document.querySelectorAll('.payment-btn[data-method]').forEach(b => b.classList.remove('active-blue'));
-        el.classList.add('active-blue');
+        document.querySelectorAll('.pay-btn[data-method]').forEach(b => b.classList.remove('blue'));
+        el.classList.add('blue');
         state.payment.method = el.dataset.method;
     }
 
@@ -1158,57 +1048,63 @@
         const nom = document.getElementById('clientNom').value || 'CLIENT';
         const tel = document.getElementById('clientTel').value || '—';
         const prix = document.getElementById('priceInput').value || '0';
+        const instructions = document.getElementById('instructions').value;
         const id = Math.floor(1000 + Math.random() * 9000);
         const date = new Date().toLocaleDateString('fr-FR');
         const heure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         const ref = state.category + String(state.ref).padStart(3, '0');
 
-        const cols = { tshirt: { bg: '#E3F2FD', c: '#1976D2', n: 'T-Shirt' }, polo: { bg: '#E8F5E9', c: '#388E3C', n: 'Polo' }, sweat: { bg: '#FFF8E1', c: '#F57C00', n: 'Sweat' }, veste: { bg: '#F3E5F5', c: '#7B1FA2', n: 'Veste' }, casquette: { bg: '#FCE4EC', c: '#C2185B', n: 'Casquette' } };
+        const cols = {
+            tshirt: { bg: '#E3F2FD', c: '#1976D2', n: 'T-Shirt' },
+            polo: { bg: '#E8F5E9', c: '#388E3C', n: 'Polo' },
+            sweat: { bg: '#FFF8E1', c: '#F57C00', n: 'Sweat' },
+            veste: { bg: '#F3E5F5', c: '#7B1FA2', n: 'Veste' },
+            casquette: { bg: '#FCE4EC', c: '#C2185B', n: 'Casquette' }
+        };
         const col = cols[state.collection];
 
-        const avDisplay = state.avant.logo ? state.avant.logo + '-AV' : state.avant.text;
-        const arDisplay = state.arriere.logo ? state.arriere.logo + '-AR' : state.arriere.text;
+        const avDisplay = state.avant.design ? state.avant.design + '-AV' : state.avant.text;
+        const arDisplay = state.arriere.design ? state.arriere.design + '-AR' : state.arriere.text;
 
         const fiche = document.createElement('div');
-        fiche.className = 'fiche fade-in' + (state.urgence ? ' urgente' : '');
+        fiche.className = 'fiche' + (state.urgence ? ' urgente' : '');
         fiche.innerHTML = `
-            <div class="fiche-header">
+            <div class="fiche-row">
                 <div>
                     <div class="fiche-meta">Fiche Production</div>
                     <div class="fiche-client">${nom.toUpperCase()}</div>
                     <div class="fiche-meta">${tel}</div>
                 </div>
-                <div style="text-align:right;">
+                <div style="text-align:right">
                     <div class="fiche-id">#${id}</div>
                     <div class="fiche-meta">${date} — ${heure}</div>
                 </div>
             </div>
-            <div class="fiche-product">
-                <span class="fiche-badge" style="background:${col.bg};color:${col.c};">${col.n}</span>
+            <div class="fiche-center">
+                <span class="fiche-badge" style="background:${col.bg};color:${col.c}">${col.n}</span>
                 <div class="fiche-ref">${ref}</div>
-                <div class="fiche-category">${state.categoryLabel}</div>
+                <div class="fiche-cat">${state.categoryLabel}</div>
             </div>
-            <div class="fiche-details">
-                <div class="fiche-row"><span class="fiche-label">Avant</span><span class="fiche-value" style="color:${state.avant.color}">${avDisplay || '—'}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Couleur Avant</span><span class="fiche-value">${state.avant.colorName}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Arrière</span><span class="fiche-value" style="color:${state.arriere.color}">${arDisplay || '—'}</span></div>
-                <div class="fiche-row"><span class="fiche-label">Couleur Arrière</span><span class="fiche-value">${state.arriere.colorName}</span></div>
-            </div>
-            <div class="fiche-payment">
-                <div class="fiche-price">${prix} €</div>
+            <div class="fiche-detail"><span class="fiche-label">Avant</span><span class="fiche-value" style="color:${state.avant.color}">${avDisplay || '—'}</span></div>
+            <div class="fiche-detail"><span class="fiche-label">Couleur Avant</span><span class="fiche-value">${state.avant.colorName}</span></div>
+            <div class="fiche-detail"><span class="fiche-label">Arrière</span><span class="fiche-value" style="color:${state.arriere.color}">${arDisplay || '—'}</span></div>
+            <div class="fiche-detail"><span class="fiche-label">Couleur Arrière</span><span class="fiche-value">${state.arriere.colorName}</span></div>
+            ${instructions ? `<div class="fiche-notes"><div class="fiche-notes-title">Instructions Atelier</div><div class="fiche-notes-text">${instructions}</div></div>` : ''}
+            <div class="fiche-price">
+                <div class="fiche-price-value">${prix} €</div>
                 <span class="fiche-status ${state.payment.status === 'paid' ? 'paid' : 'pending'}">${state.payment.status === 'paid' ? '✓ Réglé' : '⏳ En attente'}</span>
-                <div class="fiche-meta" style="margin-top:8px;">${state.payment.method === 'cash' ? '💵 Espèces' : '💳 Carte'}</div>
+                <div class="fiche-meta" style="margin-top:6px">${state.payment.method === 'cash' ? '💵 Espèces' : '💳 Carte'}</div>
             </div>
             <div class="fiche-actions no-print">
-                <button class="fiche-btn-delete" onclick="this.closest('.fiche').remove()">Supprimer</button>
-                <button class="fiche-btn-print" onclick="window.print()">Imprimer</button>
+                <button class="btn-delete" onclick="this.closest('.fiche').remove()">Supprimer</button>
+                <button class="btn-print" onclick="window.print()">Imprimer</button>
             </div>
         `;
         document.getElementById('fichesContainer').prepend(fiche);
     }
 
-    updateRefDisplay();
-    updatePreview();
+    // Init
+    buildWheel();
 </script>
 
 </body>
