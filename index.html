@@ -173,70 +173,40 @@
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
                 <defs>
-                    <linearGradient id="fabricGradientAV" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.2)"/>
-                        <stop offset="30%" style="stop-color:rgba(255,255,255,0.05)"/>
-                        <stop offset="70%" style="stop-color:rgba(0,0,0,0.02)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.08)"/>
+                    <linearGradient id="shadeAV" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.3)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
                     </linearGradient>
-                    <linearGradient id="sleeveShadeAV" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.1)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
-                    </linearGradient>
-                    <linearGradient id="collarGradAV" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.08)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
-                    </linearGradient>
-                    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
-                    </filter>
                 </defs>
-                <!-- Corps principal du t-shirt - forme premium -->
-                <path class="tshirt-body" id="pathAV" d="M55,40
-                    Q75,32 105,22
-                    Q120,18 135,22
-                    Q145,30 150,35
-                    Q155,30 165,22
-                    Q180,18 195,22
-                    Q225,32 245,40
-                    L290,88
-                    Q280,98 262,110
-                    L248,100
-                    Q246,108 246,118
-                    L246,332
-                    Q246,340 238,340
-                    L62,340
-                    Q54,340 54,332
-                    L54,118
-                    Q54,108 52,100
-                    L38,110
-                    Q20,98 10,88
-                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1" filter="url(#softShadow)"/>
-                <!-- Texture tissu subtile -->
-                <path d="M55,40 Q75,32 105,22 Q120,18 135,22 Q145,30 150,35 Q155,30 165,22 Q180,18 195,22 Q225,32 245,40 L290,88 Q280,98 262,110 L248,100 Q246,108 246,118 L246,332 Q246,340 238,340 L62,340 Q54,340 54,332 L54,118 Q54,108 52,100 L38,110 Q20,98 10,88 Z" fill="url(#fabricGradientAV)" opacity="0.5"/>
-                <!-- Col rond premium - triple couche -->
-                <ellipse cx="150" cy="28" rx="42" ry="18" fill="none" stroke="#D8D8D8" stroke-width="8" opacity="0.4"/>
-                <ellipse cx="150" cy="28" rx="38" ry="15" fill="none" stroke="#C8C8C8" stroke-width="4"/>
-                <ellipse cx="150" cy="28" rx="35" ry="12" fill="none" stroke="#E0E0E0" stroke-width="2"/>
-                <!-- Effet d'ombre intérieur du col -->
-                <ellipse cx="150" cy="30" rx="32" ry="10" fill="url(#collarGradAV)" opacity="0.3"/>
-                <!-- Bord côtelé du col (lignes fines) -->
-                <ellipse cx="150" cy="28" rx="40" ry="14" fill="none" stroke="#E8E8E8" stroke-width="0.5" stroke-dasharray="2,1"/>
-                <!-- Coutures épaules premium -->
-                <path d="M108,24 Q80,45 54,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M192,24 Q220,45 246,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
-                <!-- Coutures manches arrondies -->
-                <path d="M54,105 Q42,88 38,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
-                <path d="M246,105 Q258,88 262,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
-                <!-- Ourlet bas double -->
-                <line x1="62" y1="336" x2="238" y2="336" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round"/>
-                <line x1="64" y1="332" x2="236" y2="332" stroke="#F0F0F0" stroke-width="1"/>
-                <!-- Coutures côtés élégantes -->
-                <path d="M56,118 L56,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
-                <path d="M244,118 L244,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
-                <!-- Ombrage manches subtil -->
-                <path d="M55,40 Q30,60 10,88 L38,110 L52,100 Q54,80 55,40 Z" fill="url(#sleeveShadeAV)" opacity="0.25"/>
-                <path d="M245,40 Q270,60 290,88 L262,110 L248,100 Q246,80 245,40 Z" fill="url(#sleeveShadeAV)" opacity="0.25"/>
+                <!-- T-shirt classique AVANT -->
+                <path id="pathAV" d="
+                    M 100,25
+                    L 70,35
+                    L 15,70
+                    L 35,115
+                    L 55,100
+                    L 55,320
+                    L 245,320
+                    L 245,100
+                    L 265,115
+                    L 285,70
+                    L 230,35
+                    L 200,25
+                    C 190,45 160,55 150,55
+                    C 140,55 110,45 100,25 Z
+                " fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Ombre légère -->
+                <path d="
+                    M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 190,45 160,55 150,55 C 140,55 110,45 100,25 Z
+                " fill="url(#shadeAV)" opacity="0.4"/>
+                <!-- Col rond -->
+                <path d="M 100,25 C 110,45 140,55 150,55 C 160,55 190,45 200,25" fill="none" stroke="#BBBBBB" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 102,28 C 112,46 141,54 150,54 C 159,54 188,46 198,28" fill="none" stroke="#DDDDDD" stroke-width="1.5"/>
+                <!-- Coutures manches -->
+                <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <!-- Ourlet bas -->
+                <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" stroke-width="1.5"/>
             </svg>
             <canvas id="canAV"></canvas>
         </div>
@@ -254,70 +224,42 @@
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
                 <defs>
-                    <linearGradient id="fabricGradientAR" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.2)"/>
-                        <stop offset="30%" style="stop-color:rgba(255,255,255,0.05)"/>
-                        <stop offset="70%" style="stop-color:rgba(0,0,0,0.02)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.08)"/>
+                    <linearGradient id="shadeAR" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.3)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
                     </linearGradient>
-                    <linearGradient id="sleeveShadeAR" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.1)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
-                    </linearGradient>
-                    <linearGradient id="collarGradAR" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.06)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
-                    </linearGradient>
-                    <filter id="softShadowAR" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
-                    </filter>
                 </defs>
-                <!-- Corps principal du t-shirt arrière - forme premium -->
-                <path class="tshirt-body" id="pathAR" d="M55,40
-                    Q75,32 105,22
-                    Q125,18 150,22
-                    Q175,18 195,22
-                    Q225,32 245,40
-                    L290,88
-                    Q280,98 262,110
-                    L248,100
-                    Q246,108 246,118
-                    L246,332
-                    Q246,340 238,340
-                    L62,340
-                    Q54,340 54,332
-                    L54,118
-                    Q54,108 52,100
-                    L38,110
-                    Q20,98 10,88
-                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1" filter="url(#softShadowAR)"/>
-                <!-- Texture tissu subtile -->
-                <path d="M55,40 Q75,32 105,22 Q125,18 150,22 Q175,18 195,22 Q225,32 245,40 L290,88 Q280,98 262,110 L248,100 Q246,108 246,118 L246,332 Q246,340 238,340 L62,340 Q54,340 54,332 L54,118 Q54,108 52,100 L38,110 Q20,98 10,88 Z" fill="url(#fabricGradientAR)" opacity="0.5"/>
-                <!-- Col rond arrière - plus plat mais élégant -->
-                <path d="M108,24 Q130,18 150,20 Q170,18 192,24" fill="none" stroke="#D8D8D8" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
-                <path d="M110,25 Q130,20 150,22 Q170,20 190,25" fill="none" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/>
-                <path d="M112,26 Q132,22 150,23 Q168,22 188,26" fill="none" stroke="#E0E0E0" stroke-width="1.5" stroke-linecap="round"/>
-                <!-- Étiquette premium -->
-                <rect x="137" y="28" width="26" height="12" rx="2" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="0.8"/>
-                <line x1="142" y1="32" x2="158" y2="32" stroke="#D0D0D0" stroke-width="0.5"/>
-                <line x1="144" y1="35" x2="156" y2="35" stroke="#E0E0E0" stroke-width="0.5"/>
-                <!-- Couture centrale dos élégante -->
-                <path d="M150,45 L150,332" fill="none" stroke="#F2F2F2" stroke-width="1" stroke-dasharray="6,4"/>
-                <!-- Coutures épaules premium -->
-                <path d="M108,24 Q80,45 54,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M192,24 Q220,45 246,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
-                <!-- Coutures manches arrondies -->
-                <path d="M54,105 Q42,88 38,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
-                <path d="M246,105 Q258,88 262,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
-                <!-- Ourlet bas double -->
-                <line x1="62" y1="336" x2="238" y2="336" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round"/>
-                <line x1="64" y1="332" x2="236" y2="332" stroke="#F0F0F0" stroke-width="1"/>
-                <!-- Coutures côtés élégantes -->
-                <path d="M56,118 L56,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
-                <path d="M244,118 L244,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
-                <!-- Ombrage manches subtil -->
-                <path d="M55,40 Q30,60 10,88 L38,110 L52,100 Q54,80 55,40 Z" fill="url(#sleeveShadeAR)" opacity="0.25"/>
-                <path d="M245,40 Q270,60 290,88 L262,110 L248,100 Q246,80 245,40 Z" fill="url(#sleeveShadeAR)" opacity="0.25"/>
+                <!-- T-shirt classique ARRIÈRE -->
+                <path id="pathAR" d="
+                    M 100,25
+                    L 70,35
+                    L 15,70
+                    L 35,115
+                    L 55,100
+                    L 55,320
+                    L 245,320
+                    L 245,100
+                    L 265,115
+                    L 285,70
+                    L 230,35
+                    L 200,25
+                    C 195,30 175,35 150,35
+                    C 125,35 105,30 100,25 Z
+                " fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Ombre légère -->
+                <path d="
+                    M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 195,30 175,35 150,35 C 125,35 105,30 100,25 Z
+                " fill="url(#shadeAR)" opacity="0.4"/>
+                <!-- Col arrière (plus plat) -->
+                <path d="M 100,25 C 105,30 125,35 150,35 C 175,35 195,30 200,25" fill="none" stroke="#BBBBBB" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 102,27 C 107,31 126,35 150,35 C 174,35 193,31 198,27" fill="none" stroke="#DDDDDD" stroke-width="1.5"/>
+                <!-- Étiquette -->
+                <rect x="140" y="38" width="20" height="10" rx="1" fill="#F8F8F8" stroke="#DDDDDD" stroke-width="1"/>
+                <!-- Coutures manches -->
+                <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <!-- Ourlet bas -->
+                <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" stroke-width="1.5"/>
             </svg>
             <canvas id="canAR"></canvas>
         </div>
