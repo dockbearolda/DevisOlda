@@ -13,13 +13,14 @@
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
 
         .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
-        .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); }
+        .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); animation: urgentPulse 2s ease-in-out infinite; }
         .main-card.urgent .input-apple,
         .main-card.urgent .select-apple { background: #FFF5F5; border-color: #FFCCCC; }
         .main-card.urgent .chip { background: #FFCCCC; }
         .main-card.urgent .chip.active { background: #FF3B30; }
         .main-card.urgent .deadline-row { background: #FFCCCC; }
         .main-card.urgent .canvas-box { background: #FFF0F0; border-color: #FFCCCC; }
+        @keyframes urgentPulse { 0%, 100% { box-shadow: 0 15px 40px rgba(255,59,48,0.3); } 50% { box-shadow: 0 15px 60px rgba(255,59,48,0.5); } }
 
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-title { font-size: 14px; font-weight: 900; color: #1d1d1f; }
@@ -85,12 +86,12 @@
     <!-- Header avec bouton Urgence -->
     <div class="header-row">
         <span class="header-title">OLDA Production</span>
-        <button id="urgentBtn" class="urgent-btn" onclick="App.toggleUrgent()">🚨 URGENT</button>
+        <button id="urgentBtn" class="urgent-btn" onclick="App.toggleUrgent()">URGENT</button>
     </div>
 
     <!-- Date limite -->
     <div class="deadline-row">
-        <span class="label" style="margin:0; white-space:nowrap;">📅 Date limite</span>
+        <span class="label" style="margin:0; white-space:nowrap;">Date limite</span>
         <input type="date" id="deadlineInput" onchange="App.updateDeadline()">
         <span id="daysBadge" class="days-badge" style="display:none;">--</span>
     </div>
@@ -166,7 +167,7 @@
 
     <!-- Prix -->
     <div class="grid-2">
-        <div><span class="label">💰 Prix T-Shirt</span>
+        <div><span class="label">Prix T-Shirt</span>
             <select id="priceTshirt" class="select-apple" onchange="App.updateTotal()">
                 <option value="0">0 €</option>
                 <option value="5">5 €</option>
@@ -186,7 +187,7 @@
                 <option value="100">100 €</option>
             </select>
         </div>
-        <div><span class="label">🎨 Prix Personnalisation</span>
+        <div><span class="label">Prix Personnalisation</span>
             <select id="pricePerso" class="select-apple" onchange="App.updateTotal()">
                 <option value="0" selected>0 €</option>
                 <option value="5">5 €</option>
@@ -210,14 +211,14 @@
 
     <!-- Boutons AV / AR cliquables -->
     <div class="view-toggle">
-        <div id="btnAV" class="view-btn" onclick="App.toggleViewBtn('AV')">👕 AVANT</div>
-        <div id="btnAR" class="view-btn" onclick="App.toggleViewBtn('AR')">👕 ARRIÈRE</div>
+        <div id="btnAV" class="view-btn" onclick="App.toggleViewBtn('AV')">AVANT</div>
+        <div id="btnAR" class="view-btn" onclick="App.toggleViewBtn('AR')">ARRIERE</div>
     </div>
 
     <!-- Boutons d'upload -->
     <div class="upload-section">
-        <label for="fileInputAV" class="upload-btn">📁 Logo AVANT</label>
-        <label for="fileInputAR" class="upload-btn">📁 Logo ARRIÈRE</label>
+        <label for="fileInputAV" class="upload-btn">Importer logo AVANT</label>
+        <label for="fileInputAR" class="upload-btn">Importer logo ARRIERE</label>
     </div>
     <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
     <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
@@ -342,8 +343,8 @@
             </div>
         </div>
         <div class="payment-toggle">
-            <button class="payment-btn unpaid-btn active" id="btnUnpaid" onclick="App.setPayment(false)">❌ NON PAYÉ</button>
-            <button class="payment-btn paid-btn" id="btnPaid" onclick="App.setPayment(true)">✅ PAYÉ</button>
+            <button class="payment-btn unpaid-btn active" id="btnUnpaid" onclick="App.setPayment(false)">NON PAYE</button>
+            <button class="payment-btn paid-btn" id="btnPaid" onclick="App.setPayment(true)">PAYE</button>
         </div>
     </div>
 </div>
@@ -400,7 +401,7 @@ const App = {
             let o = document.createElement('option'); o.value = v; o.innerText = v; s.appendChild(o);
         }
         // Ajouter option MANUEL à la fin
-        let m = document.createElement('option'); m.value = 'MANUEL'; m.innerText = '✏️ MANUEL'; s.appendChild(m);
+        let m = document.createElement('option'); m.value = 'MANUEL'; m.innerText = 'MANUEL'; s.appendChild(m);
     },
     checkManual() {
         const val = document.getElementById('refSelect').value;
@@ -417,7 +418,7 @@ const App = {
         } else {
             card.classList.remove('urgent');
             btn.classList.remove('active');
-            btn.innerHTML = '🚨 URGENT';
+            btn.innerHTML = 'URGENT';
         }
     },
     updateDeadline() {
@@ -436,13 +437,13 @@ const App = {
 
         badge.style.display = 'inline-block';
         if(diffDays < 0) {
-            badge.textContent = '⚠️ DÉPASSÉ';
+            badge.textContent = 'DEPASSE';
             badge.className = 'days-badge critical';
         } else if(diffDays === 0) {
-            badge.textContent = "📍 Aujourd'hui";
+            badge.textContent = "Aujourd'hui";
             badge.className = 'days-badge critical';
         } else if(diffDays === 1) {
-            badge.textContent = '⚡ 1 jour';
+            badge.textContent = '1 jour';
             badge.className = 'days-badge critical';
         } else if(diffDays <= 3) {
             badge.textContent = diffDays + ' jours';
@@ -532,8 +533,8 @@ const App = {
 
         // Gestion des PDFs
         if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
-            alert('📄 Fichier PDF sélectionné: ' + file.name + '\n\nNote: Le PDF sera représenté par son nom.\nPour afficher l\'image, exportez en PNG ou JPG.');
-            const t = new fabric.Text('📄 ' + file.name.substring(0, 12) + (file.name.length > 12 ? '...' : ''), {
+            alert('Fichier PDF selectionne: ' + file.name + '\n\nNote: Le PDF sera represente par son nom.\nPour afficher l\'image, exportez en PNG ou JPG.');
+            const t = new fabric.Text('[PDF] ' + file.name.substring(0, 12) + (file.name.length > 12 ? '...' : ''), {
                 fontSize: 12, fontWeight: '600', fill: '#666',
                 left: 150, top: 180, originX: 'center', originY: 'center', padding: 20,
                 backgroundColor: '#f0f0f0'
