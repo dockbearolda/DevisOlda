@@ -11,8 +11,23 @@
     <style>
         :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
-        
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; }
+
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
+        .main-card.urgent { background: linear-gradient(135deg, #FFF5F5 0%, #FFE5E5 100%); border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.25); }
+
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header-title { font-size: 14px; font-weight: 900; color: #1d1d1f; }
+        .urgent-btn { padding: 8px 16px; background: #FF3B30; color: white; border: none; border-radius: 20px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .urgent-btn:hover { background: #E0342B; transform: scale(1.05); }
+        .urgent-btn.active { background: #34C759; }
+        .urgent-btn.active::before { content: '✓ '; }
+
+        .deadline-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: #F8F8FA; border-radius: 12px; }
+        .deadline-row input[type="date"] { flex: 1; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #E0E0E0; font-size: 12px; font-weight: 600; background: white; }
+        .days-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: #34C759; color: white; white-space: nowrap; }
+        .days-badge.warning { background: #FF9500; }
+        .days-badge.critical { background: #FF3B30; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
@@ -50,6 +65,19 @@
 <body>
 
 <div class="main-card" id="capture">
+    <!-- Header avec bouton Urgence -->
+    <div class="header-row">
+        <span class="header-title">OLDA Production</span>
+        <button id="urgentBtn" class="urgent-btn" onclick="App.toggleUrgent()">🚨 URGENT</button>
+    </div>
+
+    <!-- Deadline -->
+    <div class="deadline-row">
+        <span class="label" style="margin:0; white-space:nowrap;">📅 Deadline</span>
+        <input type="date" id="deadlineInput" onchange="App.updateDeadline()">
+        <span id="daysBadge" class="days-badge" style="display:none;">--</span>
+    </div>
+
     <div class="grid-2">
         <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
         <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
@@ -146,61 +174,69 @@
             <svg class="tshirt-svg" viewBox="0 0 300 350">
                 <defs>
                     <linearGradient id="fabricGradientAV" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
-                        <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.2)"/>
+                        <stop offset="30%" style="stop-color:rgba(255,255,255,0.05)"/>
+                        <stop offset="70%" style="stop-color:rgba(0,0,0,0.02)"/>
                         <stop offset="100%" style="stop-color:rgba(0,0,0,0.08)"/>
                     </linearGradient>
                     <linearGradient id="sleeveShadeAV" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.12)"/>
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.1)"/>
                         <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
                     </linearGradient>
-                    <filter id="fabricTextureAV" x="0%" y="0%" width="100%" height="100%">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
-                        <feDiffuseLighting in="noise" lighting-color="white" surfaceScale="1" result="light">
-                            <feDistantLight azimuth="45" elevation="60"/>
-                        </feDiffuseLighting>
-                        <feBlend in="SourceGraphic" in2="light" mode="multiply"/>
+                    <linearGradient id="collarGradAV" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.08)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
+                    </linearGradient>
+                    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
                     </filter>
                 </defs>
-                <!-- Corps principal du t-shirt -->
-                <path class="tshirt-body" id="pathAV" d="M50,35
-                    Q70,28 110,18
-                    C125,15 135,22 150,28
-                    C165,22 175,15 190,18
-                    Q230,28 250,35
-                    L295,85
-                    Q285,95 265,108
-                    L250,98
-                    Q248,105 248,115
-                    L248,335
-                    Q248,342 240,342
-                    L60,342
-                    Q52,342 52,335
-                    L52,115
-                    Q52,105 50,98
-                    L35,108
-                    Q15,95 5,85
-                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
-                <!-- Overlay texture tissu -->
-                <path d="M50,35 Q70,28 110,18 C125,15 135,22 150,28 C165,22 175,15 190,18 Q230,28 250,35 L295,85 Q285,95 265,108 L250,98 Q248,105 248,115 L248,335 Q248,342 240,342 L60,342 Q52,342 52,335 L52,115 Q52,105 50,98 L35,108 Q15,95 5,85 Z" fill="url(#fabricGradientAV)" opacity="0.6"/>
-                <!-- Col en V/rond détaillé -->
-                <path d="M110,18 C125,15 135,25 150,32 C165,25 175,15 190,18" fill="none" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M112,21 C127,18 137,27 150,33 C163,27 173,18 188,21" fill="none" stroke="#E8E8E8" stroke-width="1"/>
-                <!-- Coutures épaules -->
-                <line x1="110" y1="18" x2="52" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
-                <line x1="190" y1="18" x2="248" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
-                <!-- Coutures manches -->
-                <path d="M52,100 Q45,85 35,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                <path d="M248,100 Q255,85 265,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                <!-- Ourlet bas -->
-                <line x1="60" y1="338" x2="240" y2="338" stroke="#E0E0E0" stroke-width="1.5"/>
-                <line x1="62" y1="335" x2="238" y2="335" stroke="#EFEFEF" stroke-width="0.5"/>
-                <!-- Coutures côtés -->
-                <line x1="55" y1="115" x2="55" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
-                <line x1="245" y1="115" x2="245" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
-                <!-- Ombrage subtil manches -->
-                <path d="M50,35 L5,85 L35,108 L50,98 Z" fill="url(#sleeveShadeAV)" opacity="0.3"/>
-                <path d="M250,35 L295,85 L265,108 L250,98 Z" fill="url(#sleeveShadeAV)" opacity="0.3" transform="scale(-1,1) translate(-300,0)"/>
+                <!-- Corps principal du t-shirt - forme premium -->
+                <path class="tshirt-body" id="pathAV" d="M55,40
+                    Q75,32 105,22
+                    Q120,18 135,22
+                    Q145,30 150,35
+                    Q155,30 165,22
+                    Q180,18 195,22
+                    Q225,32 245,40
+                    L290,88
+                    Q280,98 262,110
+                    L248,100
+                    Q246,108 246,118
+                    L246,332
+                    Q246,340 238,340
+                    L62,340
+                    Q54,340 54,332
+                    L54,118
+                    Q54,108 52,100
+                    L38,110
+                    Q20,98 10,88
+                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1" filter="url(#softShadow)"/>
+                <!-- Texture tissu subtile -->
+                <path d="M55,40 Q75,32 105,22 Q120,18 135,22 Q145,30 150,35 Q155,30 165,22 Q180,18 195,22 Q225,32 245,40 L290,88 Q280,98 262,110 L248,100 Q246,108 246,118 L246,332 Q246,340 238,340 L62,340 Q54,340 54,332 L54,118 Q54,108 52,100 L38,110 Q20,98 10,88 Z" fill="url(#fabricGradientAV)" opacity="0.5"/>
+                <!-- Col rond premium - triple couche -->
+                <ellipse cx="150" cy="28" rx="42" ry="18" fill="none" stroke="#D8D8D8" stroke-width="8" opacity="0.4"/>
+                <ellipse cx="150" cy="28" rx="38" ry="15" fill="none" stroke="#C8C8C8" stroke-width="4"/>
+                <ellipse cx="150" cy="28" rx="35" ry="12" fill="none" stroke="#E0E0E0" stroke-width="2"/>
+                <!-- Effet d'ombre intérieur du col -->
+                <ellipse cx="150" cy="30" rx="32" ry="10" fill="url(#collarGradAV)" opacity="0.3"/>
+                <!-- Bord côtelé du col (lignes fines) -->
+                <ellipse cx="150" cy="28" rx="40" ry="14" fill="none" stroke="#E8E8E8" stroke-width="0.5" stroke-dasharray="2,1"/>
+                <!-- Coutures épaules premium -->
+                <path d="M108,24 Q80,45 54,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M192,24 Q220,45 246,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Coutures manches arrondies -->
+                <path d="M54,105 Q42,88 38,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M246,105 Q258,88 262,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
+                <!-- Ourlet bas double -->
+                <line x1="62" y1="336" x2="238" y2="336" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round"/>
+                <line x1="64" y1="332" x2="236" y2="332" stroke="#F0F0F0" stroke-width="1"/>
+                <!-- Coutures côtés élégantes -->
+                <path d="M56,118 L56,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
+                <path d="M244,118 L244,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
+                <!-- Ombrage manches subtil -->
+                <path d="M55,40 Q30,60 10,88 L38,110 L52,100 Q54,80 55,40 Z" fill="url(#sleeveShadeAV)" opacity="0.25"/>
+                <path d="M245,40 Q270,60 290,88 L262,110 L248,100 Q246,80 245,40 Z" fill="url(#sleeveShadeAV)" opacity="0.25"/>
             </svg>
             <canvas id="canAV"></canvas>
         </div>
@@ -219,58 +255,69 @@
             <svg class="tshirt-svg" viewBox="0 0 300 350">
                 <defs>
                     <linearGradient id="fabricGradientAR" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.12)"/>
-                        <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.1)"/>
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.2)"/>
+                        <stop offset="30%" style="stop-color:rgba(255,255,255,0.05)"/>
+                        <stop offset="70%" style="stop-color:rgba(0,0,0,0.02)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.08)"/>
                     </linearGradient>
                     <linearGradient id="sleeveShadeAR" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.12)"/>
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.1)"/>
                         <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
                     </linearGradient>
+                    <linearGradient id="collarGradAR" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.06)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0)"/>
+                    </linearGradient>
+                    <filter id="softShadowAR" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
+                    </filter>
                 </defs>
-                <!-- Corps principal du t-shirt (vue arrière) -->
-                <path class="tshirt-body" id="pathAR" d="M50,35
-                    Q70,28 110,18
-                    C130,15 145,18 150,20
-                    C155,18 170,15 190,18
-                    Q230,28 250,35
-                    L295,85
-                    Q285,95 265,108
-                    L250,98
-                    Q248,105 248,115
-                    L248,335
-                    Q248,342 240,342
-                    L60,342
-                    Q52,342 52,335
-                    L52,115
-                    Q52,105 50,98
-                    L35,108
-                    Q15,95 5,85
-                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
-                <!-- Overlay texture tissu -->
-                <path d="M50,35 Q70,28 110,18 C130,15 145,18 150,20 C155,18 170,15 190,18 Q230,28 250,35 L295,85 Q285,95 265,108 L250,98 Q248,105 248,115 L248,335 Q248,342 240,342 L60,342 Q52,342 52,335 L52,115 Q52,105 50,98 L35,108 Q15,95 5,85 Z" fill="url(#fabricGradientAR)" opacity="0.6"/>
-                <!-- Col arrière (plus plat) -->
-                <path d="M110,18 C130,14 145,17 150,19 C155,17 170,14 190,18" fill="none" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M112,21 C132,17 147,19 150,20 C153,19 168,17 188,21" fill="none" stroke="#E8E8E8" stroke-width="1"/>
-                <!-- Couture centrale dos (caractéristique vue arrière) -->
-                <line x1="150" y1="25" x2="150" y2="335" stroke="#F0F0F0" stroke-width="0.8" stroke-dasharray="8,4"/>
-                <!-- Coutures épaules -->
-                <line x1="110" y1="18" x2="52" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
-                <line x1="190" y1="18" x2="248" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="3,2"/>
-                <!-- Coutures manches -->
-                <path d="M52,100 Q45,85 35,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                <path d="M248,100 Q255,85 265,108" fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                <!-- Ourlet bas -->
-                <line x1="60" y1="338" x2="240" y2="338" stroke="#E0E0E0" stroke-width="1.5"/>
-                <line x1="62" y1="335" x2="238" y2="335" stroke="#EFEFEF" stroke-width="0.5"/>
-                <!-- Coutures côtés -->
-                <line x1="55" y1="115" x2="55" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
-                <line x1="245" y1="115" x2="245" y2="335" stroke="#EBEBEB" stroke-width="0.8"/>
-                <!-- Ombrage subtil manches -->
-                <path d="M50,35 L5,85 L35,108 L50,98 Z" fill="url(#sleeveShadeAR)" opacity="0.3"/>
-                <path d="M250,35 L295,85 L265,108 L250,98 Z" fill="url(#sleeveShadeAR)" opacity="0.3" transform="scale(-1,1) translate(-300,0)"/>
-                <!-- Étiquette col (typique vue arrière) -->
-                <rect x="140" y="22" width="20" height="8" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="0.5" rx="1"/>
+                <!-- Corps principal du t-shirt arrière - forme premium -->
+                <path class="tshirt-body" id="pathAR" d="M55,40
+                    Q75,32 105,22
+                    Q125,18 150,22
+                    Q175,18 195,22
+                    Q225,32 245,40
+                    L290,88
+                    Q280,98 262,110
+                    L248,100
+                    Q246,108 246,118
+                    L246,332
+                    Q246,340 238,340
+                    L62,340
+                    Q54,340 54,332
+                    L54,118
+                    Q54,108 52,100
+                    L38,110
+                    Q20,98 10,88
+                    Z" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1" filter="url(#softShadowAR)"/>
+                <!-- Texture tissu subtile -->
+                <path d="M55,40 Q75,32 105,22 Q125,18 150,22 Q175,18 195,22 Q225,32 245,40 L290,88 Q280,98 262,110 L248,100 Q246,108 246,118 L246,332 Q246,340 238,340 L62,340 Q54,340 54,332 L54,118 Q54,108 52,100 L38,110 Q20,98 10,88 Z" fill="url(#fabricGradientAR)" opacity="0.5"/>
+                <!-- Col rond arrière - plus plat mais élégant -->
+                <path d="M108,24 Q130,18 150,20 Q170,18 192,24" fill="none" stroke="#D8D8D8" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+                <path d="M110,25 Q130,20 150,22 Q170,20 190,25" fill="none" stroke="#C8C8C8" stroke-width="3" stroke-linecap="round"/>
+                <path d="M112,26 Q132,22 150,23 Q168,22 188,26" fill="none" stroke="#E0E0E0" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Étiquette premium -->
+                <rect x="137" y="28" width="26" height="12" rx="2" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="0.8"/>
+                <line x1="142" y1="32" x2="158" y2="32" stroke="#D0D0D0" stroke-width="0.5"/>
+                <line x1="144" y1="35" x2="156" y2="35" stroke="#E0E0E0" stroke-width="0.5"/>
+                <!-- Couture centrale dos élégante -->
+                <path d="M150,45 L150,332" fill="none" stroke="#F2F2F2" stroke-width="1" stroke-dasharray="6,4"/>
+                <!-- Coutures épaules premium -->
+                <path d="M108,24 Q80,45 54,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M192,24 Q220,45 246,105" fill="none" stroke="#EBEBEB" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Coutures manches arrondies -->
+                <path d="M54,105 Q42,88 38,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M246,105 Q258,88 262,110" fill="none" stroke="#E8E8E8" stroke-width="1.2" stroke-linecap="round"/>
+                <!-- Ourlet bas double -->
+                <line x1="62" y1="336" x2="238" y2="336" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round"/>
+                <line x1="64" y1="332" x2="236" y2="332" stroke="#F0F0F0" stroke-width="1"/>
+                <!-- Coutures côtés élégantes -->
+                <path d="M56,118 L56,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
+                <path d="M244,118 L244,332" fill="none" stroke="#EBEBEB" stroke-width="1" stroke-dasharray="4,3"/>
+                <!-- Ombrage manches subtil -->
+                <path d="M55,40 Q30,60 10,88 L38,110 L52,100 Q54,80 55,40 Z" fill="url(#sleeveShadeAR)" opacity="0.25"/>
+                <path d="M245,40 Q270,60 290,88 L262,110 L248,100 Q246,80 245,40 Z" fill="url(#sleeveShadeAR)" opacity="0.25"/>
             </svg>
             <canvas id="canAR"></canvas>
         </div>
@@ -289,11 +336,16 @@
 
 <script>
 const App = {
-    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null } },
-    init() { 
+    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null }, isUrgent: false },
+    init() {
         this.state.cans.AV = this.setupCanvas('canAV');
         this.state.cans.AR = this.setupCanvas('canAR');
         this.updateRefList();
+        // Définir la date par défaut à aujourd'hui + 7 jours
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 7);
+        document.getElementById('deadlineInput').value = defaultDate.toISOString().split('T')[0];
+        this.updateDeadline();
         
         fabric.Object.prototype.controls.deleteControl = new fabric.Control({
             x: 0.5, y: -0.5, offsetY: -16, offsetX: 16, cursorStyle: 'pointer',
@@ -336,6 +388,52 @@ const App = {
     checkManual() {
         const val = document.getElementById('refSelect').value;
         document.getElementById('manualZone').style.display = (val === 'MANUEL') ? 'block' : 'none';
+    },
+    toggleUrgent() {
+        this.state.isUrgent = !this.state.isUrgent;
+        const card = document.getElementById('capture');
+        const btn = document.getElementById('urgentBtn');
+        if(this.state.isUrgent) {
+            card.classList.add('urgent');
+            btn.classList.add('active');
+            btn.innerHTML = 'URGENT';
+        } else {
+            card.classList.remove('urgent');
+            btn.classList.remove('active');
+            btn.innerHTML = '🚨 URGENT';
+        }
+    },
+    updateDeadline() {
+        const input = document.getElementById('deadlineInput');
+        const badge = document.getElementById('daysBadge');
+        if(!input.value) {
+            badge.style.display = 'none';
+            return;
+        }
+        const deadline = new Date(input.value);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        deadline.setHours(0,0,0,0);
+        const diffTime = deadline - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        badge.style.display = 'inline-block';
+        if(diffDays < 0) {
+            badge.textContent = '⚠️ DÉPASSÉ';
+            badge.className = 'days-badge critical';
+        } else if(diffDays === 0) {
+            badge.textContent = "📍 Aujourd'hui";
+            badge.className = 'days-badge critical';
+        } else if(diffDays === 1) {
+            badge.textContent = '⚡ 1 jour';
+            badge.className = 'days-badge critical';
+        } else if(diffDays <= 3) {
+            badge.textContent = diffDays + ' jours';
+            badge.className = 'days-badge warning';
+        } else {
+            badge.textContent = diffDays + ' jours';
+            badge.className = 'days-badge';
+        }
     },
     toggleViewBtn(side) {
         const btn = document.getElementById('btn' + side);
