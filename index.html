@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OLDA | Production Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
@@ -348,7 +349,7 @@
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
+<button class="btn-confirm" onclick="App.download()">EXPEDIER LA FICHE PDF</button>
 
 <script>
 const App = {
@@ -579,14 +580,25 @@ const App = {
             allowTaint: true,
             backgroundColor: '#ffffff'
         }).then(canvas => {
-            const link = document.createElement('a');
+            const { jsPDF } = window.jspdf;
+            const imgData = canvas.toDataURL('image/png');
+
+            // Dimensions du canvas
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // Creer PDF en format adapte
+            const pdf = new jsPDF({
+                orientation: imgHeight > imgWidth ? 'portrait' : 'landscape',
+                unit: 'px',
+                format: [imgWidth / 2, imgHeight / 2]
+            });
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth / 2, imgHeight / 2);
+
             const refVal = document.getElementById('refSelect').value;
             const ref = (refVal === 'MANUEL') ? document.getElementById('manualRef').value : refVal;
-            link.download = 'OLDA_' + (ref || 'devis') + '.png';
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            pdf.save('OLDA_' + (ref || 'devis') + '.pdf');
         }).catch(err => {
             console.error('Erreur export:', err);
             alert('Erreur lors de l\'export. Veuillez reessayer.');
