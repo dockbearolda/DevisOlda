@@ -16,8 +16,8 @@
         .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); animation: urgentPulse 2s ease-in-out infinite; }
         .main-card.urgent .input-apple,
         .main-card.urgent .select-apple { background: #FFF5F5; border-color: #FFCCCC; }
-        .main-card.urgent .chip { background: #FFCCCC; }
-        .main-card.urgent .chip.active { background: #FF3B30; }
+        .main-card.urgent .target-grid .chip { background: #FFCCCC; }
+        .main-card.urgent .target-grid .chip.active { background: #FF3B30; }
         .main-card.urgent .deadline-row { background: #FFCCCC; }
         .main-card.urgent .canvas-box { background: #FFF0F0; border-color: #FFCCCC; }
         @keyframes urgentPulse { 0%, 100% { box-shadow: 0 15px 40px rgba(255,59,48,0.3); } 50% { box-shadow: 0 15px 60px rgba(255,59,48,0.5); } }
@@ -66,12 +66,11 @@
         .price-line.total { font-size: 18px; font-weight: 900; color: #1d1d1f; border-top: 1px solid #EEE; padding-top: 10px; margin-top: 5px; }
         .price-line.total.paid { color: #34C759; }
         .price-line.total.unpaid { color: #FF3B30; }
-        .payment-toggle { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: #F8F8FA; border-radius: 12px; }
-        .payment-btn { padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .payment-btn.unpaid-btn { background: #FFF0F0; color: #FF3B30; border-color: #FF3B30; }
-        .payment-btn.paid-btn { background: #F0FFF4; color: #34C759; border-color: #34C759; }
-        .payment-btn.active { transform: scale(1.05); }
-        .payment-btn:not(.active) { opacity: 0.5; }
+        .payment-toggle { display: flex; align-items: center; justify-content: center; gap: 0; padding: 4px; background: #F0F0F0; border-radius: 25px; }
+        .payment-btn { padding: 12px 24px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; border: none; transition: all 0.3s ease; background: transparent; color: #888; }
+        .payment-btn.unpaid-btn.active { background: #FF3B30; color: white; }
+        .payment-btn.paid-btn.active { background: #34C759; color: white; }
+        .payment-btn:hover:not(.active) { background: rgba(0,0,0,0.05); }
         .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
 
         .upload-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
@@ -573,11 +572,24 @@ const App = {
     },
     download() {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
-        html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
-            const a = document.createElement('a');
+        const captureEl = document.getElementById('capture');
+        html2canvas(captureEl, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            const link = document.createElement('a');
             const refVal = document.getElementById('refSelect').value;
             const ref = (refVal === 'MANUEL') ? document.getElementById('manualRef').value : refVal;
-            a.download = `OLDA_${ref || 'devis'}.png`; a.href = c.toDataURL("image/png"); a.click();
+            link.download = 'OLDA_' + (ref || 'devis') + '.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }).catch(err => {
+            console.error('Erreur export:', err);
+            alert('Erreur lors de l\'export. Veuillez reessayer.');
         });
     }
 };
