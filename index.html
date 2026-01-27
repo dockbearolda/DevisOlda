@@ -24,6 +24,11 @@
         .chip { padding: 8px 0; background: #F2F2F7; border-radius: 8px; font-size: 9px; font-weight: 800; text-align: center; cursor: pointer; }
         .chip.active { background: #000; color: #fff; }
 
+        .view-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+        .view-btn { padding: 12px; background: #F2F2F7; border: 2px solid transparent; border-radius: 10px; font-size: 11px; font-weight: 800; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .view-btn.active { background: #007AFF; color: white; border-color: #007AFF; }
+        .view-btn:hover:not(.active) { background: #E5E5EA; }
+
         /* Preview Layout */
         .view-section { margin-top: 15px; display: none; }
         .view-section.visible { display: block; }
@@ -58,7 +63,7 @@
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Référence</span><select id="refSelect" class="select-apple"></select></div>
+        <div><span class="label">Référence</span><select id="refSelect" class="select-apple" onchange="App.checkManual()"></select></div>
         <div><span class="label">Taille</span>
             <select id="sizeSelect" class="select-apple">
                 <option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option>
@@ -66,27 +71,14 @@
         </div>
     </div>
 
-    <div class="grid-2">
-        <div>
-            <span class="label">Manuel <input type="checkbox" id="manualCheck" class="mini-check" onchange="App.toggleManual()"></span>
-            <input type="text" id="manualRef" class="input-apple" placeholder="..." disabled>
-        </div>
-        <div style="height: 42px; display: flex; align-items: center; justify-content: center; gap: 15px; background: #FBFBFD; border-radius: 10px; border: 1px solid #EFEEF2;">
-            <label class="label" style="margin:0"><input type="checkbox" id="checkAV" class="mini-check" onchange="App.toggleView('AV')"> AV</label>
-            <label class="label" style="margin:0"><input type="checkbox" id="checkAR" class="mini-check" onchange="App.toggleView('AR')"> AR</label>
-        </div>
+    <!-- Champ manuel (affiché uniquement si MANUEL sélectionné) -->
+    <div id="manualZone" style="display:none; margin-bottom:10px;">
+        <span class="label">Référence manuelle</span>
+        <input type="text" id="manualRef" class="input-apple" placeholder="Entrez votre référence...">
     </div>
 
-    <!-- Boutons d'upload toujours visibles -->
-    <div class="upload-section">
-        <label for="fileInputAV" class="upload-btn">📁 Logo AVANT</label>
-        <label for="fileInputAR" class="upload-btn">📁 Logo ARRIÈRE</label>
-    </div>
-    <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
-    <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
-
     <div class="grid-2">
-        <div><span class="label">Couleur T-Shirt (Pastel)</span>
+        <div><span class="label">Couleur T-Shirt</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
                 <option value="#FFFFFF">Blanc Pure</option>
                 <option value="#1A1A1A">Noir Deep</option>
@@ -105,7 +97,7 @@
                 <option value="#F0FFFF">Azure</option>
             </select>
         </div>
-        <div><span class="label">Couleur Logo (16)</span>
+        <div><span class="label">Couleur Logo</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
@@ -127,11 +119,24 @@
         </div>
     </div>
 
+    <!-- Boutons AV / AR cliquables -->
+    <div class="view-toggle">
+        <div id="btnAV" class="view-btn" onclick="App.toggleViewBtn('AV')">👕 AVANT</div>
+        <div id="btnAR" class="view-btn" onclick="App.toggleViewBtn('AR')">👕 ARRIÈRE</div>
+    </div>
+
+    <!-- Boutons d'upload -->
+    <div class="upload-section">
+        <label for="fileInputAV" class="upload-btn">📁 Logo AVANT</label>
+        <label for="fileInputAR" class="upload-btn">📁 Logo ARRIÈRE</label>
+    </div>
+    <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
+    <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
+
     <div id="zoneAV" class="view-section">
         <span class="label">Logo AVANT</span>
         <select id="logoAV" class="select-apple" onchange="App.triggerFile('AV')">
             <option value="">-- Choisir logo AV --</option>
-            <option value="UPLOAD">📁 Parcourir...</option>
             <option value="BEA-16">BEA-16</option>
             <option value="SXM-12">SXM-12</option>
             <option value="WRA-01">WRA-01</option>
@@ -205,7 +210,6 @@
         <span class="label">Logo ARRIÈRE</span>
         <select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')">
             <option value="">-- Choisir logo AR --</option>
-            <option value="UPLOAD">📁 Parcourir...</option>
             <option value="BEA-16">BEA-16</option>
             <option value="SXM-12">SXM-12</option>
             <option value="WRA-01">WRA-01</option>
@@ -307,8 +311,13 @@ const App = {
         return c;
     },
     toggleView(side) {
-        const isChecked = document.getElementById('check'+side).checked;
-        document.getElementById('zone'+side).classList.toggle('visible', isChecked);
+        // Utilise les nouveaux boutons AV/AR
+        const btn = document.getElementById('btn' + side);
+        const zone = document.getElementById('zone' + side);
+        if(!btn.classList.contains('active')) {
+            btn.classList.add('active');
+            zone.classList.add('visible');
+        }
     },
     setTarget(prefix, el) {
         this.state.targetPrefix = prefix;
@@ -321,11 +330,25 @@ const App = {
             let v = this.state.targetPrefix + i.toString().padStart(3, '0');
             let o = document.createElement('option'); o.value = v; o.innerText = v; s.appendChild(o);
         }
+        // Ajouter option MANUEL à la fin
+        let m = document.createElement('option'); m.value = 'MANUEL'; m.innerText = '✏️ MANUEL'; s.appendChild(m);
     },
-    toggleManual() {
-        const m = document.getElementById('manualCheck').checked;
-        document.getElementById('manualRef').disabled = !m;
-        document.getElementById('refSelect').disabled = m;
+    checkManual() {
+        const val = document.getElementById('refSelect').value;
+        document.getElementById('manualZone').style.display = (val === 'MANUEL') ? 'block' : 'none';
+    },
+    toggleViewBtn(side) {
+        const btn = document.getElementById('btn' + side);
+        const zone = document.getElementById('zone' + side);
+        const isActive = btn.classList.contains('active');
+
+        if(isActive) {
+            btn.classList.remove('active');
+            zone.classList.remove('visible');
+        } else {
+            btn.classList.add('active');
+            zone.classList.add('visible');
+        }
     },
     updateTsColor() {
         const col = document.getElementById('tsColorSelect').value;
@@ -360,10 +383,9 @@ const App = {
         const fileName = file.name.toLowerCase();
 
         // S'assurer que la zone est visible
-        const checkbox = document.getElementById('check' + side);
-        if(!checkbox.checked) {
-            checkbox.checked = true;
-            this.toggleView(side);
+        const btn = document.getElementById('btn' + side);
+        if(!btn.classList.contains('active')) {
+            this.toggleViewBtn(side);
         }
 
         // Gestion des PDFs
@@ -410,8 +432,9 @@ const App = {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
         html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
             const a = document.createElement('a');
-            const ref = document.getElementById('manualCheck').checked ? document.getElementById('manualRef').value : document.getElementById('refSelect').value;
-            a.download = `OLDA_${ref}.png`; a.href = c.toDataURL("image/png"); a.click();
+            const refVal = document.getElementById('refSelect').value;
+            const ref = (refVal === 'MANUEL') ? document.getElementById('manualRef').value : refVal;
+            a.download = `OLDA_${ref || 'devis'}.png`; a.href = c.toDataURL("image/png"); a.click();
         });
     }
 };
