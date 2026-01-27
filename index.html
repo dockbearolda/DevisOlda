@@ -32,9 +32,9 @@
 
         .deadline-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: #F8F8FA; border-radius: 12px; }
         .deadline-row input[type="date"] { flex: 1; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #E0E0E0; font-size: 12px; font-weight: 600; background: white; }
-        .days-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: #34C759; color: white; white-space: nowrap; }
-        .days-badge.warning { background: #FF9500; }
-        .days-badge.critical { background: #FF3B30; animation: pulse 1s infinite; }
+        .days-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: #000; color: white; white-space: nowrap; }
+        .days-badge.warning { background: #000; }
+        .days-badge.critical { background: #000; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
@@ -217,8 +217,8 @@
 
     <!-- Boutons d'upload -->
     <div class="upload-section">
-        <label for="fileInputAV" class="upload-btn">Importer logo AVANT</label>
-        <label for="fileInputAR" class="upload-btn">Importer logo ARRIERE</label>
+        <label for="fileInputAV" class="upload-btn">Importer logo AV</label>
+        <label for="fileInputAR" class="upload-btn">Importer logo AR</label>
     </div>
     <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
     <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
