@@ -13,7 +13,13 @@
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
 
         .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
-        .main-card.urgent { background: linear-gradient(135deg, #FFF5F5 0%, #FFE5E5 100%); border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.25); }
+        .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); }
+        .main-card.urgent .input-apple,
+        .main-card.urgent .select-apple { background: #FFF5F5; border-color: #FFCCCC; }
+        .main-card.urgent .chip { background: #FFCCCC; }
+        .main-card.urgent .chip.active { background: #FF3B30; }
+        .main-card.urgent .deadline-row { background: #FFCCCC; }
+        .main-card.urgent .canvas-box { background: #FFF0F0; border-color: #FFCCCC; }
 
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-title { font-size: 14px; font-weight: 900; color: #1d1d1f; }
@@ -53,7 +59,18 @@
         .tshirt-svg path.tshirt-body { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
         canvas { z-index: 2; }
 
-        .footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
+        .footer { border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
+        .price-summary { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .price-line { display: flex; justify-content: space-between; font-size: 13px; color: #666; }
+        .price-line.total { font-size: 18px; font-weight: 900; color: #1d1d1f; border-top: 1px solid #EEE; padding-top: 10px; margin-top: 5px; }
+        .price-line.total.paid { color: #34C759; }
+        .price-line.total.unpaid { color: #FF3B30; }
+        .payment-toggle { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: #F8F8FA; border-radius: 12px; }
+        .payment-btn { padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .payment-btn.unpaid-btn { background: #FFF0F0; color: #FF3B30; border-color: #FF3B30; }
+        .payment-btn.paid-btn { background: #F0FFF4; color: #34C759; border-color: #34C759; }
+        .payment-btn.active { transform: scale(1.05); }
+        .payment-btn:not(.active) { opacity: 0.5; }
         .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
 
         .upload-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
@@ -71,9 +88,9 @@
         <button id="urgentBtn" class="urgent-btn" onclick="App.toggleUrgent()">🚨 URGENT</button>
     </div>
 
-    <!-- Deadline -->
+    <!-- Date limite -->
     <div class="deadline-row">
-        <span class="label" style="margin:0; white-space:nowrap;">📅 Deadline</span>
+        <span class="label" style="margin:0; white-space:nowrap;">📅 Date limite</span>
         <input type="date" id="deadlineInput" onchange="App.updateDeadline()">
         <span id="daysBadge" class="days-badge" style="display:none;">--</span>
     </div>
@@ -143,6 +160,50 @@
                 <option value="#5AC8FA">Bleu Cyan</option>
                 <option value="#000080">Marine</option>
                 <option value="#556B2F">Olive</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Prix -->
+    <div class="grid-2">
+        <div><span class="label">💰 Prix T-Shirt</span>
+            <select id="priceTshirt" class="select-apple" onchange="App.updateTotal()">
+                <option value="0">0 €</option>
+                <option value="5">5 €</option>
+                <option value="10">10 €</option>
+                <option value="15">15 €</option>
+                <option value="20">20 €</option>
+                <option value="25" selected>25 €</option>
+                <option value="30">30 €</option>
+                <option value="35">35 €</option>
+                <option value="40">40 €</option>
+                <option value="45">45 €</option>
+                <option value="50">50 €</option>
+                <option value="60">60 €</option>
+                <option value="70">70 €</option>
+                <option value="80">80 €</option>
+                <option value="90">90 €</option>
+                <option value="100">100 €</option>
+            </select>
+        </div>
+        <div><span class="label">🎨 Prix Personnalisation</span>
+            <select id="pricePerso" class="select-apple" onchange="App.updateTotal()">
+                <option value="0" selected>0 €</option>
+                <option value="5">5 €</option>
+                <option value="10">10 €</option>
+                <option value="15">15 €</option>
+                <option value="20">20 €</option>
+                <option value="25">25 €</option>
+                <option value="30">30 €</option>
+                <option value="35">35 €</option>
+                <option value="40">40 €</option>
+                <option value="45">45 €</option>
+                <option value="50">50 €</option>
+                <option value="60">60 €</option>
+                <option value="70">70 €</option>
+                <option value="80">80 €</option>
+                <option value="90">90 €</option>
+                <option value="100">100 €</option>
             </select>
         </div>
     </div>
@@ -266,10 +327,23 @@
     </div>
 
     <div class="footer">
-        <div style="font-size: 22px; font-weight: 900;"><input type="number" id="priceInput" value="25" style="border:none; width:60px; font-size:22px; font-weight:900;">€</div>
-        <div class="label" style="margin:0">
-            <label><input type="checkbox" class="mini-check"> CASH</label>
-            <label style="color:#34C759; margin-left:10px;"><input type="checkbox" class="mini-check"> RÉGLÉ</label>
+        <div class="price-summary">
+            <div class="price-line">
+                <span>T-Shirt</span>
+                <span id="displayPriceTshirt">25 €</span>
+            </div>
+            <div class="price-line">
+                <span>Personnalisation</span>
+                <span id="displayPricePerso">0 €</span>
+            </div>
+            <div class="price-line total" id="totalLine">
+                <span>TOTAL</span>
+                <span id="displayTotal">25 €</span>
+            </div>
+        </div>
+        <div class="payment-toggle">
+            <button class="payment-btn unpaid-btn active" id="btnUnpaid" onclick="App.setPayment(false)">❌ NON PAYÉ</button>
+            <button class="payment-btn paid-btn" id="btnPaid" onclick="App.setPayment(true)">✅ PAYÉ</button>
         </div>
     </div>
 </div>
@@ -278,11 +352,12 @@
 
 <script>
 const App = {
-    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null }, isUrgent: false },
+    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null }, isUrgent: false, isPaid: false },
     init() {
         this.state.cans.AV = this.setupCanvas('canAV');
         this.state.cans.AR = this.setupCanvas('canAR');
         this.updateRefList();
+        this.updateTotal();
         // Définir la date par défaut à aujourd'hui + 7 jours
         const defaultDate = new Date();
         defaultDate.setDate(defaultDate.getDate() + 7);
@@ -375,6 +450,33 @@ const App = {
         } else {
             badge.textContent = diffDays + ' jours';
             badge.className = 'days-badge';
+        }
+    },
+    updateTotal() {
+        const priceTshirt = parseInt(document.getElementById('priceTshirt').value) || 0;
+        const pricePerso = parseInt(document.getElementById('pricePerso').value) || 0;
+        const total = priceTshirt + pricePerso;
+
+        document.getElementById('displayPriceTshirt').textContent = priceTshirt + ' €';
+        document.getElementById('displayPricePerso').textContent = pricePerso + ' €';
+        document.getElementById('displayTotal').textContent = total + ' €';
+    },
+    setPayment(paid) {
+        this.state.isPaid = paid;
+        const totalLine = document.getElementById('totalLine');
+        const btnPaid = document.getElementById('btnPaid');
+        const btnUnpaid = document.getElementById('btnUnpaid');
+
+        if(paid) {
+            totalLine.classList.remove('unpaid');
+            totalLine.classList.add('paid');
+            btnPaid.classList.add('active');
+            btnUnpaid.classList.remove('active');
+        } else {
+            totalLine.classList.remove('paid');
+            totalLine.classList.add('unpaid');
+            btnUnpaid.classList.add('active');
+            btnPaid.classList.remove('active');
         }
     },
     toggleViewBtn(side) {
