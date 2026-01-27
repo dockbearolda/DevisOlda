@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-stone-50 text-stone-800 min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-stone-900 text-white font-medium rounded-lg
+           hover:bg-stone-800 transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white text-stone-800 font-medium rounded-lg border border-stone-300
+           hover:bg-stone-50 transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2;
+  }
+
+  .btn-danger {
+    @apply px-6 py-3 bg-red-600 text-white font-medium rounded-lg
+           hover:bg-red-700 transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-stone-300 rounded-lg bg-white
+           focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-transparent
+           placeholder:text-stone-400 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-lg border border-stone-100;
+  }
+
+  .tab-active {
+    @apply bg-white text-stone-900 shadow-sm border-b-2 border-stone-900;
+  }
+
+  .tab-inactive {
+    @apply bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-800;
+  }
+
+  .urgent-pulse {
+    @apply animate-pulse-urgent border-4 border-red-500;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Print styles for PDF */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+}

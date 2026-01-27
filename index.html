@@ -5,14 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OLDA | Production Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
-        
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; }
+
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
+        .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); animation: urgentPulse 2s ease-in-out infinite; }
+        .main-card.urgent .input-apple,
+        .main-card.urgent .select-apple { background: #FFF5F5; border-color: #FFCCCC; }
+        .main-card.urgent .target-grid .chip { background: #FFCCCC; }
+        .main-card.urgent .target-grid .chip.active { background: #FF3B30; }
+        .main-card.urgent .deadline-row { background: #FFCCCC; }
+        .main-card.urgent .canvas-box { background: #FFF0F0; border-color: #FFCCCC; }
+        @keyframes urgentPulse { 0%, 100% { box-shadow: 0 15px 40px rgba(255,59,48,0.3); } 50% { box-shadow: 0 15px 60px rgba(255,59,48,0.5); } }
+
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header-title { font-size: 14px; font-weight: 900; color: #1d1d1f; }
+        .urgent-btn { padding: 8px 16px; background: #FF3B30; color: white; border: none; border-radius: 20px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .urgent-btn:hover { background: #E0342B; transform: scale(1.05); }
+        .urgent-btn.active { background: #34C759; }
+        .urgent-btn.active::before { content: '✓ '; }
+
+        .deadline-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: #F8F8FA; border-radius: 12px; }
+        .deadline-row input[type="date"] { flex: 1; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #E0E0E0; font-size: 12px; font-weight: 600; background: white; }
+        .days-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: #000; color: white; white-space: nowrap; }
+        .days-badge.warning { background: #000; }
+        .days-badge.critical { background: #000; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
@@ -24,21 +47,55 @@
         .chip { padding: 8px 0; background: #F2F2F7; border-radius: 8px; font-size: 9px; font-weight: 800; text-align: center; cursor: pointer; }
         .chip.active { background: #000; color: #fff; }
 
+        .view-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+        .view-btn { padding: 12px; background: #F2F2F7; border: 2px solid transparent; border-radius: 10px; font-size: 11px; font-weight: 800; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .view-btn.active { background: #000; color: white; border-color: #000; }
+        .view-btn:hover:not(.active) { background: #E5E5EA; }
+
         /* Preview Layout */
         .view-section { margin-top: 15px; display: none; }
         .view-section.visible { display: block; }
         
-        .canvas-box { width: 300px; height: 350px; background: #fff; border-radius: 20px; position: relative; border: 1px solid #F2F2F7; margin: 10px auto; overflow: hidden; }
+        .canvas-box { width: 300px; height: 350px; background: linear-gradient(145deg, #fafafa 0%, #f0f0f0 100%); border-radius: 20px; position: relative; border: 1px solid #E8E8E8; margin: 10px auto; overflow: hidden; box-shadow: inset 0 2px 8px rgba(0,0,0,0.04); }
         .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .tshirt-svg path.tshirt-body { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
         canvas { z-index: 2; }
 
-        .footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
+        .footer { border-top: 1px solid #EEE; padding-top: 15px; margin-top: 10px; }
+        .price-summary { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .price-line { display: flex; justify-content: space-between; font-size: 13px; color: #666; }
+        .price-line.total { font-size: 18px; font-weight: 900; color: #1d1d1f; border-top: 1px solid #EEE; padding-top: 10px; margin-top: 5px; }
+        .price-line.total.paid { color: #34C759; }
+        .price-line.total.unpaid { color: #FF3B30; }
+        .payment-toggle { display: flex; align-items: center; justify-content: center; gap: 0; padding: 4px; background: #F0F0F0; border-radius: 25px; }
+        .payment-btn { padding: 12px 24px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; border: none; transition: all 0.3s ease; background: transparent; color: #888; }
+        .payment-btn.unpaid-btn.active { background: #FF3B30; color: white; }
+        .payment-btn.paid-btn.active { background: #34C759; color: white; }
+        .payment-btn:hover:not(.active) { background: rgba(0,0,0,0.05); }
         .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
+
+        .upload-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #000; color: white; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 700; transition: background 0.2s; }
+        .upload-btn:hover { background: #333; }
+        .upload-btn:active { background: #555; }
     </style>
 </head>
 <body>
 
 <div class="main-card" id="capture">
+    <!-- Header avec bouton Urgence -->
+    <div class="header-row">
+        <span class="header-title">OLDA Production</span>
+        <button id="urgentBtn" class="urgent-btn" onclick="App.toggleUrgent()">URGENT</button>
+    </div>
+
+    <!-- Date limite -->
+    <div class="deadline-row">
+        <span class="label" style="margin:0; white-space:nowrap;">Date limite</span>
+        <input type="date" id="deadlineInput" onchange="App.updateDeadline()">
+        <span id="daysBadge" class="days-badge" style="display:none;">--</span>
+    </div>
+
     <div class="grid-2">
         <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
         <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
@@ -52,7 +109,7 @@
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Référence</span><select id="refSelect" class="select-apple"></select></div>
+        <div><span class="label">Référence</span><select id="refSelect" class="select-apple" onchange="App.checkManual()"></select></div>
         <div><span class="label">Taille</span>
             <select id="sizeSelect" class="select-apple">
                 <option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option>
@@ -60,19 +117,14 @@
         </div>
     </div>
 
-    <div class="grid-2">
-        <div>
-            <span class="label">Manuel <input type="checkbox" id="manualCheck" class="mini-check" onchange="App.toggleManual()"></span>
-            <input type="text" id="manualRef" class="input-apple" placeholder="..." disabled>
-        </div>
-        <div style="height: 42px; display: flex; align-items: center; justify-content: center; gap: 15px; background: #FBFBFD; border-radius: 10px; border: 1px solid #EFEEF2;">
-            <label class="label" style="margin:0"><input type="checkbox" id="checkAV" class="mini-check" onchange="App.toggleView('AV')"> AV</label>
-            <label class="label" style="margin:0"><input type="checkbox" id="checkAR" class="mini-check" onchange="App.toggleView('AR')"> AR</label>
-        </div>
+    <!-- Champ manuel (affiché uniquement si MANUEL sélectionné) -->
+    <div id="manualZone" style="display:none; margin-bottom:10px;">
+        <span class="label">Référence manuelle</span>
+        <input type="text" id="manualRef" class="input-apple" placeholder="Entrez votre référence...">
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Couleur T-Shirt (Pastel)</span>
+        <div><span class="label">Couleur T-Shirt</span>
             <select id="tsColorSelect" class="select-apple" onchange="App.updateTsColor()">
                 <option value="#FFFFFF">Blanc Pure</option>
                 <option value="#1A1A1A">Noir Deep</option>
@@ -91,7 +143,7 @@
                 <option value="#F0FFFF">Azure</option>
             </select>
         </div>
-        <div><span class="label">Couleur Logo (16)</span>
+        <div><span class="label">Couleur Logo</span>
             <select id="logoColorSelect" class="select-apple" onchange="App.updateLogoColor()">
                 <option value="#000000">Noir</option>
                 <option value="#FFFFFF">Blanc</option>
@@ -113,11 +165,68 @@
         </div>
     </div>
 
+    <!-- Prix -->
+    <div class="grid-2">
+        <div><span class="label">Prix T-Shirt</span>
+            <select id="priceTshirt" class="select-apple" onchange="App.updateTotal()">
+                <option value="0">0 €</option>
+                <option value="5">5 €</option>
+                <option value="10">10 €</option>
+                <option value="15">15 €</option>
+                <option value="20">20 €</option>
+                <option value="25" selected>25 €</option>
+                <option value="30">30 €</option>
+                <option value="35">35 €</option>
+                <option value="40">40 €</option>
+                <option value="45">45 €</option>
+                <option value="50">50 €</option>
+                <option value="60">60 €</option>
+                <option value="70">70 €</option>
+                <option value="80">80 €</option>
+                <option value="90">90 €</option>
+                <option value="100">100 €</option>
+            </select>
+        </div>
+        <div><span class="label">Prix Personnalisation</span>
+            <select id="pricePerso" class="select-apple" onchange="App.updateTotal()">
+                <option value="0" selected>0 €</option>
+                <option value="5">5 €</option>
+                <option value="10">10 €</option>
+                <option value="15">15 €</option>
+                <option value="20">20 €</option>
+                <option value="25">25 €</option>
+                <option value="30">30 €</option>
+                <option value="35">35 €</option>
+                <option value="40">40 €</option>
+                <option value="45">45 €</option>
+                <option value="50">50 €</option>
+                <option value="60">60 €</option>
+                <option value="70">70 €</option>
+                <option value="80">80 €</option>
+                <option value="90">90 €</option>
+                <option value="100">100 €</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Boutons AV / AR cliquables -->
+    <div class="view-toggle">
+        <div id="btnAV" class="view-btn" onclick="App.toggleViewBtn('AV')">AVANT</div>
+        <div id="btnAR" class="view-btn" onclick="App.toggleViewBtn('AR')">ARRIERE</div>
+    </div>
+
+    <!-- Boutons d'upload -->
+    <div class="upload-section">
+        <label for="fileInputAV" class="upload-btn">Importer logo AV</label>
+        <label for="fileInputAR" class="upload-btn">Importer logo AR</label>
+    </div>
+    <input type="file" id="fileInputAV" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AV', event)">
+    <input type="file" id="fileInputAR" style="display:none" accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.pdf,image/*" onchange="App.handleFileUpload('AR', event)">
+
     <div id="zoneAV" class="view-section">
         <span class="label">Logo AVANT</span>
         <select id="logoAV" class="select-apple" onchange="App.triggerFile('AV')">
             <option value="">-- Choisir logo AV --</option>
-            <option value="UPLOAD">📁 Parcourir...</option>
             <option value="BEA-16">BEA-16</option>
             <option value="SXM-12">SXM-12</option>
             <option value="WRA-01">WRA-01</option>
@@ -125,7 +234,41 @@
         </select>
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path id="pathAV" d="M45,30 L115,15 C130,28 170,28 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+                <defs>
+                    <linearGradient id="shadeAV" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.3)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
+                    </linearGradient>
+                </defs>
+                <!-- T-shirt classique AVANT -->
+                <path id="pathAV" d="
+                    M 100,25
+                    L 70,35
+                    L 15,70
+                    L 35,115
+                    L 55,100
+                    L 55,320
+                    L 245,320
+                    L 245,100
+                    L 265,115
+                    L 285,70
+                    L 230,35
+                    L 200,25
+                    C 190,45 160,55 150,55
+                    C 140,55 110,45 100,25 Z
+                " fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Ombre légère -->
+                <path d="
+                    M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 190,45 160,55 150,55 C 140,55 110,45 100,25 Z
+                " fill="url(#shadeAV)" opacity="0.4"/>
+                <!-- Col rond -->
+                <path d="M 100,25 C 110,45 140,55 150,55 C 160,55 190,45 200,25" fill="none" stroke="#BBBBBB" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 102,28 C 112,46 141,54 150,54 C 159,54 188,46 198,28" fill="none" stroke="#DDDDDD" stroke-width="1.5"/>
+                <!-- Coutures manches -->
+                <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <!-- Ourlet bas -->
+                <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" stroke-width="1.5"/>
             </svg>
             <canvas id="canAV"></canvas>
         </div>
@@ -135,7 +278,6 @@
         <span class="label">Logo ARRIÈRE</span>
         <select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')">
             <option value="">-- Choisir logo AR --</option>
-            <option value="UPLOAD">📁 Parcourir...</option>
             <option value="BEA-16">BEA-16</option>
             <option value="SXM-12">SXM-12</option>
             <option value="WRA-01">WRA-01</option>
@@ -143,31 +285,85 @@
         </select>
         <div class="canvas-box">
             <svg class="tshirt-svg" viewBox="0 0 300 350">
-                <path id="pathAR" d="M45,30 L115,15 C130,20 170,20 185,15 L255,30 L300,90 L260,110 L245,100 L245,340 L55,340 L55,100 L40,110 L0,90 Z" fill="#FFFFFF" stroke="#DDD"/>
+                <defs>
+                    <linearGradient id="shadeAR" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.3)"/>
+                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
+                    </linearGradient>
+                </defs>
+                <!-- T-shirt classique ARRIÈRE -->
+                <path id="pathAR" d="
+                    M 100,25
+                    L 70,35
+                    L 15,70
+                    L 35,115
+                    L 55,100
+                    L 55,320
+                    L 245,320
+                    L 245,100
+                    L 265,115
+                    L 285,70
+                    L 230,35
+                    L 200,25
+                    C 195,30 175,35 150,35
+                    C 125,35 105,30 100,25 Z
+                " fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Ombre légère -->
+                <path d="
+                    M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 195,30 175,35 150,35 C 125,35 105,30 100,25 Z
+                " fill="url(#shadeAR)" opacity="0.4"/>
+                <!-- Col arrière (plus plat) -->
+                <path d="M 100,25 C 105,30 125,35 150,35 C 175,35 195,30 200,25" fill="none" stroke="#BBBBBB" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 102,27 C 107,31 126,35 150,35 C 174,35 193,31 198,27" fill="none" stroke="#DDDDDD" stroke-width="1.5"/>
+                <!-- Étiquette -->
+                <rect x="140" y="38" width="20" height="10" rx="1" fill="#F8F8F8" stroke="#DDDDDD" stroke-width="1"/>
+                <!-- Coutures manches -->
+                <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4,2"/>
+                <!-- Ourlet bas -->
+                <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" stroke-width="1.5"/>
             </svg>
             <canvas id="canAR"></canvas>
         </div>
     </div>
 
     <div class="footer">
-        <div style="font-size: 22px; font-weight: 900;"><input type="number" id="priceInput" value="25" style="border:none; width:60px; font-size:22px; font-weight:900;">€</div>
-        <div class="label" style="margin:0">
-            <label><input type="checkbox" class="mini-check"> CASH</label>
-            <label style="color:#34C759; margin-left:10px;"><input type="checkbox" class="mini-check"> RÉGLÉ</label>
+        <div class="price-summary">
+            <div class="price-line">
+                <span>T-Shirt</span>
+                <span id="displayPriceTshirt">25 €</span>
+            </div>
+            <div class="price-line">
+                <span>Personnalisation</span>
+                <span id="displayPricePerso">0 €</span>
+            </div>
+            <div class="price-line total" id="totalLine">
+                <span>TOTAL</span>
+                <span id="displayTotal">25 €</span>
+            </div>
+        </div>
+        <div class="payment-toggle">
+            <button class="payment-btn unpaid-btn active" id="btnUnpaid" onclick="App.setPayment(false)">NON PAYE</button>
+            <button class="payment-btn paid-btn" id="btnPaid" onclick="App.setPayment(true)">PAYE</button>
         </div>
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">EXPÉDIER LA FICHE PNG</button>
-<input type="file" id="fileInput" style="display:none" accept="image/*">
+<button class="btn-confirm" onclick="App.download()">EXPEDIER LA FICHE PDF</button>
 
 <script>
 const App = {
-    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null } },
-    init() { 
+    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null }, isUrgent: false, isPaid: false },
+    init() {
         this.state.cans.AV = this.setupCanvas('canAV');
         this.state.cans.AR = this.setupCanvas('canAR');
         this.updateRefList();
+        this.updateTotal();
+        // Définir la date par défaut à aujourd'hui + 7 jours
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 7);
+        document.getElementById('deadlineInput').value = defaultDate.toISOString().split('T')[0];
+        this.updateDeadline();
         
         fabric.Object.prototype.controls.deleteControl = new fabric.Control({
             x: 0.5, y: -0.5, offsetY: -16, offsetX: 16, cursorStyle: 'pointer',
@@ -178,8 +374,6 @@ const App = {
                 ctx.moveTo(-5,-5); ctx.lineTo(5,5); ctx.moveTo(5,-5); ctx.lineTo(-5,5); ctx.stroke(); ctx.restore();
             }
         });
-
-        document.getElementById('fileInput').addEventListener('change', (e) => this.handleFile(e));
     },
     setupCanvas(id) {
         const c = new fabric.Canvas(id, { width: 300, height: 350 });
@@ -187,8 +381,13 @@ const App = {
         return c;
     },
     toggleView(side) {
-        const isChecked = document.getElementById('check'+side).checked;
-        document.getElementById('zone'+side).classList.toggle('visible', isChecked);
+        // Utilise les nouveaux boutons AV/AR
+        const btn = document.getElementById('btn' + side);
+        const zone = document.getElementById('zone' + side);
+        if(!btn.classList.contains('active')) {
+            btn.classList.add('active');
+            zone.classList.add('visible');
+        }
     },
     setTarget(prefix, el) {
         this.state.targetPrefix = prefix;
@@ -201,11 +400,98 @@ const App = {
             let v = this.state.targetPrefix + i.toString().padStart(3, '0');
             let o = document.createElement('option'); o.value = v; o.innerText = v; s.appendChild(o);
         }
+        // Ajouter option MANUEL à la fin
+        let m = document.createElement('option'); m.value = 'MANUEL'; m.innerText = 'MANUEL'; s.appendChild(m);
     },
-    toggleManual() {
-        const m = document.getElementById('manualCheck').checked;
-        document.getElementById('manualRef').disabled = !m;
-        document.getElementById('refSelect').disabled = m;
+    checkManual() {
+        const val = document.getElementById('refSelect').value;
+        document.getElementById('manualZone').style.display = (val === 'MANUEL') ? 'block' : 'none';
+    },
+    toggleUrgent() {
+        this.state.isUrgent = !this.state.isUrgent;
+        const card = document.getElementById('capture');
+        const btn = document.getElementById('urgentBtn');
+        if(this.state.isUrgent) {
+            card.classList.add('urgent');
+            btn.classList.add('active');
+            btn.innerHTML = 'URGENT';
+        } else {
+            card.classList.remove('urgent');
+            btn.classList.remove('active');
+            btn.innerHTML = 'URGENT';
+        }
+    },
+    updateDeadline() {
+        const input = document.getElementById('deadlineInput');
+        const badge = document.getElementById('daysBadge');
+        if(!input.value) {
+            badge.style.display = 'none';
+            return;
+        }
+        const deadline = new Date(input.value);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        deadline.setHours(0,0,0,0);
+        const diffTime = deadline - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        badge.style.display = 'inline-block';
+        if(diffDays < 0) {
+            badge.textContent = 'DEPASSE';
+            badge.className = 'days-badge critical';
+        } else if(diffDays === 0) {
+            badge.textContent = "Aujourd'hui";
+            badge.className = 'days-badge critical';
+        } else if(diffDays === 1) {
+            badge.textContent = '1 jour';
+            badge.className = 'days-badge critical';
+        } else if(diffDays <= 3) {
+            badge.textContent = diffDays + ' jours';
+            badge.className = 'days-badge warning';
+        } else {
+            badge.textContent = diffDays + ' jours';
+            badge.className = 'days-badge';
+        }
+    },
+    updateTotal() {
+        const priceTshirt = parseInt(document.getElementById('priceTshirt').value) || 0;
+        const pricePerso = parseInt(document.getElementById('pricePerso').value) || 0;
+        const total = priceTshirt + pricePerso;
+
+        document.getElementById('displayPriceTshirt').textContent = priceTshirt + ' €';
+        document.getElementById('displayPricePerso').textContent = pricePerso + ' €';
+        document.getElementById('displayTotal').textContent = total + ' €';
+    },
+    setPayment(paid) {
+        this.state.isPaid = paid;
+        const totalLine = document.getElementById('totalLine');
+        const btnPaid = document.getElementById('btnPaid');
+        const btnUnpaid = document.getElementById('btnUnpaid');
+
+        if(paid) {
+            totalLine.classList.remove('unpaid');
+            totalLine.classList.add('paid');
+            btnPaid.classList.add('active');
+            btnUnpaid.classList.remove('active');
+        } else {
+            totalLine.classList.remove('paid');
+            totalLine.classList.add('unpaid');
+            btnUnpaid.classList.add('active');
+            btnPaid.classList.remove('active');
+        }
+    },
+    toggleViewBtn(side) {
+        const btn = document.getElementById('btn' + side);
+        const zone = document.getElementById('zone' + side);
+        const isActive = btn.classList.contains('active');
+
+        if(isActive) {
+            btn.classList.remove('active');
+            zone.classList.remove('visible');
+        } else {
+            btn.classList.add('active');
+            zone.classList.add('visible');
+        }
     },
     updateTsColor() {
         const col = document.getElementById('tsColorSelect').value;
@@ -220,27 +506,66 @@ const App = {
         });
     },
     triggerFile(side) {
-        const val = document.getElementById('logo'+side).value;
-        this.state.currentSide = side; 
+        const selectEl = document.getElementById('logo'+side);
+        const val = selectEl.value;
+        this.state.currentSide = side;
         if(val === 'UPLOAD') {
-            document.getElementById('fileInput').value = "";
-            document.getElementById('fileInput').click();
+            // Déclencher le clic sur le nouvel input file
+            document.getElementById('fileInput' + side).click();
+            selectEl.selectedIndex = 0;
         } else if(val !== "") {
             this.addText(side, val);
+            selectEl.selectedIndex = 0;
         }
     },
-    handleFile(e) {
-        const file = e.target.files[0]; if(!file) return;
+    handleFileUpload(side, e) {
+        const file = e.target.files[0];
+        if(!file) return;
+
+        const fileType = file.type || '';
+        const fileName = file.name.toLowerCase();
+
+        // S'assurer que la zone est visible
+        const btn = document.getElementById('btn' + side);
+        if(!btn.classList.contains('active')) {
+            this.toggleViewBtn(side);
+        }
+
+        // Gestion des PDFs
+        if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+            alert('Fichier PDF selectionne: ' + file.name + '\n\nNote: Le PDF sera represente par son nom.\nPour afficher l\'image, exportez en PNG ou JPG.');
+            const t = new fabric.Text('[PDF] ' + file.name.substring(0, 12) + (file.name.length > 12 ? '...' : ''), {
+                fontSize: 12, fontWeight: '600', fill: '#666',
+                left: 150, top: 180, originX: 'center', originY: 'center', padding: 20,
+                backgroundColor: '#f0f0f0'
+            });
+            this.state.cans[side].add(t).setActiveObject(t);
+            this.state.cans[side].renderAll();
+            return;
+        }
+
+        // Gestion des images
         const reader = new FileReader();
-        reader.onload = (event) => {
-            fabric.Image.fromURL(event.target.result, (img) => {
-                const side = this.state.currentSide;
+        const canvas = this.state.cans[side];
+
+        reader.onload = (evt) => {
+            fabric.Image.fromURL(evt.target.result, (img) => {
+                if(!img) {
+                    alert('Impossible de charger cette image.');
+                    return;
+                }
                 img.scaleToWidth(side === 'AV' ? 80 : 160);
-                img.set({ left: 150, top: 150, originX: 'center', originY: 'center', padding: 25 });
-                this.state.cans[side].add(img).setActiveObject(img);
+                img.set({ left: 150, top: 180, originX: 'center', originY: 'center', padding: 25 });
+                canvas.add(img).setActiveObject(img);
+                canvas.renderAll();
             });
         };
+
         reader.readAsDataURL(file);
+    },
+    handleFile(e) {
+        // Ancienne fonction - redirige vers la nouvelle
+        this.handleFileUpload(this.state.currentSide, e);
     },
     addText(side, txt) {
         const t = new fabric.Text(txt, { fontSize: 35, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center', padding: 25 });
@@ -248,10 +573,35 @@ const App = {
     },
     download() {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
-        html2canvas(document.getElementById('capture'), { scale: 2 }).then(c => {
-            const a = document.createElement('a');
-            const ref = document.getElementById('manualCheck').checked ? document.getElementById('manualRef').value : document.getElementById('refSelect').value;
-            a.download = `OLDA_${ref}.png`; a.href = c.toDataURL("image/png"); a.click();
+        const captureEl = document.getElementById('capture');
+        html2canvas(captureEl, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            const { jsPDF } = window.jspdf;
+            const imgData = canvas.toDataURL('image/png');
+
+            // Dimensions du canvas
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // Creer PDF en format adapte
+            const pdf = new jsPDF({
+                orientation: imgHeight > imgWidth ? 'portrait' : 'landscape',
+                unit: 'px',
+                format: [imgWidth / 2, imgHeight / 2]
+            });
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth / 2, imgHeight / 2);
+
+            const refVal = document.getElementById('refSelect').value;
+            const ref = (refVal === 'MANUEL') ? document.getElementById('manualRef').value : refVal;
+            pdf.save('OLDA_' + (ref || 'devis') + '.pdf');
+        }).catch(err => {
+            console.error('Erreur export:', err);
+            alert('Erreur lors de l\'export. Veuillez reessayer.');
         });
     }
 };
