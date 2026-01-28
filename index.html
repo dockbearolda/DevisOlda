@@ -8,12 +8,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <style>
         :root { --apple-blue: #007AFF; --apple-red: #FF3B30; --bg: #F5F7FA; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; color: #1d1d1f; }
 
-        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
+        /* Tabs System */
+        .tabs-container { width: 100%; max-width: 540px; margin-bottom: 10px; }
+        .tabs-bar { display: flex; align-items: center; gap: 5px; overflow-x: auto; padding: 5px 0; }
+        .tab { padding: 10px 16px; background: #E5E5EA; border-radius: 12px 12px 0 0; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: all 0.2s; max-width: 150px; }
+        .tab span { overflow: hidden; text-overflow: ellipsis; }
+        .tab.active { background: #fff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .tab .close-tab { width: 16px; height: 16px; border-radius: 50%; background: #C7C7CC; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; opacity: 0.7; }
+        .tab .close-tab:hover { background: #FF3B30; opacity: 1; }
+        .tab-add { width: 36px; height: 36px; background: #000; color: white; border-radius: 10px; font-size: 20px; font-weight: 300; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .tab-add:hover { background: #333; }
+
+        .main-card { width: 100%; max-width: 500px; background: #fff; border-radius: 0 30px 30px 30px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); box-sizing: border-box; position: relative; transition: all 0.3s ease; }
         .main-card.urgent { background: #FFE4E4; border: 3px solid #FF3B30; box-shadow: 0 15px 40px rgba(255,59,48,0.3); animation: urgentPulse 2s ease-in-out infinite; }
         .main-card.urgent .input-apple,
         .main-card.urgent .select-apple { background: #FFF5F5; border-color: #FFCCCC; }
@@ -28,18 +39,15 @@
         .urgent-btn { padding: 8px 16px; background: #FF3B30; color: white; border: none; border-radius: 20px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
         .urgent-btn:hover { background: #E0342B; transform: scale(1.05); }
         .urgent-btn.active { background: #34C759; }
-        .urgent-btn.active::before { content: '✓ '; }
+        .urgent-btn.active::before { content: 'OK '; }
 
         .deadline-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: #F8F8FA; border-radius: 12px; }
         .deadline-row input[type="date"] { flex: 1; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #E0E0E0; font-size: 12px; font-weight: 600; background: white; }
         .days-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: #000; color: white; white-space: nowrap; }
-        .days-badge.warning { background: #000; }
-        .days-badge.critical { background: #000; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        
+
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .label { font-size: 10px; font-weight: 800; color: #86868B; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
-        
+
         .mini-check { width: 16px; height: 16px; accent-color: var(--apple-blue); margin: 0; }
         .input-apple, .select-apple { width: 100%; height: 42px; padding: 0 10px; border-radius: 10px; border: 1px solid #EFEEF2; font-size: 12px; font-weight: 600; background: #FBFBFD; outline: none; box-sizing: border-box; }
 
@@ -55,7 +63,7 @@
         /* Preview Layout */
         .view-section { margin-top: 15px; display: none; }
         .view-section.visible { display: block; }
-        
+
         .canvas-box { width: 300px; height: 350px; background: linear-gradient(145deg, #fafafa 0%, #f0f0f0 100%); border-radius: 20px; position: relative; border: 1px solid #E8E8E8; margin: 10px auto; overflow: hidden; box-shadow: inset 0 2px 8px rgba(0,0,0,0.04); }
         .tshirt-svg { position: absolute; width: 300px; height: 350px; top: 0; left: 0; z-index: 1; pointer-events: none; }
         .tshirt-svg path.tshirt-body { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
@@ -72,7 +80,26 @@
         .payment-btn.unpaid-btn.active { background: #FF3B30; color: white; }
         .payment-btn.paid-btn.active { background: #34C759; color: white; }
         .payment-btn:hover:not(.active) { background: rgba(0,0,0,0.05); }
-        .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; }
+
+        /* PDF Section */
+        .pdf-section { margin-top: 15px; padding: 15px; background: #F8F8FA; border-radius: 15px; display: none; }
+        .pdf-section.has-pdf { display: block; }
+        .pdf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .pdf-title { font-size: 11px; font-weight: 800; color: #86868B; text-transform: uppercase; }
+        .pdf-preview { display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 10px; border: 1px solid #E5E5EA; }
+        .pdf-icon { width: 40px; height: 50px; background: linear-gradient(135deg, #FF3B30, #FF6B6B); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 800; }
+        .pdf-info { flex: 1; }
+        .pdf-name { font-size: 12px; font-weight: 700; color: #1d1d1f; margin-bottom: 2px; }
+        .pdf-date { font-size: 10px; color: #86868B; }
+        .pdf-actions { display: flex; gap: 8px; }
+        .pdf-action-btn { padding: 8px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+        .pdf-download { background: #000; color: white; }
+        .pdf-download:hover { background: #333; }
+        .pdf-delete { background: #FFE5E5; color: #FF3B30; }
+        .pdf-delete:hover { background: #FF3B30; color: white; }
+
+        .btn-confirm { background: #000; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; width: 100%; max-width: 500px; margin-top: 15px; cursor: pointer; }
+        .btn-confirm:hover { background: #333; }
 
         .upload-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
         .upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #000; color: white; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 700; transition: background 0.2s; }
@@ -81,6 +108,17 @@
     </style>
 </head>
 <body>
+
+<!-- Tabs -->
+<div class="tabs-container">
+    <div class="tabs-bar" id="tabsBar">
+        <div class="tab active" data-id="1" onclick="App.switchTab(1)">
+            <span>Nouvelle fiche</span>
+            <div class="close-tab" onclick="event.stopPropagation(); App.closeTab(1)">x</div>
+        </div>
+        <div class="tab-add" onclick="App.addTab()">+</div>
+    </div>
+</div>
 
 <div class="main-card" id="capture">
     <!-- Header avec bouton Urgence -->
@@ -97,19 +135,19 @@
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom"></div>
-        <div><span class="label">Téléphone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
+        <div><span class="label">Client</span><input type="text" id="custName" class="input-apple" placeholder="Nom" oninput="App.updateTabName()"></div>
+        <div><span class="label">Telephone</span><input type="tel" id="custTel" class="input-apple" placeholder="06.."></div>
     </div>
 
     <div class="target-grid">
         <div class="chip active" onclick="App.setTarget('H', this)">Homme</div>
         <div class="chip" onclick="App.setTarget('F', this)">Femme</div>
         <div class="chip" onclick="App.setTarget('E', this)">Enfant</div>
-        <div class="chip" onclick="App.setTarget('B', this)">Bébé</div>
+        <div class="chip" onclick="App.setTarget('B', this)">Bebe</div>
     </div>
 
     <div class="grid-2">
-        <div><span class="label">Référence</span><select id="refSelect" class="select-apple" onchange="App.checkManual()"></select></div>
+        <div><span class="label">Reference</span><select id="refSelect" class="select-apple" onchange="App.checkManual()"></select></div>
         <div><span class="label">Taille</span>
             <select id="sizeSelect" class="select-apple">
                 <option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option>
@@ -119,8 +157,8 @@
 
     <!-- Champ manuel (affiché uniquement si MANUEL sélectionné) -->
     <div id="manualZone" style="display:none; margin-bottom:10px;">
-        <span class="label">Référence manuelle</span>
-        <input type="text" id="manualRef" class="input-apple" placeholder="Entrez votre référence...">
+        <span class="label">Reference manuelle</span>
+        <input type="text" id="manualRef" class="input-apple" placeholder="Entrez votre reference...">
     </div>
 
     <div class="grid-2">
@@ -133,9 +171,9 @@
                 <option value="#B3E5FC">Bleu Ciel</option>
                 <option value="#C1E1C1">Vert Menthe</option>
                 <option value="#E6E6FA">Lavande</option>
-                <option value="#FFDAB9">Pêche</option>
+                <option value="#FFDAB9">Peche</option>
                 <option value="#F5F5DC">Beige</option>
-                <option value="#B0E0E6">Bleu Poudré</option>
+                <option value="#B0E0E6">Bleu Poudre</option>
                 <option value="#F08080">Corail Douce</option>
                 <option value="#D3D3D3">Gris Clair</option>
                 <option value="#FAF0E6">Lin</option>
@@ -169,42 +207,42 @@
     <div class="grid-2">
         <div><span class="label">Prix T-Shirt</span>
             <select id="priceTshirt" class="select-apple" onchange="App.updateTotal()">
-                <option value="0">0 €</option>
-                <option value="5">5 €</option>
-                <option value="10">10 €</option>
-                <option value="15">15 €</option>
-                <option value="20">20 €</option>
-                <option value="25" selected>25 €</option>
-                <option value="30">30 €</option>
-                <option value="35">35 €</option>
-                <option value="40">40 €</option>
-                <option value="45">45 €</option>
-                <option value="50">50 €</option>
-                <option value="60">60 €</option>
-                <option value="70">70 €</option>
-                <option value="80">80 €</option>
-                <option value="90">90 €</option>
-                <option value="100">100 €</option>
+                <option value="0">0 EUR</option>
+                <option value="5">5 EUR</option>
+                <option value="10">10 EUR</option>
+                <option value="15">15 EUR</option>
+                <option value="20">20 EUR</option>
+                <option value="25" selected>25 EUR</option>
+                <option value="30">30 EUR</option>
+                <option value="35">35 EUR</option>
+                <option value="40">40 EUR</option>
+                <option value="45">45 EUR</option>
+                <option value="50">50 EUR</option>
+                <option value="60">60 EUR</option>
+                <option value="70">70 EUR</option>
+                <option value="80">80 EUR</option>
+                <option value="90">90 EUR</option>
+                <option value="100">100 EUR</option>
             </select>
         </div>
         <div><span class="label">Prix Personnalisation</span>
             <select id="pricePerso" class="select-apple" onchange="App.updateTotal()">
-                <option value="0" selected>0 €</option>
-                <option value="5">5 €</option>
-                <option value="10">10 €</option>
-                <option value="15">15 €</option>
-                <option value="20">20 €</option>
-                <option value="25">25 €</option>
-                <option value="30">30 €</option>
-                <option value="35">35 €</option>
-                <option value="40">40 €</option>
-                <option value="45">45 €</option>
-                <option value="50">50 €</option>
-                <option value="60">60 €</option>
-                <option value="70">70 €</option>
-                <option value="80">80 €</option>
-                <option value="90">90 €</option>
-                <option value="100">100 €</option>
+                <option value="0" selected>0 EUR</option>
+                <option value="5">5 EUR</option>
+                <option value="10">10 EUR</option>
+                <option value="15">15 EUR</option>
+                <option value="20">20 EUR</option>
+                <option value="25">25 EUR</option>
+                <option value="30">30 EUR</option>
+                <option value="35">35 EUR</option>
+                <option value="40">40 EUR</option>
+                <option value="45">45 EUR</option>
+                <option value="50">50 EUR</option>
+                <option value="60">60 EUR</option>
+                <option value="70">70 EUR</option>
+                <option value="80">80 EUR</option>
+                <option value="90">90 EUR</option>
+                <option value="100">100 EUR</option>
             </select>
         </div>
     </div>
@@ -275,7 +313,7 @@
     </div>
 
     <div id="zoneAR" class="view-section">
-        <span class="label">Logo ARRIÈRE</span>
+        <span class="label">Logo ARRIERE</span>
         <select id="logoAR" class="select-apple" onchange="App.triggerFile('AR')">
             <option value="">-- Choisir logo AR --</option>
             <option value="BEA-16">BEA-16</option>
@@ -327,19 +365,37 @@
         </div>
     </div>
 
+    <!-- PDF Section -->
+    <div class="pdf-section" id="pdfSection">
+        <div class="pdf-header">
+            <span class="pdf-title">Fiche PDF</span>
+        </div>
+        <div class="pdf-preview">
+            <div class="pdf-icon">PDF</div>
+            <div class="pdf-info">
+                <div class="pdf-name" id="pdfName">--</div>
+                <div class="pdf-date" id="pdfDate">--</div>
+            </div>
+            <div class="pdf-actions">
+                <button class="pdf-action-btn pdf-download" onclick="App.downloadSavedPdf()">Telecharger</button>
+                <button class="pdf-action-btn pdf-delete" onclick="App.deletePdf()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
     <div class="footer">
         <div class="price-summary">
             <div class="price-line">
                 <span>T-Shirt</span>
-                <span id="displayPriceTshirt">25 €</span>
+                <span id="displayPriceTshirt">25 EUR</span>
             </div>
             <div class="price-line">
                 <span>Personnalisation</span>
-                <span id="displayPricePerso">0 €</span>
+                <span id="displayPricePerso">0 EUR</span>
             </div>
             <div class="price-line total" id="totalLine">
                 <span>TOTAL</span>
-                <span id="displayTotal">25 €</span>
+                <span id="displayTotal">25 EUR</span>
             </div>
         </div>
         <div class="payment-toggle">
@@ -349,11 +405,21 @@
     </div>
 </div>
 
-<button class="btn-confirm" onclick="App.download()">EXPEDIER LA FICHE PDF</button>
+<button class="btn-confirm" onclick="App.generateAndSavePdf()">GENERER ET SAUVEGARDER PDF</button>
 
 <script>
 const App = {
-    state: { currentSide: 'AV', targetPrefix: 'H', cans: { AV: null, AR: null }, isUrgent: false, isPaid: false },
+    state: {
+        currentSide: 'AV',
+        targetPrefix: 'H',
+        cans: { AV: null, AR: null },
+        isUrgent: false,
+        isPaid: false,
+        currentTabId: 1,
+        nextTabId: 2,
+        tabs: {},
+        savedPdf: null
+    },
     init() {
         this.state.cans.AV = this.setupCanvas('canAV');
         this.state.cans.AR = this.setupCanvas('canAR');
@@ -364,7 +430,10 @@ const App = {
         defaultDate.setDate(defaultDate.getDate() + 7);
         document.getElementById('deadlineInput').value = defaultDate.toISOString().split('T')[0];
         this.updateDeadline();
-        
+
+        // Initialiser le premier onglet
+        this.state.tabs[1] = this.getFormData();
+
         fabric.Object.prototype.controls.deleteControl = new fabric.Control({
             x: 0.5, y: -0.5, offsetY: -16, offsetX: 16, cursorStyle: 'pointer',
             mouseUpHandler: (e, t) => { t.target.canvas.remove(t.target); t.target.canvas.requestRenderAll(); },
@@ -380,8 +449,189 @@ const App = {
         c.on('object:scaling', (e) => e.target.set({ scaleY: e.target.scaleX }));
         return c;
     },
+
+    // Tab Management
+    addTab() {
+        const id = this.state.nextTabId++;
+        this.saveCurrentTab();
+
+        // Reset form
+        this.resetForm();
+
+        // Create tab element
+        const tabsBar = document.getElementById('tabsBar');
+        const addBtn = tabsBar.querySelector('.tab-add');
+        const tab = document.createElement('div');
+        tab.className = 'tab active';
+        tab.dataset.id = id;
+        tab.onclick = () => this.switchTab(id);
+        tab.innerHTML = '<span>Nouvelle fiche</span><div class="close-tab" onclick="event.stopPropagation(); App.closeTab(' + id + ')">x</div>';
+
+        // Deactivate all tabs
+        tabsBar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+        tabsBar.insertBefore(tab, addBtn);
+        this.state.currentTabId = id;
+        this.state.tabs[id] = this.getFormData();
+    },
+    switchTab(id) {
+        if(id === this.state.currentTabId) return;
+
+        this.saveCurrentTab();
+
+        // Update tab UI
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.toggle('active', parseInt(t.dataset.id) === id);
+        });
+
+        this.state.currentTabId = id;
+        this.loadTab(id);
+    },
+    closeTab(id) {
+        const tabs = document.querySelectorAll('.tab');
+        if(tabs.length <= 1) return; // Don't close last tab
+
+        const tabEl = document.querySelector('.tab[data-id="' + id + '"]');
+        if(!tabEl) return;
+
+        // If closing current tab, switch to another
+        if(id === this.state.currentTabId) {
+            const nextTab = tabEl.nextElementSibling?.classList.contains('tab') ? tabEl.nextElementSibling : tabEl.previousElementSibling;
+            if(nextTab && nextTab.classList.contains('tab')) {
+                this.switchTab(parseInt(nextTab.dataset.id));
+            }
+        }
+
+        tabEl.remove();
+        delete this.state.tabs[id];
+    },
+    saveCurrentTab() {
+        this.state.tabs[this.state.currentTabId] = this.getFormData();
+    },
+    loadTab(id) {
+        const data = this.state.tabs[id];
+        if(!data) return;
+
+        document.getElementById('custName').value = data.custName || '';
+        document.getElementById('custTel').value = data.custTel || '';
+        document.getElementById('deadlineInput').value = data.deadline || '';
+        document.getElementById('refSelect').value = data.ref || '';
+        document.getElementById('sizeSelect').value = data.size || 'M';
+        document.getElementById('tsColorSelect').value = data.tsColor || '#FFFFFF';
+        document.getElementById('logoColorSelect').value = data.logoColor || '#000000';
+        document.getElementById('priceTshirt').value = data.priceTshirt || '25';
+        document.getElementById('pricePerso').value = data.pricePerso || '0';
+
+        this.state.isUrgent = data.isUrgent || false;
+        this.state.isPaid = data.isPaid || false;
+        this.state.targetPrefix = data.targetPrefix || 'H';
+        this.state.savedPdf = data.savedPdf || null;
+
+        // Update UI
+        this.updateTsColor();
+        this.updateDeadline();
+        this.updateTotal();
+        this.updateUrgentUI();
+        this.updatePaymentUI();
+        this.updateTargetUI();
+        this.updatePdfSection();
+
+        // Clear canvases
+        this.state.cans.AV.clear();
+        this.state.cans.AR.clear();
+    },
+    getFormData() {
+        return {
+            custName: document.getElementById('custName').value,
+            custTel: document.getElementById('custTel').value,
+            deadline: document.getElementById('deadlineInput').value,
+            ref: document.getElementById('refSelect').value,
+            size: document.getElementById('sizeSelect').value,
+            tsColor: document.getElementById('tsColorSelect').value,
+            logoColor: document.getElementById('logoColorSelect').value,
+            priceTshirt: document.getElementById('priceTshirt').value,
+            pricePerso: document.getElementById('pricePerso').value,
+            isUrgent: this.state.isUrgent,
+            isPaid: this.state.isPaid,
+            targetPrefix: this.state.targetPrefix,
+            savedPdf: this.state.savedPdf
+        };
+    },
+    resetForm() {
+        document.getElementById('custName').value = '';
+        document.getElementById('custTel').value = '';
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 7);
+        document.getElementById('deadlineInput').value = defaultDate.toISOString().split('T')[0];
+        document.getElementById('sizeSelect').value = 'M';
+        document.getElementById('tsColorSelect').value = '#FFFFFF';
+        document.getElementById('logoColorSelect').value = '#000000';
+        document.getElementById('priceTshirt').value = '25';
+        document.getElementById('pricePerso').value = '0';
+
+        this.state.isUrgent = false;
+        this.state.isPaid = false;
+        this.state.targetPrefix = 'H';
+        this.state.savedPdf = null;
+
+        this.updateRefList();
+        this.updateTsColor();
+        this.updateDeadline();
+        this.updateTotal();
+        this.updateUrgentUI();
+        this.updatePaymentUI();
+        this.updateTargetUI();
+        this.updatePdfSection();
+
+        this.state.cans.AV.clear();
+        this.state.cans.AR.clear();
+
+        // Hide views
+        document.getElementById('btnAV').classList.remove('active');
+        document.getElementById('btnAR').classList.remove('active');
+        document.getElementById('zoneAV').classList.remove('visible');
+        document.getElementById('zoneAR').classList.remove('visible');
+    },
+    updateTabName() {
+        const name = document.getElementById('custName').value || 'Nouvelle fiche';
+        const tab = document.querySelector('.tab[data-id="' + this.state.currentTabId + '"] span');
+        if(tab) tab.textContent = name.substring(0, 15) + (name.length > 15 ? '...' : '');
+    },
+    updateUrgentUI() {
+        const card = document.getElementById('capture');
+        const btn = document.getElementById('urgentBtn');
+        if(this.state.isUrgent) {
+            card.classList.add('urgent');
+            btn.classList.add('active');
+        } else {
+            card.classList.remove('urgent');
+            btn.classList.remove('active');
+        }
+    },
+    updatePaymentUI() {
+        const totalLine = document.getElementById('totalLine');
+        const btnPaid = document.getElementById('btnPaid');
+        const btnUnpaid = document.getElementById('btnUnpaid');
+
+        if(this.state.isPaid) {
+            totalLine.classList.remove('unpaid');
+            totalLine.classList.add('paid');
+            btnPaid.classList.add('active');
+            btnUnpaid.classList.remove('active');
+        } else {
+            totalLine.classList.remove('paid');
+            totalLine.classList.add('unpaid');
+            btnUnpaid.classList.add('active');
+            btnPaid.classList.remove('active');
+        }
+    },
+    updateTargetUI() {
+        const chips = document.querySelectorAll('.chip');
+        const prefixMap = { 'H': 0, 'F': 1, 'E': 2, 'B': 3 };
+        chips.forEach((c, i) => c.classList.toggle('active', i === prefixMap[this.state.targetPrefix]));
+    },
+
     toggleView(side) {
-        // Utilise les nouveaux boutons AV/AR
         const btn = document.getElementById('btn' + side);
         const zone = document.getElementById('zone' + side);
         if(!btn.classList.contains('active')) {
@@ -400,7 +650,6 @@ const App = {
             let v = this.state.targetPrefix + i.toString().padStart(3, '0');
             let o = document.createElement('option'); o.value = v; o.innerText = v; s.appendChild(o);
         }
-        // Ajouter option MANUEL à la fin
         let m = document.createElement('option'); m.value = 'MANUEL'; m.innerText = 'MANUEL'; s.appendChild(m);
     },
     checkManual() {
@@ -409,17 +658,7 @@ const App = {
     },
     toggleUrgent() {
         this.state.isUrgent = !this.state.isUrgent;
-        const card = document.getElementById('capture');
-        const btn = document.getElementById('urgentBtn');
-        if(this.state.isUrgent) {
-            card.classList.add('urgent');
-            btn.classList.add('active');
-            btn.innerHTML = 'URGENT';
-        } else {
-            card.classList.remove('urgent');
-            btn.classList.remove('active');
-            btn.innerHTML = 'URGENT';
-        }
+        this.updateUrgentUI();
     },
     updateDeadline() {
         const input = document.getElementById('deadlineInput');
@@ -436,21 +675,16 @@ const App = {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         badge.style.display = 'inline-block';
+        badge.className = 'days-badge';
+
         if(diffDays < 0) {
-            badge.textContent = 'DEPASSE';
-            badge.className = 'days-badge critical';
+            badge.textContent = Math.abs(diffDays) + ' jour' + (Math.abs(diffDays) > 1 ? 's' : '') + ' de retard';
         } else if(diffDays === 0) {
             badge.textContent = "Aujourd'hui";
-            badge.className = 'days-badge critical';
         } else if(diffDays === 1) {
-            badge.textContent = '1 jour';
-            badge.className = 'days-badge critical';
-        } else if(diffDays <= 3) {
-            badge.textContent = diffDays + ' jours';
-            badge.className = 'days-badge warning';
+            badge.textContent = '1 jour restant';
         } else {
-            badge.textContent = diffDays + ' jours';
-            badge.className = 'days-badge';
+            badge.textContent = diffDays + ' jours restants';
         }
     },
     updateTotal() {
@@ -458,27 +692,13 @@ const App = {
         const pricePerso = parseInt(document.getElementById('pricePerso').value) || 0;
         const total = priceTshirt + pricePerso;
 
-        document.getElementById('displayPriceTshirt').textContent = priceTshirt + ' €';
-        document.getElementById('displayPricePerso').textContent = pricePerso + ' €';
-        document.getElementById('displayTotal').textContent = total + ' €';
+        document.getElementById('displayPriceTshirt').textContent = priceTshirt + ' EUR';
+        document.getElementById('displayPricePerso').textContent = pricePerso + ' EUR';
+        document.getElementById('displayTotal').textContent = total + ' EUR';
     },
     setPayment(paid) {
         this.state.isPaid = paid;
-        const totalLine = document.getElementById('totalLine');
-        const btnPaid = document.getElementById('btnPaid');
-        const btnUnpaid = document.getElementById('btnUnpaid');
-
-        if(paid) {
-            totalLine.classList.remove('unpaid');
-            totalLine.classList.add('paid');
-            btnPaid.classList.add('active');
-            btnUnpaid.classList.remove('active');
-        } else {
-            totalLine.classList.remove('paid');
-            totalLine.classList.add('unpaid');
-            btnUnpaid.classList.add('active');
-            btnPaid.classList.remove('active');
-        }
+        this.updatePaymentUI();
     },
     toggleViewBtn(side) {
         const btn = document.getElementById('btn' + side);
@@ -510,7 +730,6 @@ const App = {
         const val = selectEl.value;
         this.state.currentSide = side;
         if(val === 'UPLOAD') {
-            // Déclencher le clic sur le nouvel input file
             document.getElementById('fileInput' + side).click();
             selectEl.selectedIndex = 0;
         } else if(val !== "") {
@@ -525,13 +744,11 @@ const App = {
         const fileType = file.type || '';
         const fileName = file.name.toLowerCase();
 
-        // S'assurer que la zone est visible
         const btn = document.getElementById('btn' + side);
         if(!btn.classList.contains('active')) {
             this.toggleViewBtn(side);
         }
 
-        // Gestion des PDFs
         if(fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
             alert('Fichier PDF selectionne: ' + file.name + '\n\nNote: Le PDF sera represente par son nom.\nPour afficher l\'image, exportez en PNG ou JPG.');
             const t = new fabric.Text('[PDF] ' + file.name.substring(0, 12) + (file.name.length > 12 ? '...' : ''), {
@@ -544,7 +761,6 @@ const App = {
             return;
         }
 
-        // Gestion des images
         const reader = new FileReader();
         const canvas = this.state.cans[side];
 
@@ -564,14 +780,25 @@ const App = {
         reader.readAsDataURL(file);
     },
     handleFile(e) {
-        // Ancienne fonction - redirige vers la nouvelle
         this.handleFileUpload(this.state.currentSide, e);
     },
     addText(side, txt) {
         const t = new fabric.Text(txt, { fontSize: 35, fontWeight: '900', fill: document.getElementById('logoColorSelect').value, left: 150, top: 130, originX: 'center', originY: 'center', padding: 25 });
         this.state.cans[side].add(t).setActiveObject(t);
     },
-    download() {
+
+    // PDF Management
+    updatePdfSection() {
+        const section = document.getElementById('pdfSection');
+        if(this.state.savedPdf) {
+            section.classList.add('has-pdf');
+            document.getElementById('pdfName').textContent = this.state.savedPdf.name;
+            document.getElementById('pdfDate').textContent = this.state.savedPdf.date;
+        } else {
+            section.classList.remove('has-pdf');
+        }
+    },
+    generateAndSavePdf() {
         ['AV', 'AR'].forEach(s => this.state.cans[s].discardActiveObject().renderAll());
         const captureEl = document.getElementById('capture');
         html2canvas(captureEl, {
@@ -583,11 +810,9 @@ const App = {
             const { jsPDF } = window.jspdf;
             const imgData = canvas.toDataURL('image/png');
 
-            // Dimensions du canvas
             const imgWidth = canvas.width;
             const imgHeight = canvas.height;
 
-            // Creer PDF en format adapte
             const pdf = new jsPDF({
                 orientation: imgHeight > imgWidth ? 'portrait' : 'landscape',
                 unit: 'px',
@@ -598,11 +823,50 @@ const App = {
 
             const refVal = document.getElementById('refSelect').value;
             const ref = (refVal === 'MANUEL') ? document.getElementById('manualRef').value : refVal;
-            pdf.save('OLDA_' + (ref || 'devis') + '.pdf');
+            const custName = document.getElementById('custName').value || 'Client';
+            const fileName = 'OLDA_' + custName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + (ref || 'devis') + '.pdf';
+
+            // Save PDF data
+            const pdfBlob = pdf.output('blob');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+
+            this.state.savedPdf = {
+                name: fileName,
+                date: dateStr,
+                url: pdfUrl,
+                blob: pdfBlob
+            };
+
+            this.updatePdfSection();
+            this.saveCurrentTab();
+
+            // Also download
+            pdf.save(fileName);
         }).catch(err => {
             console.error('Erreur export:', err);
             alert('Erreur lors de l\'export. Veuillez reessayer.');
         });
+    },
+    downloadSavedPdf() {
+        if(!this.state.savedPdf) return;
+
+        const link = document.createElement('a');
+        link.href = this.state.savedPdf.url;
+        link.download = this.state.savedPdf.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+    deletePdf() {
+        if(this.state.savedPdf && this.state.savedPdf.url) {
+            URL.revokeObjectURL(this.state.savedPdf.url);
+        }
+        this.state.savedPdf = null;
+        this.updatePdfSection();
+        this.saveCurrentTab();
     }
 };
 window.onload = () => App.init();
