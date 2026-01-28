@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
 /**
- * Exporte un element HTML en PDF
+ * Exporte un element HTML en PDF - Optimise pour une seule page A4
  * @param {HTMLElement} element - L'element a exporter
  * @param {string} filename - Le nom du fichier (sans extension)
  * @returns {Promise<void>}
@@ -23,9 +23,9 @@ export async function exportToPdf(element, filename = 'fiche') {
     // Attendre un court instant pour que les styles soient appliques
     await new Promise(resolve => setTimeout(resolve, 100))
 
-    // Creer le canvas a partir de l'element
+    // Creer le canvas a partir de l'element - echelle reduite pour tenir sur A4
     const canvas = await html2canvas(element, {
-      scale: 2, // Meilleure qualite
+      scale: 1.5, // Echelle reduite pour optimiser la taille
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
@@ -39,44 +39,55 @@ export async function exportToPdf(element, filename = 'fiche') {
       el.style.display = ''
     })
 
-    // Calculer les dimensions du PDF
-    const imgWidth = 210 // A4 width in mm
-    const pageHeight = 297 // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    let heightLeft = imgHeight
-    let position = 0
+    // Dimensions A4 en mm
+    const pdfWidth = 210
+    const pdfHeight = 297
+
+    // Marges en mm
+    const marginX = 8
+    const marginY = 8
+
+    // Zone imprimable
+    const printableWidth = pdfWidth - (marginX * 2)
+    const printableHeight = pdfHeight - (marginY * 2) - 10 // Reserve pour le footer
+
+    // Calculer le ratio pour faire tenir sur une page
+    const canvasRatio = canvas.width / canvas.height
+    const pageRatio = printableWidth / printableHeight
+
+    let imgWidth, imgHeight
+
+    if (canvasRatio > pageRatio) {
+      // L'image est plus large que la page
+      imgWidth = printableWidth
+      imgHeight = printableWidth / canvasRatio
+    } else {
+      // L'image est plus haute que la page
+      imgHeight = printableHeight
+      imgWidth = printableHeight * canvasRatio
+    }
+
+    // Centrer l'image
+    const offsetX = marginX + (printableWidth - imgWidth) / 2
+    const offsetY = marginY
 
     // Creer le PDF
     const pdf = new jsPDF('p', 'mm', 'a4')
-    const imgData = canvas.toDataURL('image/jpeg', 0.95)
+    const imgData = canvas.toDataURL('image/jpeg', 0.92)
 
-    // Ajouter l'image au PDF (gerer plusieurs pages si necessaire)
-    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-    heightLeft -= pageHeight
+    // Ajouter l'image centree sur une seule page
+    pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgWidth, imgHeight)
 
-    // Si le contenu depasse une page, ajouter des pages supplementaires
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight
-      pdf.addPage()
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-    }
-
-    // Ajouter un pied de page avec la date
-    const totalPages = pdf.internal.getNumberOfPages()
+    // Ajouter un pied de page elegant
     const date = new Date().toLocaleDateString('fr-FR')
-
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i)
-      pdf.setFontSize(8)
-      pdf.setTextColor(150)
-      pdf.text(
-        `OLDA Collections - Genere le ${date} - Page ${i}/${totalPages}`,
-        105,
-        290,
-        { align: 'center' }
-      )
-    }
+    pdf.setFontSize(7)
+    pdf.setTextColor(180)
+    pdf.text(
+      `Commande T-shirt OLDA - ${date}`,
+      pdfWidth / 2,
+      pdfHeight - 5,
+      { align: 'center' }
+    )
 
     // Nettoyer le nom de fichier
     const cleanFilename = filename
