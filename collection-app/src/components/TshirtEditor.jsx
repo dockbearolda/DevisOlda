@@ -43,8 +43,8 @@ const LOGO_COLORS = [
 // Tailles disponibles
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-// Logos predefinies
-const PRESET_LOGOS = ['BEA-16', 'SXM-12', 'WRA-01', 'VIN-01']
+// Logos predefinies (references officielles)
+const PRESET_LOGOS = ['BEA-16', 'SXM-12', 'VIN-01', 'SUR-07']
 
 // Composant SVG du T-shirt AVANT
 function TshirtSvgFront({ color }) {
