@@ -1,5 +1,217 @@
 import { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react'
 
+// Composant Logo Draggable et Redimensionnable
+function DraggableLogo({
+  src,
+  isText = false,
+  textContent = '',
+  logoColor = '#000000',
+  initialPosition = { x: 100, y: 100 },
+  initialSize = { width: 100, height: 100 },
+  minSize = 40,
+  maxSize = 200,
+  containerRef,
+  onRemove,
+  disabled = false,
+  side = 'front'
+}) {
+  const [position, setPosition] = useState(initialPosition)
+  const [size, setSize] = useState(initialSize)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isResizing, setIsResizing] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 })
+  const logoRef = useRef(null)
+
+  // Calculer les limites du container
+  const getContainerBounds = useCallback(() => {
+    if (!containerRef?.current) return { minX: 55, maxX: 245, minY: 70, maxY: 290 }
+    return {
+      minX: 55,
+      maxX: 245,
+      minY: 70,
+      maxY: 290
+    }
+  }, [containerRef])
+
+  // Gestion du drag
+  const handleMouseDown = useCallback((e) => {
+    if (disabled || isResizing) return
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    })
+  }, [disabled, isResizing, position])
+
+  const handleMouseMove = useCallback((e) => {
+    if (isDragging && !disabled) {
+      const bounds = getContainerBounds()
+      const newX = Math.max(bounds.minX, Math.min(bounds.maxX - size.width, e.clientX - dragStart.x))
+      const newY = Math.max(bounds.minY, Math.min(bounds.maxY - size.height, e.clientY - dragStart.y))
+      setPosition({ x: newX, y: newY })
+    }
+    if (isResizing && !disabled) {
+      const deltaX = e.clientX - resizeStart.x
+      // Garder les proportions
+      const aspectRatio = resizeStart.width / resizeStart.height
+      let newWidth = Math.max(minSize, Math.min(maxSize, resizeStart.width + deltaX))
+      let newHeight = newWidth / aspectRatio
+
+      if (newHeight > maxSize) {
+        newHeight = maxSize
+        newWidth = newHeight * aspectRatio
+      }
+      if (newHeight < minSize) {
+        newHeight = minSize
+        newWidth = newHeight * aspectRatio
+      }
+
+      setSize({ width: newWidth, height: newHeight })
+    }
+  }, [isDragging, isResizing, disabled, dragStart, resizeStart, getContainerBounds, size.width, size.height, minSize, maxSize])
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+    setIsResizing(false)
+  }, [])
+
+  // Gestion du resize
+  const handleResizeStart = useCallback((e) => {
+    if (disabled) return
+    e.preventDefault()
+    e.stopPropagation()
+    setIsResizing(true)
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: size.width,
+      height: size.height
+    })
+  }, [disabled, size])
+
+  // Touch support
+  const handleTouchStart = useCallback((e) => {
+    if (disabled || isResizing) return
+    const touch = e.touches[0]
+    setIsDragging(true)
+    setDragStart({
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y
+    })
+  }, [disabled, isResizing, position])
+
+  const handleTouchMove = useCallback((e) => {
+    if (isDragging && !disabled) {
+      const touch = e.touches[0]
+      const bounds = getContainerBounds()
+      const newX = Math.max(bounds.minX, Math.min(bounds.maxX - size.width, touch.clientX - dragStart.x))
+      const newY = Math.max(bounds.minY, Math.min(bounds.maxY - size.height, touch.clientY - dragStart.y))
+      setPosition({ x: newX, y: newY })
+    }
+  }, [isDragging, disabled, dragStart, getContainerBounds, size.width, size.height])
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false)
+    setIsResizing(false)
+  }, [])
+
+  // Event listeners globaux
+  useEffect(() => {
+    if (isDragging || isResizing) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+      window.addEventListener('touchmove', handleTouchMove)
+      window.addEventListener('touchend', handleTouchEnd)
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove)
+        window.removeEventListener('mouseup', handleMouseUp)
+        window.removeEventListener('touchmove', handleTouchMove)
+        window.removeEventListener('touchend', handleTouchEnd)
+      }
+    }
+  }, [isDragging, isResizing, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
+
+  return (
+    <div
+      ref={logoRef}
+      className={`absolute z-20 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} ${disabled ? 'pointer-events-none' : ''}`}
+      style={{
+        left: position.x,
+        top: position.y,
+        width: size.width,
+        height: size.height,
+        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.2s'
+      }}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+    >
+      {/* Bordure de selection */}
+      {!disabled && (
+        <div className={`absolute inset-0 border-2 rounded-lg pointer-events-none transition-all ${
+          isDragging || isResizing ? 'border-blue-500 shadow-lg' : 'border-dashed border-stone-400 hover:border-stone-600'
+        }`} />
+      )}
+
+      {/* Contenu du logo */}
+      <div className="w-full h-full flex items-center justify-center overflow-hidden">
+        {isText ? (
+          <span
+            className="font-black text-center leading-none"
+            style={{
+              color: logoColor,
+              fontSize: `${Math.min(size.width, size.height) * 0.35}px`
+            }}
+          >
+            {textContent}
+          </span>
+        ) : (
+          <img
+            src={src}
+            alt="Logo"
+            className="max-w-full max-h-full object-contain"
+            draggable={false}
+          />
+        )}
+      </div>
+
+      {/* Bouton de suppression - Croix rouge */}
+      {!disabled && onRemove && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove()
+          }}
+          className="absolute -top-3 -right-3 w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full
+                     flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200
+                     hover:scale-110 z-30"
+          title="Supprimer le logo"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
+      {/* Poignee de redimensionnement */}
+      {!disabled && (
+        <div
+          className="absolute -bottom-2 -right-2 w-5 h-5 bg-blue-500 hover:bg-blue-600 rounded-full cursor-se-resize
+                     flex items-center justify-center shadow-lg transition-all hover:scale-110 z-30"
+          onMouseDown={handleResizeStart}
+          title="Redimensionner (proportionnel)"
+        >
+          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // Couleurs de t-shirt disponibles
 const TSHIRT_COLORS = [
   { value: '#FFFFFF', label: 'Blanc Pure' },
@@ -136,6 +348,8 @@ const TshirtEditor = forwardRef(function TshirtEditor({
   const [uploadedImageBack, setUploadedImageBack] = useState(null)
   const fileInputFrontRef = useRef(null)
   const fileInputBackRef = useRef(null)
+  const containerFrontRef = useRef(null)
+  const containerBackRef = useRef(null)
 
   // Gerer l'upload d'image
   const handleFileUpload = useCallback((side, event) => {
@@ -156,12 +370,14 @@ const TshirtEditor = forwardRef(function TshirtEditor({
     event.target.value = ''
   }, [disabled])
 
-  // Supprimer une image
+  // Supprimer une image ou un logo
   const handleRemoveImage = (side) => {
     if (side === 'front') {
       setUploadedImageFront(null)
+      setSelectedLogoFront('')
     } else {
       setUploadedImageBack(null)
+      setSelectedLogoBack('')
     }
   }
 
@@ -259,7 +475,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
       {activeView.front && (
         <div className="animate-fade-in">
           {/* Selection logo AVANT */}
-          <div className="mb-3">
+          <div className="mb-4">
             <label className="text-xs font-bold text-stone-500 uppercase mb-2 block">Logo AVANT</label>
             <div className="flex gap-2">
               <select
@@ -287,41 +503,53 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 </button>
               )}
             </div>
+            {!disabled && (uploadedImageFront || selectedLogoFront) && (
+              <p className="text-xs text-stone-400 mt-2 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Deplacez et redimensionnez le logo directement sur le t-shirt
+              </p>
+            )}
           </div>
 
           {/* Preview T-shirt AVANT */}
-          <div className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                          rounded-2xl border border-stone-200 overflow-hidden shadow-inner">
+          <div
+            ref={containerFrontRef}
+            className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
+                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+          >
             <TshirtSvgFront color={tshirtColor} />
 
-            {/* Zone logo */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 pt-8">
-              {uploadedImageFront ? (
-                <div className="relative">
-                  <img
-                    src={uploadedImageFront}
-                    alt="Logo"
-                    className="max-w-[100px] max-h-[100px] object-contain"
-                  />
-                  {!disabled && (
-                    <button
-                      onClick={() => handleRemoveImage('front')}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full
-                                 flex items-center justify-center text-xs font-bold"
-                    >
-                      X
-                    </button>
-                  )}
+            {/* Logo draggable et redimensionnable */}
+            {(uploadedImageFront || selectedLogoFront) && (
+              <DraggableLogo
+                src={uploadedImageFront}
+                isText={!uploadedImageFront && !!selectedLogoFront}
+                textContent={selectedLogoFront}
+                logoColor={logoColor}
+                initialPosition={{ x: 100, y: 120 }}
+                initialSize={{ width: 100, height: 100 }}
+                minSize={40}
+                maxSize={180}
+                containerRef={containerFrontRef}
+                onRemove={() => handleRemoveImage('front')}
+                disabled={disabled}
+                side="front"
+              />
+            )}
+
+            {/* Indication zone de drop si vide */}
+            {!uploadedImageFront && !selectedLogoFront && !disabled && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="text-center text-stone-400 p-4">
+                  <svg className="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-xs">Selectionnez un logo</p>
                 </div>
-              ) : selectedLogoFront ? (
-                <span
-                  className="text-3xl font-black"
-                  style={{ color: logoColor }}
-                >
-                  {selectedLogoFront}
-                </span>
-              ) : null}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -330,7 +558,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
       {activeView.back && (
         <div className="animate-fade-in">
           {/* Selection logo ARRIERE */}
-          <div className="mb-3">
+          <div className="mb-4">
             <label className="text-xs font-bold text-stone-500 uppercase mb-2 block">Logo ARRIERE</label>
             <div className="flex gap-2">
               <select
@@ -358,41 +586,53 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 </button>
               )}
             </div>
+            {!disabled && (uploadedImageBack || selectedLogoBack) && (
+              <p className="text-xs text-stone-400 mt-2 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Deplacez et redimensionnez le logo directement sur le t-shirt
+              </p>
+            )}
           </div>
 
           {/* Preview T-shirt ARRIERE */}
-          <div className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                          rounded-2xl border border-stone-200 overflow-hidden shadow-inner">
+          <div
+            ref={containerBackRef}
+            className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
+                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+          >
             <TshirtSvgBack color={tshirtColor} />
 
-            {/* Zone logo */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 pt-8">
-              {uploadedImageBack ? (
-                <div className="relative">
-                  <img
-                    src={uploadedImageBack}
-                    alt="Logo"
-                    className="max-w-[150px] max-h-[150px] object-contain"
-                  />
-                  {!disabled && (
-                    <button
-                      onClick={() => handleRemoveImage('back')}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full
-                                 flex items-center justify-center text-xs font-bold"
-                    >
-                      X
-                    </button>
-                  )}
+            {/* Logo draggable et redimensionnable */}
+            {(uploadedImageBack || selectedLogoBack) && (
+              <DraggableLogo
+                src={uploadedImageBack}
+                isText={!uploadedImageBack && !!selectedLogoBack}
+                textContent={selectedLogoBack}
+                logoColor={logoColor}
+                initialPosition={{ x: 75, y: 100 }}
+                initialSize={{ width: 150, height: 150 }}
+                minSize={50}
+                maxSize={200}
+                containerRef={containerBackRef}
+                onRemove={() => handleRemoveImage('back')}
+                disabled={disabled}
+                side="back"
+              />
+            )}
+
+            {/* Indication zone de drop si vide */}
+            {!uploadedImageBack && !selectedLogoBack && !disabled && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="text-center text-stone-400 p-4">
+                  <svg className="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-xs">Selectionnez un logo</p>
                 </div>
-              ) : selectedLogoBack ? (
-                <span
-                  className="text-4xl font-black"
-                  style={{ color: logoColor }}
-                >
-                  {selectedLogoBack}
-                </span>
-              ) : null}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab }) {
+function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab, viewLabel }) {
   const tabsContainerRef = useRef(null)
   const activeTabRef = useRef(null)
 
@@ -18,11 +18,20 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab }) {
   return (
     <div className="bg-stone-100 border-b border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 py-2">
+        <div className="flex items-center gap-4 py-3">
+          {/* Label de la vue */}
+          {viewLabel && (
+            <div className="flex-shrink-0 hidden sm:block">
+              <span className="text-xs font-semibold text-stone-400 uppercase tracking-widest">
+                {viewLabel}
+              </span>
+            </div>
+          )}
+
           {/* Tabs Container */}
           <div
             ref={tabsContainerRef}
-            className="flex-1 flex items-center gap-1 overflow-x-auto scrollbar-hide py-1"
+            className="flex-1 flex items-center gap-2 overflow-x-auto scrollbar-hide py-1"
           >
             {fiches.map((fiche) => (
               <Tab
@@ -36,19 +45,21 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab }) {
             ))}
           </div>
 
-          {/* Add Tab Button */}
-          <button
-            onClick={onAddTab}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-stone-900 text-white
-                       rounded-lg hover:bg-stone-800 transition-all duration-200
-                       focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2
-                       text-sm font-medium shadow-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span className="hidden sm:inline">Nouvelle fiche</span>
-          </button>
+          {/* Add Tab Button - Seulement si onAddTab est defini */}
+          {onAddTab && (
+            <button
+              onClick={onAddTab}
+              className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-stone-900 text-white
+                         rounded-xl hover:bg-stone-800 transition-all duration-200
+                         focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2
+                         text-sm font-semibold shadow-lg hover:shadow-xl"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="hidden sm:inline">Nouvelle commande</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
