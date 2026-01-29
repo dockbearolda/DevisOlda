@@ -1,37 +1,54 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState } from 'react'
 import ProductionStepper from './ProductionStepper'
+import TshirtEditor from './TshirtEditor'
+import Modal from './Modal'
 import { exportToPdf } from '../utils/pdfExport'
 
-// Options de cibles
-const TARGET_OPTIONS = [
+// Options de collections (anciennement cibles/categories)
+const COLLECTION_OPTIONS = [
   { value: 'H', label: 'Homme' },
   { value: 'F', label: 'Femme' },
   { value: 'E', label: 'Enfant' },
   { value: 'B', label: 'Bebe' }
 ]
 
-// Options de references par cible
-const REFERENCES = {
-  H: ['H-001', 'H-002', 'H-003', 'H-004', 'H-005'],
-  F: ['F-001', 'F-002', 'F-003', 'F-004', 'F-005'],
-  E: ['E-001', 'E-002', 'E-003', 'E-004', 'E-005'],
-  B: ['B-001', 'B-002', 'B-003', 'B-004', 'B-005']
+// Generer les references automatiquement
+const generateReferences = (prefix) => {
+  const refs = []
+  for (let i = 1; i <= 15; i++) {
+    refs.push(`${prefix}${i.toString().padStart(3, '0')}`)
+  }
+  return refs
 }
 
-// Couleurs de t-shirt disponibles
-const TSHIRT_COLORS = [
-  { value: '#FFFFFF', label: 'Blanc' },
-  { value: '#000000', label: 'Noir' },
-  { value: '#1F2937', label: 'Gris fonce' },
-  { value: '#9CA3AF', label: 'Gris clair' },
-  { value: '#1E40AF', label: 'Bleu marine' },
-  { value: '#DC2626', label: 'Rouge' },
-  { value: '#16A34A', label: 'Vert' },
-  { value: '#FBBF24', label: 'Jaune' }
-]
+// Prix disponibles
+const PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
+
+// Formater la date
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+// Formater la date courte
+const formatDateShort = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
 
 function FicheClient({ fiche, onUpdate, onValidate }) {
   const printRef = useRef(null)
+  const editorRef = useRef(null)
+  const [showPdfModal, setShowPdfModal] = useState(false)
 
   // Calculer les jours restants avant la deadline
   const daysRemaining = useMemo(() => {
@@ -44,113 +61,139 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
     return diff
   }, [fiche.deadline])
 
-  // Calculer le total
-  const total = useMemo(() => {
-    const tshirtTotal = (fiche.tshirtPrice || 0) * (fiche.quantity || 1)
-    const personalizationTotal = (fiche.personalizationPrice || 0) * (fiche.quantity || 1)
-    return tshirtTotal + personalizationTotal
-  }, [fiche.tshirtPrice, fiche.personalizationPrice, fiche.quantity])
+  // Calcul dynamique des prix
+  const prixTshirt = fiche.tshirtPrice || 0
+  const prixPerso = fiche.personalizationPrice || 0
+  const total = prixTshirt + prixPerso
 
-  // Obtenir les references disponibles pour la cible selectionnee
+  // Obtenir les references disponibles pour la collection selectionnee
   const availableReferences = useMemo(() => {
-    return fiche.target ? REFERENCES[fiche.target] || [] : []
+    return fiche.target ? generateReferences(fiche.target) : []
   }, [fiche.target])
 
-  // Gerer le changement de fichier (logo)
-  const handleFileChange = (side) => (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        onUpdate({ [`${side}Logo`]: event.target.result })
-      }
-      reader.readAsDataURL(file)
+  // Verifier si le formulaire est valide pour validation
+  const canValidate = fiche.clientName && fiche.clientName !== 'Nouveau Client' && fiche.clientPhone
+
+  // Gerer le clic sur le bouton PDF
+  const handlePdfClick = () => {
+    if (!fiche.isValidated && canValidate) {
+      setShowPdfModal(true)
+    } else {
+      generatePdf()
     }
   }
 
-  // Gerer la suppression d'un logo
-  const handleRemoveLogo = (side) => () => {
-    onUpdate({ [`${side}Logo`]: null })
-  }
+  // Generer et telecharger le PDF
+  const generatePdf = async () => {
+    if (editorRef.current) {
+      editorRef.current.clearSelection()
+    }
 
-  // Exporter en PDF
-  const handleExportPdf = async () => {
     if (printRef.current) {
       await exportToPdf(printRef.current, fiche.clientName || 'fiche')
     }
   }
 
-  // Verifier si le formulaire est valide pour validation
-  const canValidate = fiche.clientName && fiche.clientName !== 'Nouveau Client' && fiche.clientPhone
+  // Valider et generer PDF
+  const handleValidateAndPdf = () => {
+    onValidate()
+    setTimeout(() => {
+      generatePdf()
+    }, 100)
+  }
+
+  // Verifier si la commande est terminee
+  const isCompleted = fiche.isValidated && fiche.productionSteps?.completed
 
   return (
     <div className="animate-fade-in">
-      {/* Fiche Container avec animation d'urgence */}
+      {/* Fiche Container - Optimisee pour A4 */}
       <div
         ref={printRef}
         className={`
-          card p-8 transition-all duration-300
+          card p-6 sm:p-8 transition-all duration-500
           ${fiche.isUrgent && !fiche.isValidated ? 'animate-pulse-urgent ring-4 ring-red-500/50' : ''}
-          ${fiche.isValidated ? 'bg-stone-50' : ''}
+          ${isCompleted ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 shadow-xl shadow-green-100' : ''}
+          ${fiche.isValidated && !isCompleted ? 'bg-stone-50' : ''}
         `}
       >
-        {/* Header de la fiche */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b border-stone-200">
-          <div>
-            <h2 className="font-serif text-2xl font-semibold text-stone-900">
-              {fiche.isValidated ? 'Fiche Validee' : 'Nouvelle Commande'}
-            </h2>
-            <p className="text-sm text-stone-500 mt-1">
-              Creee le {new Date(fiche.createdAt).toLocaleDateString('fr-FR')}
-              {fiche.validatedAt && ` - Validee le ${new Date(fiche.validatedAt).toLocaleDateString('fr-FR')}`}
-            </p>
-          </div>
+        {/* ============================================ */}
+        {/* EN-TETE: Date figee + Titre + Actions */}
+        {/* ============================================ */}
+        <div className="mb-6">
+          {/* Date de creation - Tout en haut, proeminente */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center px-4 py-2 bg-stone-900 text-white text-sm font-semibold rounded-full tracking-wide">
+                <svg className="w-4 h-4 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {fiche.createdDateDisplay || formatDate(fiche.createdAt)}
+              </span>
+            </div>
 
-          <div className="flex items-center gap-3 no-print">
-            {/* Bouton Urgence */}
-            {!fiche.isValidated && (
+            {/* Actions - No Print */}
+            <div className="flex items-center gap-2 no-print">
+              {/* Bouton Urgence */}
+              {!fiche.isValidated && (
+                <button
+                  onClick={() => onUpdate({ isUrgent: !fiche.isUrgent })}
+                  className={`
+                    px-4 py-2 rounded-full font-bold text-xs tracking-wider transition-all duration-200
+                    ${fiche.isUrgent
+                      ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                    }
+                  `}
+                >
+                  URGENT
+                </button>
+              )}
+
+              {/* Bouton PDF */}
               <button
-                onClick={() => onUpdate({ isUrgent: !fiche.isUrgent })}
+                onClick={handlePdfClick}
+                disabled={!canValidate && !fiche.isValidated}
                 className={`
-                  px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
-                  ${fiche.isUrgent
-                    ? 'bg-red-600 text-white hover:bg-red-700'
-                    : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+                  px-4 py-2 rounded-full font-bold text-xs tracking-wider transition-all duration-200
+                  flex items-center gap-2
+                  ${canValidate || fiche.isValidated
+                    ? 'bg-stone-900 text-white hover:bg-stone-800 shadow-md'
+                    : 'bg-stone-200 text-stone-400 cursor-not-allowed'
                   }
                 `}
               >
-                {fiche.isUrgent ? 'URGENT' : 'Marquer Urgent'}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                PDF
               </button>
-            )}
+            </div>
+          </div>
 
-            {/* Badge Urgence pour PDF */}
-            {fiche.isUrgent && (
-              <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full print-only hidden">
-                URGENT
-              </span>
+          {/* Titre de la fiche */}
+          <div className="text-center pb-4 border-b border-stone-200">
+            <h2 className="font-serif text-2xl font-bold text-stone-900 tracking-tight">
+              {isCompleted ? 'COMMANDE TERMINEE' : fiche.isValidated ? 'FICHE VALIDEE' : 'Commande T-shirt OLDA'}
+            </h2>
+            {fiche.validatedAt && (
+              <p className="text-sm text-stone-500 mt-1">
+                Validee le {formatDate(fiche.validatedAt)}
+              </p>
             )}
-
-            {/* Bouton Export PDF */}
-            <button
-              onClick={handleExportPdf}
-              className="px-4 py-2 bg-stone-900 text-white rounded-lg font-medium text-sm
-                         hover:bg-stone-800 transition-all duration-200
-                         flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Telecharger PDF
-            </button>
           </div>
         </div>
 
-        {/* Stepper de Production (visible uniquement si valide) */}
+        {/* ============================================ */}
+        {/* STEPPER DE PRODUCTION - Haut de gamme */}
+        {/* ============================================ */}
         {fiche.isValidated && (
-          <div className="mb-8">
+          <div className="mb-6">
             <ProductionStepper
               steps={fiche.productionSteps}
+              clientPhone={fiche.clientPhone}
+              clientName={fiche.clientName}
               onUpdateStep={(stepKey, value) => {
                 onUpdate({
                   productionSteps: {
@@ -163,128 +206,68 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
           </div>
         )}
 
-        {/* Formulaire */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Colonne Gauche - Informations Client */}
-          <div className="space-y-6">
-            <SectionTitle>Informations Client</SectionTitle>
+        {/* ============================================ */}
+        {/* FORMULAIRE PRINCIPAL */}
+        {/* ============================================ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            {/* Nom du client */}
+          {/* Colonne Gauche - Informations Client */}
+          <div className="space-y-5">
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
+              Informations Client
+            </h3>
+
+            {/* Client */}
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Nom du client *
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Nom du client
               </label>
               <input
                 type="text"
                 value={fiche.clientName}
                 onChange={(e) => onUpdate({ clientName: e.target.value })}
                 disabled={fiche.isValidated}
-                className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                placeholder="Ex: Mme Martin"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                placeholder="Nom complet"
               />
             </div>
 
             {/* Telephone */}
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Telephone *
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Telephone
               </label>
               <input
                 type="tel"
                 value={fiche.clientPhone}
                 onChange={(e) => onUpdate({ clientPhone: e.target.value })}
                 disabled={fiche.isValidated}
-                className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                placeholder="06 12 34 56 78"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                placeholder="06 00 00 00 00"
               />
             </div>
 
-            {/* Email */}
+            {/* Collection (anciennement Cible) */}
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Email
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Collection
               </label>
-              <input
-                type="email"
-                value={fiche.clientEmail}
-                onChange={(e) => onUpdate({ clientEmail: e.target.value })}
-                disabled={fiche.isValidated}
-                className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                placeholder="client@email.com"
-              />
-            </div>
-
-            {/* Date limite */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Date limite de livraison
-              </label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="date"
-                  value={fiche.deadline}
-                  onChange={(e) => onUpdate({ deadline: e.target.value })}
-                  disabled={fiche.isValidated}
-                  className="input-field flex-1 disabled:bg-stone-100 disabled:cursor-not-allowed"
-                />
-                {daysRemaining !== null && (
-                  <span className={`
-                    px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap
-                    ${daysRemaining <= 0
-                      ? 'bg-red-100 text-red-800'
-                      : daysRemaining <= 3
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-green-100 text-green-800'
-                    }
-                  `}>
-                    {daysRemaining <= 0
-                      ? 'Depasse'
-                      : daysRemaining === 1
-                        ? '1 jour'
-                        : `${daysRemaining} jours`
-                    }
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Notes / Instructions speciales
-              </label>
-              <textarea
-                value={fiche.notes}
-                onChange={(e) => onUpdate({ notes: e.target.value })}
-                disabled={fiche.isValidated}
-                rows={3}
-                className="input-field resize-none disabled:bg-stone-100 disabled:cursor-not-allowed"
-                placeholder="Instructions particulieres pour l'atelier..."
-              />
-            </div>
-          </div>
-
-          {/* Colonne Droite - Details Commande */}
-          <div className="space-y-6">
-            <SectionTitle>Details de la Commande</SectionTitle>
-
-            {/* Cible */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Cible
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {TARGET_OPTIONS.map((option) => (
+              <div className="grid grid-cols-4 gap-2">
+                {COLLECTION_OPTIONS.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => onUpdate({ target: option.value, reference: '' })}
                     disabled={fiche.isValidated}
                     className={`
-                      px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                      py-3 rounded-xl text-sm font-bold transition-all duration-200
                       disabled:cursor-not-allowed
                       ${fiche.target === option.value
-                        ? 'bg-stone-900 text-white'
-                        : 'bg-stone-200 text-stone-700 hover:bg-stone-300 disabled:hover:bg-stone-200'
+                        ? 'bg-stone-900 text-white shadow-lg'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                       }
                     `}
                   >
@@ -296,173 +279,162 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
 
             {/* Reference */}
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
                 Reference
               </label>
-              <div className="flex flex-col gap-3">
-                <select
-                  value={fiche.reference}
-                  onChange={(e) => onUpdate({ reference: e.target.value })}
-                  disabled={fiche.isValidated || !fiche.target}
-                  className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                >
-                  <option value="">Selectionnez une reference</option>
-                  {availableReferences.map((ref) => (
-                    <option key={ref} value={ref}>{ref}</option>
-                  ))}
-                  <option value="manual">Saisie manuelle</option>
-                </select>
+              <select
+                value={fiche.reference}
+                onChange={(e) => onUpdate({ reference: e.target.value })}
+                disabled={fiche.isValidated || !fiche.target}
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+              >
+                <option value="">Selectionnez une reference</option>
+                {availableReferences.map((ref) => (
+                  <option key={ref} value={ref}>{ref}</option>
+                ))}
+                <option value="MANUEL">Reference manuelle</option>
+              </select>
+            </div>
 
-                {fiche.reference === 'manual' && (
+            {/* Champ manuel */}
+            {fiche.reference === 'MANUEL' && (
+              <div>
+                <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                  Reference manuelle
+                </label>
+                <input
+                  type="text"
+                  value={fiche.manualReference || ''}
+                  onChange={(e) => onUpdate({ manualReference: e.target.value })}
+                  disabled={fiche.isValidated}
+                  className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                             focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                             disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                  placeholder="Entrez la reference"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Colonne Droite - Details Commande */}
+          <div className="space-y-5">
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
+              Details de la Commande
+            </h3>
+
+            {/* Date limite et Jours restants - MEME LIGNE */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Echeance
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
                   <input
-                    type="text"
-                    value={fiche.manualReference}
-                    onChange={(e) => onUpdate({ manualReference: e.target.value })}
+                    type="date"
+                    value={fiche.deadline}
+                    onChange={(e) => onUpdate({ deadline: e.target.value })}
                     disabled={fiche.isValidated}
-                    className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                    placeholder="Entrez la reference manuellement"
+                    className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                               focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                               disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                   />
+                </div>
+                {daysRemaining !== null && (
+                  <div className={`
+                    flex items-center justify-center h-12 px-5 rounded-xl text-base font-bold
+                    ${daysRemaining <= 0
+                      ? 'bg-red-500 text-white'
+                      : daysRemaining <= 3
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-stone-900 text-white'
+                    }
+                  `}>
+                    {daysRemaining <= 0 ? 'DEPASSE' : `${daysRemaining} jour${daysRemaining > 1 ? 's' : ''}`}
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Couleur du T-shirt */}
+            {/* Taille */}
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Couleur du T-shirt
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Taille
               </label>
-              <div className="flex flex-wrap gap-2">
-                {TSHIRT_COLORS.map((color) => (
-                  <button
-                    key={color.value}
-                    onClick={() => onUpdate({ tshirtColor: color.value })}
-                    disabled={fiche.isValidated}
-                    title={color.label}
-                    className={`
-                      w-10 h-10 rounded-lg border-2 transition-all duration-200
-                      disabled:cursor-not-allowed
-                      ${fiche.tshirtColor === color.value
-                        ? 'ring-2 ring-offset-2 ring-stone-900'
-                        : 'hover:scale-110'
-                      }
-                    `}
-                    style={{
-                      backgroundColor: color.value,
-                      borderColor: color.value === '#FFFFFF' ? '#e5e7eb' : color.value
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Quantite */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
-                Quantite
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={fiche.quantity}
-                onChange={(e) => onUpdate({ quantity: parseInt(e.target.value) || 1 })}
+              <select
+                value={fiche.size || 'M'}
+                onChange={(e) => onUpdate({ size: e.target.value })}
                 disabled={fiche.isValidated}
-                className="input-field w-32 disabled:bg-stone-100 disabled:cursor-not-allowed"
-              />
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+              >
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
             </div>
 
-            {/* Prix */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">
-                  Prix T-shirt (EUR)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={fiche.tshirtPrice}
-                  onChange={(e) => onUpdate({ tshirtPrice: parseFloat(e.target.value) || 0 })}
+            {/* Section Tarification */}
+            <div className="bg-stone-50 rounded-2xl p-5 space-y-4">
+              <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">
+                Tarification
+              </h4>
+
+              {/* Prix T-Shirt */}
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-stone-600">Prix T-Shirt</label>
+                <select
+                  value={fiche.tshirtPrice || 25}
+                  onChange={(e) => onUpdate({ tshirtPrice: parseInt(e.target.value) })}
                   disabled={fiche.isValidated}
-                  className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                />
+                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                             focus:outline-none focus:ring-2 focus:ring-stone-900
+                             disabled:bg-stone-100 disabled:cursor-not-allowed"
+                >
+                  {PRICE_OPTIONS.map(p => (
+                    <option key={p} value={p}>{p} EUR</option>
+                  ))}
+                </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">
-                  Prix Perso. (EUR)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={fiche.personalizationPrice}
-                  onChange={(e) => onUpdate({ personalizationPrice: parseFloat(e.target.value) || 0 })}
+
+              {/* Prix Personnalisation */}
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-stone-600">Personnalisation</label>
+                <select
+                  value={fiche.personalizationPrice || 0}
+                  onChange={(e) => onUpdate({ personalizationPrice: parseInt(e.target.value) })}
                   disabled={fiche.isValidated}
-                  className="input-field disabled:bg-stone-100 disabled:cursor-not-allowed"
-                />
+                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                             focus:outline-none focus:ring-2 focus:ring-stone-900
+                             disabled:bg-stone-100 disabled:cursor-not-allowed"
+                >
+                  {PRICE_OPTIONS.map(p => (
+                    <option key={p} value={p}>{p} EUR</option>
+                  ))}
+                </select>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Section Upload Logos */}
-        <div className="mt-8 pt-6 border-t border-stone-200">
-          <SectionTitle>Logos / Visuels</SectionTitle>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* Logo Avant */}
-            <LogoUpload
-              label="Logo Avant"
-              logo={fiche.frontLogo}
-              disabled={fiche.isValidated}
-              onUpload={handleFileChange('front')}
-              onRemove={handleRemoveLogo('front')}
-            />
-
-            {/* Logo Arriere */}
-            <LogoUpload
-              label="Logo Arriere"
-              logo={fiche.backLogo}
-              disabled={fiche.isValidated}
-              onUpload={handleFileChange('back')}
-              onRemove={handleRemoveLogo('back')}
-            />
-          </div>
-        </div>
-
-        {/* Recapitulatif et Total */}
-        <div className="mt-8 pt-6 border-t border-stone-200">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Total */}
-            <div className="bg-stone-100 rounded-xl p-6 flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-stone-600">Sous-total T-shirts</span>
-                <span className="font-medium">
-                  {((fiche.tshirtPrice || 0) * (fiche.quantity || 1)).toFixed(2)} EUR
+              {/* Formule */}
+              <div className="text-center py-2 border-t border-stone-200">
+                <span className="text-sm text-stone-400 font-medium tracking-wide">
+                  {prixTshirt} EUR + {prixPerso} EUR
                 </span>
               </div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-stone-600">Sous-total Personnalisation</span>
-                <span className="font-medium">
-                  {((fiche.personalizationPrice || 0) * (fiche.quantity || 1)).toFixed(2)} EUR
-                </span>
-              </div>
-              <div className="flex items-center justify-between pt-3 border-t border-stone-300">
-                <span className="text-lg font-semibold text-stone-900">Total</span>
-                <span className="text-2xl font-bold text-stone-900">{total.toFixed(2)} EUR</span>
-              </div>
-            </div>
 
-            {/* Statut Paiement */}
-            <div className="flex flex-col gap-3">
-              <span className="text-sm font-medium text-stone-700">Statut du paiement</span>
-              <div className="flex gap-2">
+              {/* Statut Paiement */}
+              <div className="flex p-1 bg-stone-200 rounded-full">
                 <button
                   onClick={() => onUpdate({ isPaid: false })}
                   className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
                     ${!fiche.isPaid
-                      ? 'bg-amber-100 text-amber-800 ring-2 ring-amber-500'
-                      : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
+                      ? 'bg-red-500 text-white shadow-lg'
+                      : 'bg-transparent text-stone-400'
                     }
                   `}
                 >
@@ -471,10 +443,10 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
                 <button
                   onClick={() => onUpdate({ isPaid: true })}
                   className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
                     ${fiche.isPaid
-                      ? 'bg-green-100 text-green-800 ring-2 ring-green-500'
-                      : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
+                      ? 'bg-green-500 text-white shadow-lg'
+                      : 'bg-transparent text-stone-400'
                     }
                   `}
                 >
@@ -485,106 +457,91 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
           </div>
         </div>
 
-        {/* Bouton de validation */}
-        {!fiche.isValidated && (
-          <div className="mt-8 pt-6 border-t border-stone-200 no-print">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <p className="text-sm text-stone-500">
-                Une fois validee, la fiche sera figee et transmise a l'atelier.
+        {/* ============================================ */}
+        {/* EDITEUR T-SHIRT */}
+        {/* ============================================ */}
+        <div className="border-t border-stone-200 pt-6 mt-6">
+          <TshirtEditor
+            ref={editorRef}
+            disabled={fiche.isValidated}
+            tshirtColor={fiche.tshirtColor || '#FFFFFF'}
+            logoColor={fiche.logoColor || '#000000'}
+            size={fiche.size || 'M'}
+            onTshirtColorChange={(color) => onUpdate({ tshirtColor: color })}
+            onLogoColorChange={(color) => onUpdate({ logoColor: color })}
+            onSizeChange={(size) => onUpdate({ size })}
+          />
+        </div>
+
+        {/* ============================================ */}
+        {/* PIED DE PAGE: Total + Validation */}
+        {/* ============================================ */}
+        <div className="border-t border-stone-200 pt-6 mt-6">
+          {/* Total - Tout en bas, mis en valeur */}
+          <div className={`
+            flex items-center justify-between p-5 rounded-2xl mb-4
+            ${fiche.isPaid
+              ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+              : 'bg-gradient-to-r from-red-500 to-rose-500'
+            }
+          `}>
+            <div className="flex items-center gap-3">
+              <div className={`
+                w-12 h-12 rounded-full flex items-center justify-center
+                ${fiche.isPaid ? 'bg-white/20' : 'bg-white/20'}
+              `}>
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {fiche.isPaid ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  )}
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm font-medium uppercase tracking-wider">
+                  Total a payer
+                </p>
+                <p className="text-white text-xs">
+                  {fiche.isPaid ? 'Reglement effectue' : 'En attente de reglement'}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white text-4xl font-black tracking-tight">
+                {total} EUR
               </p>
-              <button
-                onClick={onValidate}
-                disabled={!canValidate}
-                className={`
-                  px-8 py-3 rounded-lg font-semibold text-base transition-all duration-200
-                  ${canValidate
-                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl'
-                    : 'bg-stone-300 text-stone-500 cursor-not-allowed'
-                  }
-                `}
-              >
-                Valider et transmettre a l'atelier
-              </button>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  )
-}
 
-// Composant titre de section
-function SectionTitle({ children }) {
-  return (
-    <h3 className="text-lg font-semibold text-stone-900 mb-4 flex items-center gap-2">
-      <span className="w-1 h-6 bg-stone-900 rounded-full"></span>
-      {children}
-    </h3>
-  )
-}
-
-// Composant Upload de Logo
-function LogoUpload({ label, logo, disabled, onUpload, onRemove }) {
-  const inputRef = useRef(null)
-
-  return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium text-stone-700">{label}</label>
-
-      {logo ? (
-        <div className="relative group">
-          <div className="aspect-square bg-stone-100 rounded-xl overflow-hidden border border-stone-200">
-            <img
-              src={logo}
-              alt={label}
-              className="w-full h-full object-contain"
-            />
-          </div>
-          {!disabled && (
+          {/* Bouton Validation - uniquement si non valide */}
+          {!fiche.isValidated && (
             <button
-              onClick={onRemove}
-              className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg
-                         opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                         hover:bg-red-700"
+              onClick={onValidate}
+              disabled={!canValidate}
+              className={`
+                w-full py-4 rounded-2xl font-bold text-sm uppercase tracking-widest transition-all duration-200 no-print
+                ${canValidate
+                  ? 'bg-stone-900 text-white hover:bg-stone-800 shadow-xl hover:shadow-2xl'
+                  : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                }
+              `}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+              Valider la Commande
             </button>
           )}
         </div>
-      ) : (
-        <button
-          onClick={() => inputRef.current?.click()}
-          disabled={disabled}
-          className={`
-            w-full aspect-square rounded-xl border-2 border-dashed
-            flex flex-col items-center justify-center gap-3
-            transition-all duration-200
-            ${disabled
-              ? 'border-stone-200 bg-stone-50 cursor-not-allowed'
-              : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50 cursor-pointer'
-            }
-          `}
-        >
-          <svg className="w-10 h-10 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span className="text-sm text-stone-500">
-            {disabled ? 'Upload desactive' : 'Cliquez pour ajouter'}
-          </span>
-        </button>
-      )}
+      </div>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        onChange={onUpload}
-        disabled={disabled}
-        className="hidden"
+      {/* Modal de confirmation PDF */}
+      <Modal
+        isOpen={showPdfModal}
+        onClose={() => setShowPdfModal(false)}
+        onConfirm={handleValidateAndPdf}
+        title="Generer le PDF"
+        message="Cette action va valider la commande et generer le PDF. La fiche ne sera plus modifiable. Continuer ?"
+        confirmText="Valider et generer"
+        cancelText="Annuler"
       />
     </div>
   )

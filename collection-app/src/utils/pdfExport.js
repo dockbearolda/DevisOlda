@@ -2,7 +2,8 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
 /**
- * Exporte un element HTML en PDF
+ * Exporte un element HTML en PDF - Optimise pour une seule page A4
+ * Centrage vertical et horizontal de tous les elements
  * @param {HTMLElement} element - L'element a exporter
  * @param {string} filename - Le nom du fichier (sans extension)
  * @returns {Promise<void>}
@@ -20,18 +21,27 @@ export async function exportToPdf(element, filename = 'fiche') {
       el.style.display = 'none'
     })
 
-    // Attendre un court instant pour que les styles soient appliques
-    await new Promise(resolve => setTimeout(resolve, 100))
+    // Ajouter des styles temporaires pour le centrage optimal
+    const originalStyles = {
+      textAlign: element.style.textAlign,
+      display: element.style.display
+    }
 
-    // Creer le canvas a partir de l'element
+    // Attendre un court instant pour que les styles soient appliques
+    await new Promise(resolve => setTimeout(resolve, 150))
+
+    // Creer le canvas a partir de l'element avec qualite optimale
     const canvas = await html2canvas(element, {
-      scale: 2, // Meilleure qualite
+      scale: 2, // Haute qualite pour un rendu net
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
       windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
+      windowHeight: element.scrollHeight,
+      // Optimiser le rendu pour le centrage
+      x: 0,
+      y: 0
     })
 
     // Restaurer les elements masques
@@ -39,44 +49,84 @@ export async function exportToPdf(element, filename = 'fiche') {
       el.style.display = ''
     })
 
-    // Calculer les dimensions du PDF
-    const imgWidth = 210 // A4 width in mm
-    const pageHeight = 297 // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    let heightLeft = imgHeight
-    let position = 0
+    // Restaurer les styles originaux
+    element.style.textAlign = originalStyles.textAlign
+    element.style.display = originalStyles.display
+
+    // Dimensions A4 en mm
+    const pdfWidth = 210
+    const pdfHeight = 297
+
+    // Marges equilibrees pour un rendu centre
+    const marginX = 10
+    const marginTop = 12
+    const marginBottom = 15
+
+    // Zone imprimable
+    const printableWidth = pdfWidth - (marginX * 2)
+    const printableHeight = pdfHeight - marginTop - marginBottom
+
+    // Calculer le ratio pour faire tenir sur une page tout en centrant
+    const canvasRatio = canvas.width / canvas.height
+    const pageRatio = printableWidth / printableHeight
+
+    let imgWidth, imgHeight
+
+    if (canvasRatio > pageRatio) {
+      // L'image est plus large que la page - ajuster par la largeur
+      imgWidth = printableWidth
+      imgHeight = printableWidth / canvasRatio
+    } else {
+      // L'image est plus haute que la page - ajuster par la hauteur
+      imgHeight = printableHeight
+      imgWidth = printableHeight * canvasRatio
+    }
+
+    // Centrage horizontal
+    const offsetX = marginX + (printableWidth - imgWidth) / 2
+
+    // Centrage vertical dans la zone imprimable
+    const offsetY = marginTop + (printableHeight - imgHeight) / 2
 
     // Creer le PDF
     const pdf = new jsPDF('p', 'mm', 'a4')
     const imgData = canvas.toDataURL('image/jpeg', 0.95)
 
-    // Ajouter l'image au PDF (gerer plusieurs pages si necessaire)
-    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-    heightLeft -= pageHeight
+    // Ajouter l'image centree verticalement et horizontalement
+    pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgWidth, imgHeight)
 
-    // Si le contenu depasse une page, ajouter des pages supplementaires
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight
-      pdf.addPage()
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-    }
+    // Ligne decorative subtile en haut
+    pdf.setDrawColor(200, 200, 200)
+    pdf.setLineWidth(0.2)
+    pdf.line(marginX, 8, pdfWidth - marginX, 8)
 
-    // Ajouter un pied de page avec la date
-    const totalPages = pdf.internal.getNumberOfPages()
-    const date = new Date().toLocaleDateString('fr-FR')
+    // Ligne decorative subtile en bas
+    pdf.line(marginX, pdfHeight - 10, pdfWidth - marginX, pdfHeight - 10)
 
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i)
-      pdf.setFontSize(8)
-      pdf.setTextColor(150)
-      pdf.text(
-        `OLDA Collections - Genere le ${date} - Page ${i}/${totalPages}`,
-        105,
-        290,
-        { align: 'center' }
-      )
-    }
+    // Pied de page elegant et centre
+    const date = new Date().toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+    pdf.setFontSize(8)
+    pdf.setTextColor(150, 150, 150)
+    pdf.text(
+      `Commande T-shirt OLDA`,
+      pdfWidth / 2,
+      pdfHeight - 6,
+      { align: 'center' }
+    )
+
+    pdf.setFontSize(7)
+    pdf.setTextColor(180, 180, 180)
+    pdf.text(
+      date,
+      pdfWidth / 2,
+      pdfHeight - 3,
+      { align: 'center' }
+    )
 
     // Nettoyer le nom de fichier
     const cleanFilename = filename
