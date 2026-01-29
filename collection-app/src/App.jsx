@@ -104,7 +104,7 @@ function App() {
 
       // Si la fiche est validee, seules certaines mises a jour sont autorisees
       if (fiche.isValidated) {
-        const allowedUpdates = ['productionSteps', 'isPaid']
+        const allowedUpdates = ['productionSteps', 'isPaid', 'frontLogoSize', 'backLogoSize']
         const filteredUpdates = Object.keys(updates)
           .filter(key => allowedUpdates.includes(key))
           .reduce((obj, key) => ({ ...obj, [key]: updates[key] }), {})
