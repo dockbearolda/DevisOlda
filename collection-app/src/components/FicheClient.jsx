@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import ProductionStepper from './ProductionStepper'
 import { exportToPdf } from '../utils/pdfExport'
 
@@ -418,6 +418,7 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
               onRemove={handleRemoveLogo('front')}
               size={fiche.frontLogoSize || 100}
               onSizeChange={(val) => onUpdate({ frontLogoSize: val })}
+              tshirtColor={fiche.tshirtColor}
             />
 
             {/* Logo Arriere */}
@@ -429,6 +430,7 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
               onRemove={handleRemoveLogo('back')}
               size={fiche.backLogoSize || 100}
               onSizeChange={(val) => onUpdate({ backLogoSize: val })}
+              tshirtColor={fiche.tshirtColor}
             />
           </div>
         </div>
@@ -527,9 +529,56 @@ function SectionTitle({ children }) {
   )
 }
 
-// Composant Upload de Logo
-function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onSizeChange }) {
+// Composant Upload de Logo avec preview t-shirt
+function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onSizeChange, tshirtColor = '#FFFFFF' }) {
   const inputRef = useRef(null)
+  const containerRef = useRef(null)
+  const dragRef = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  // Gestion du drag pour redimensionner le logo a l'echelle
+  useEffect(() => {
+    if (!isDragging) return
+
+    const handleMove = (e) => {
+      if (!dragRef.current || !onSizeChange) return
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY
+      const dx = clientX - dragRef.current.startX
+      const dy = clientY - dragRef.current.startY
+      const delta = (dx + dy) / 2
+      const containerSize = containerRef.current?.offsetWidth || 300
+      const sizeChange = (delta / containerSize) * 150
+      const newSize = Math.min(100, Math.max(20, Math.round(dragRef.current.startSize + sizeChange)))
+      onSizeChange(newSize)
+    }
+
+    const handleUp = () => {
+      setIsDragging(false)
+      dragRef.current = null
+    }
+
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('mouseup', handleUp)
+    window.addEventListener('touchmove', handleMove, { passive: false })
+    window.addEventListener('touchend', handleUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('mouseup', handleUp)
+      window.removeEventListener('touchmove', handleMove)
+      window.removeEventListener('touchend', handleUp)
+    }
+  }, [isDragging, onSizeChange])
+
+  const handleResizeStart = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    dragRef.current = { startX: clientX, startY: clientY, startSize: size }
+    setIsDragging(true)
+  }
 
   return (
     <div className="space-y-3">
@@ -537,15 +586,45 @@ function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onS
 
       {logo ? (
         <div>
-          <div className="relative group">
-            <div className="aspect-square bg-stone-100 rounded-xl overflow-hidden border border-stone-200 flex items-center justify-center">
-              <img
-                src={logo}
-                alt={label}
-                className="object-contain"
-                style={{ width: `${size}%`, height: `${size}%` }}
-              />
+          <div className="relative group" ref={containerRef}>
+            {/* Preview t-shirt avec logo */}
+            <div className="relative rounded-xl overflow-hidden border border-stone-200"
+                 style={{ backgroundColor: '#f5f5f4', aspectRatio: '5/6' }}>
+              {/* Silhouette t-shirt */}
+              <svg viewBox="0 0 200 240" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M60,0 L0,45 L25,60 L25,240 L175,240 L175,60 L200,45 L140,0 L125,25 Q100,45 75,25 Z"
+                  fill={tshirtColor}
+                  stroke="#d6d3d1"
+                  strokeWidth="1.5"
+                />
+              </svg>
+
+              {/* Logo positionne sur le t-shirt */}
+              <div className="absolute inset-0 flex items-center justify-center"
+                   style={{ paddingTop: '20%', paddingBottom: '18%', paddingLeft: '16%', paddingRight: '16%' }}>
+                <div className={`relative ${isDragging ? '' : 'transition-all duration-200'}`}
+                     style={{ width: `${size}%` }}>
+                  <img
+                    src={logo}
+                    alt={label}
+                    className="w-full h-auto object-contain select-none pointer-events-none"
+                    draggable={false}
+                  />
+                  {/* Poignee de redimensionnement (echelle uniquement) */}
+                  {onSizeChange && (
+                    <div
+                      onMouseDown={handleResizeStart}
+                      onTouchStart={handleResizeStart}
+                      className="absolute -bottom-2.5 -right-2.5 w-5 h-5 bg-white border-2 border-stone-900 rounded-full cursor-se-resize shadow-md hover:scale-125 transition-transform no-print"
+                      style={{ touchAction: 'none' }}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
+
+            {/* Bouton suppression */}
             {!disabled && (
               <button
                 onClick={onRemove}
@@ -560,6 +639,8 @@ function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onS
               </button>
             )}
           </div>
+
+          {/* Slider de taille */}
           {onSizeChange && (
             <div className="mt-3 flex items-center gap-3 px-1 no-print">
               <svg className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -582,7 +663,7 @@ function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onS
           onClick={() => inputRef.current?.click()}
           disabled={disabled}
           className={`
-            w-full aspect-square rounded-xl border-2 border-dashed
+            w-full rounded-xl border-2 border-dashed
             flex flex-col items-center justify-center gap-3
             transition-all duration-200
             ${disabled
@@ -590,6 +671,7 @@ function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onS
               : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50 cursor-pointer'
             }
           `}
+          style={{ aspectRatio: '5/6' }}
         >
           <svg className="w-10 h-10 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
