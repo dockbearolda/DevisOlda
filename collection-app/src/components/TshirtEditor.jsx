@@ -107,6 +107,7 @@ function DraggableLogo({
 
   const handleTouchMove = useCallback((e) => {
     if (isResizing && !disabled) {
+      e.preventDefault()
       const touch = e.touches[0]
       const deltaX = touch.clientX - resizeStart.x
       const aspectRatio = resizeStart.width / resizeStart.height
@@ -118,6 +119,7 @@ function DraggableLogo({
       return
     }
     if (isDragging && !disabled) {
+      e.preventDefault()
       const touch = e.touches[0]
       const bounds = getContainerBounds()
       const newX = Math.max(bounds.minX, Math.min(bounds.maxX - size.width, touch.clientX - dragStart.x))
@@ -136,7 +138,7 @@ function DraggableLogo({
     if (isDragging || isResizing) {
       window.addEventListener('mousemove', handleMouseMove)
       window.addEventListener('mouseup', handleMouseUp)
-      window.addEventListener('touchmove', handleTouchMove)
+      window.addEventListener('touchmove', handleTouchMove, { passive: false })
       window.addEventListener('touchend', handleTouchEnd)
       return () => {
         window.removeEventListener('mousemove', handleMouseMove)
@@ -156,7 +158,8 @@ function DraggableLogo({
         top: position.y,
         width: size.width,
         height: size.height,
-        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.2s'
+        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.2s',
+        touchAction: 'none'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -532,7 +535,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           <div
             ref={containerFrontRef}
             className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+                       rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgFront color={tshirtColor} />
 
@@ -615,7 +618,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           <div
             ref={containerBackRef}
             className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+                       rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgBack color={tshirtColor} />
 

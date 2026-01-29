@@ -267,126 +267,58 @@ function App() {
   const fichesForCurrentView = getFichesForView()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col pt-14">
       {/* Header - Fixe en haut */}
       <header className="bg-white border-b border-stone-200 shadow-sm fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-16 overflow-x-auto scrollbar-hide">
-            {/* Navigation - Stepper Haute Gamme */}
-            <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0">
-              {/* Flux Logistique - Navigation principale */}
-              <nav className="flex items-center gap-1">
-                {/* Commande */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="flex items-center justify-center h-14 gap-3">
+            {/* Navigation - Segments connectes */}
+            <nav className="flex bg-stone-100 rounded-full p-1 flex-shrink-0">
+              {[
+                { key: 'commande', label: 'Commande', count: commandesNonValidees, activeClass: 'bg-stone-900 text-white shadow-md' },
+                { key: 'preparation', label: 'Prep', count: enPreparation, activeClass: 'bg-amber-500 text-white shadow-md' },
+                { key: 'production', label: 'Prod', count: enProduction, activeClass: 'bg-blue-500 text-white shadow-md' },
+                { key: 'terminee', label: 'Fini', count: terminees, activeClass: 'bg-emerald-500 text-white shadow-md' },
+              ].map(({ key, label, count, activeClass }) => (
                 <button
-                  onClick={() => setCurrentView('commande')}
-                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                    currentView === 'commande'
-                      ? 'bg-stone-900 text-white shadow-lg'
-                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
+                  key={key}
+                  onClick={() => setCurrentView(key)}
+                  className={`relative flex items-center gap-1 px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                    currentView === key ? activeClass : 'text-stone-500 hover:text-stone-700'
                   }`}
                 >
-                  Cmd
-                  {commandesNonValidees > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
-                      currentView === 'commande' ? 'bg-white/20 text-white' : 'bg-stone-300 text-stone-600'
+                  {label}
+                  {count > 0 && (
+                    <span className={`inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full ${
+                      currentView === key ? 'bg-white/25 text-white' : 'bg-stone-300 text-stone-600'
                     }`}>
-                      {commandesNonValidees}
+                      {count}
                     </span>
                   )}
                 </button>
+              ))}
+            </nav>
 
-                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-
-                {/* Preparation */}
-                <button
-                  onClick={() => setCurrentView('preparation')}
-                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                    currentView === 'preparation'
-                      ? 'bg-amber-500 text-white shadow-lg'
-                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
-                  }`}
-                >
-                  Prep
-                  {enPreparation > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
-                      currentView === 'preparation' ? 'bg-white/20 text-white' : 'bg-amber-200 text-amber-700'
-                    }`}>
-                      {enPreparation}
-                    </span>
-                  )}
-                </button>
-
-                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-
-                {/* Production */}
-                <button
-                  onClick={() => setCurrentView('production')}
-                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                    currentView === 'production'
-                      ? 'bg-blue-500 text-white shadow-lg'
-                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
-                  }`}
-                >
-                  Prod
-                  {enProduction > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
-                      currentView === 'production' ? 'bg-white/20 text-white' : 'bg-blue-200 text-blue-700'
-                    }`}>
-                      {enProduction}
-                    </span>
-                  )}
-                </button>
-
-                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-
-                {/* Terminee */}
-                <button
-                  onClick={() => setCurrentView('terminee')}
-                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                    currentView === 'terminee'
-                      ? 'bg-emerald-500 text-white shadow-lg'
-                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
-                  }`}
-                >
-                  Fin
-                  {terminees > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
-                      currentView === 'terminee' ? 'bg-white/20 text-white' : 'bg-emerald-200 text-emerald-700'
-                    }`}>
-                      {terminees}
-                    </span>
-                  )}
-                </button>
-              </nav>
-
-              {/* Separateur */}
-              <div className="w-px h-6 bg-stone-300 flex-shrink-0" />
-
-              {/* Archive */}
-              <button
-                onClick={() => setCurrentView('dashboard')}
-                className={`flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-shrink-0 ${
-                  currentView === 'dashboard'
-                    ? 'bg-stone-900 text-white shadow-sm'
-                    : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
-                <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
-                  currentView === 'dashboard' ? 'bg-white/20 text-white' : 'bg-stone-300 text-stone-600'
+            {/* Archive */}
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 flex-shrink-0 ${
+                currentView === 'dashboard'
+                  ? 'bg-stone-900 text-white shadow-md'
+                  : 'bg-stone-100 text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+              {archive.length > 0 && (
+                <span className={`inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full ${
+                  currentView === 'dashboard' ? 'bg-white/25 text-white' : 'bg-stone-300 text-stone-600'
                 }`}>
                   {archive.length}
                 </span>
-              </button>
-            </div>
+              )}
+            </button>
           </div>
         </div>
       </header>
