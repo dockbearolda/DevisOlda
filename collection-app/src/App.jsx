@@ -267,13 +267,13 @@ function App() {
   const fichesForCurrentView = getFichesForView()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col pt-16">
       {/* Header - Fixe en haut */}
-      <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-16">
+      <header className="bg-white border-b border-stone-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-16 overflow-x-auto scrollbar-hide">
             {/* Navigation - Stepper Haute Gamme */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0">
               {/* Flux Logistique - Navigation principale */}
               <nav className="flex items-center">
                 {/* Commande */}
