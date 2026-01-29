@@ -275,20 +275,19 @@ function App() {
             {/* Navigation - Stepper Haute Gamme */}
             <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0">
               {/* Flux Logistique - Navigation principale */}
-              <nav className="flex items-center">
+              <nav className="flex items-center gap-1">
                 {/* Commande */}
                 <button
                   onClick={() => setCurrentView('commande')}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-l-xl text-sm font-semibold transition-all duration-300 ${
+                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     currentView === 'commande'
                       ? 'bg-stone-900 text-white shadow-lg'
                       : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
                   }`}
                 >
-                  <span className="hidden sm:inline">Commande</span>
-                  <span className="sm:hidden">Cmd</span>
+                  Cmd
                   {commandesNonValidees > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
                       currentView === 'commande' ? 'bg-white/20 text-white' : 'bg-stone-300 text-stone-600'
                     }`}>
                       {commandesNonValidees}
@@ -296,24 +295,22 @@ function App() {
                   )}
                 </button>
 
-                {/* Fleche 1 */}
-                <div className="w-4 h-10 bg-stone-200 relative flex items-center">
-                  <div className="absolute right-0 w-0 h-0 border-l-8 border-l-stone-200 border-y-8 border-y-transparent transform translate-x-full z-10" />
-                </div>
+                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
 
                 {/* Preparation */}
                 <button
                   onClick={() => setCurrentView('preparation')}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     currentView === 'preparation'
                       ? 'bg-amber-500 text-white shadow-lg'
                       : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
                   }`}
                 >
-                  <span className="hidden sm:inline">Preparation</span>
-                  <span className="sm:hidden">Prep</span>
+                  Prep
                   {enPreparation > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
                       currentView === 'preparation' ? 'bg-white/20 text-white' : 'bg-amber-200 text-amber-700'
                     }`}>
                       {enPreparation}
@@ -321,24 +318,22 @@ function App() {
                   )}
                 </button>
 
-                {/* Fleche 2 */}
-                <div className="w-4 h-10 bg-stone-200 relative flex items-center">
-                  <div className="absolute right-0 w-0 h-0 border-l-8 border-l-stone-200 border-y-8 border-y-transparent transform translate-x-full z-10" />
-                </div>
+                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
 
                 {/* Production */}
                 <button
                   onClick={() => setCurrentView('production')}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     currentView === 'production'
                       ? 'bg-blue-500 text-white shadow-lg'
                       : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
                   }`}
                 >
-                  <span className="hidden sm:inline">Production</span>
-                  <span className="sm:hidden">Prod</span>
+                  Prod
                   {enProduction > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
                       currentView === 'production' ? 'bg-white/20 text-white' : 'bg-blue-200 text-blue-700'
                     }`}>
                       {enProduction}
@@ -346,24 +341,22 @@ function App() {
                   )}
                 </button>
 
-                {/* Fleche 3 */}
-                <div className="w-4 h-10 bg-stone-200 relative flex items-center">
-                  <div className="absolute right-0 w-0 h-0 border-l-8 border-l-stone-200 border-y-8 border-y-transparent transform translate-x-full z-10" />
-                </div>
+                <svg className="w-3 h-3 text-stone-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
 
                 {/* Terminee */}
                 <button
                   onClick={() => setCurrentView('terminee')}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-r-xl text-sm font-semibold transition-all duration-300 ${
+                  className={`relative flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     currentView === 'terminee'
                       ? 'bg-emerald-500 text-white shadow-lg'
                       : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
                   }`}
                 >
-                  <span className="hidden sm:inline">Terminee</span>
-                  <span className="sm:hidden">Fin</span>
+                  Fin
                   {terminees > 0 && (
-                    <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
                       currentView === 'terminee' ? 'bg-white/20 text-white' : 'bg-emerald-200 text-emerald-700'
                     }`}>
                       {terminees}
@@ -373,12 +366,12 @@ function App() {
               </nav>
 
               {/* Separateur */}
-              <div className="hidden md:block w-px h-8 bg-stone-300" />
+              <div className="w-px h-6 bg-stone-300 flex-shrink-0" />
 
               {/* Archive */}
               <button
                 onClick={() => setCurrentView('dashboard')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-1 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-shrink-0 ${
                   currentView === 'dashboard'
                     ? 'bg-stone-900 text-white shadow-sm'
                     : 'bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700'
@@ -387,8 +380,7 @@ function App() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                 </svg>
-                <span className="hidden sm:inline">Archive</span>
-                <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full ${
                   currentView === 'dashboard' ? 'bg-white/20 text-white' : 'bg-stone-300 text-stone-600'
                 }`}>
                   {archive.length}

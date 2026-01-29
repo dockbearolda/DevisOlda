@@ -83,10 +83,12 @@ function DraggableLogo({
     if (disabled) return
     e.preventDefault()
     e.stopPropagation()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
     setIsResizing(true)
     setResizeStart({
-      x: e.clientX,
-      y: e.clientY,
+      x: clientX,
+      y: clientY,
       width: size.width,
       height: size.height
     })
@@ -104,6 +106,17 @@ function DraggableLogo({
   }, [disabled, isResizing, position])
 
   const handleTouchMove = useCallback((e) => {
+    if (isResizing && !disabled) {
+      const touch = e.touches[0]
+      const deltaX = touch.clientX - resizeStart.x
+      const aspectRatio = resizeStart.width / resizeStart.height
+      let newWidth = Math.max(minSize, Math.min(maxSize, resizeStart.width + deltaX))
+      let newHeight = newWidth / aspectRatio
+      if (newHeight > maxSize) { newHeight = maxSize; newWidth = newHeight * aspectRatio }
+      if (newHeight < minSize) { newHeight = minSize; newWidth = newHeight * aspectRatio }
+      setSize({ width: newWidth, height: newHeight })
+      return
+    }
     if (isDragging && !disabled) {
       const touch = e.touches[0]
       const bounds = getContainerBounds()
@@ -111,7 +124,7 @@ function DraggableLogo({
       const newY = Math.max(bounds.minY, Math.min(bounds.maxY - size.height, touch.clientY - dragStart.y))
       setPosition({ x: newX, y: newY })
     }
-  }, [isDragging, disabled, dragStart, getContainerBounds, size.width, size.height])
+  }, [isDragging, isResizing, disabled, dragStart, resizeStart, getContainerBounds, size.width, size.height, minSize, maxSize])
 
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false)
@@ -198,9 +211,11 @@ function DraggableLogo({
       {/* Poignee de redimensionnement */}
       {!disabled && (
         <div
-          className="absolute -bottom-2 -right-2 w-5 h-5 bg-blue-500 hover:bg-blue-600 rounded-full cursor-se-resize
+          className="absolute -bottom-2 -right-2 w-7 h-7 bg-blue-500 hover:bg-blue-600 rounded-full cursor-se-resize
                      flex items-center justify-center shadow-lg transition-all hover:scale-110 z-30"
           onMouseDown={handleResizeStart}
+          onTouchStart={handleResizeStart}
+          style={{ touchAction: 'none' }}
           title="Redimensionner (proportionnel)"
         >
           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
