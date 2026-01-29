@@ -141,7 +141,7 @@ function StepItem({ step, index, isCompleted, isCurrent, canToggle, onToggle }) 
 
         {/* Animation pulse pour l'etape courante */}
         {isCurrent && !isCompleted && (
-          <span className="absolute inset-0 rounded-full border-2 border-stone-900 animate-ping opacity-30" />
+          <span className="absolute inset-0 rounded-full border-2 border-stone-900 animate-ping opacity-30 no-print" />
         )}
       </button>
 

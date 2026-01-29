@@ -35,6 +35,8 @@ const createEmptyFiche = (name = 'Nouveau Client') => ({
   // Images/Logos
   frontLogo: null,
   backLogo: null,
+  frontLogoSize: 100,
+  backLogoSize: 100,
 
   // Notes
   notes: '',

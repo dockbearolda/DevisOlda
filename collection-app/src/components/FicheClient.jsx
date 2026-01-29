@@ -416,6 +416,8 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
               disabled={fiche.isValidated}
               onUpload={handleFileChange('front')}
               onRemove={handleRemoveLogo('front')}
+              size={fiche.frontLogoSize || 100}
+              onSizeChange={(val) => onUpdate({ frontLogoSize: val })}
             />
 
             {/* Logo Arriere */}
@@ -425,6 +427,8 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
               disabled={fiche.isValidated}
               onUpload={handleFileChange('back')}
               onRemove={handleRemoveLogo('back')}
+              size={fiche.backLogoSize || 100}
+              onSizeChange={(val) => onUpdate({ backLogoSize: val })}
             />
           </div>
         </div>
@@ -524,7 +528,7 @@ function SectionTitle({ children }) {
 }
 
 // Composant Upload de Logo
-function LogoUpload({ label, logo, disabled, onUpload, onRemove }) {
+function LogoUpload({ label, logo, disabled, onUpload, onRemove, size = 100, onSizeChange }) {
   const inputRef = useRef(null)
 
   return (
@@ -532,26 +536,45 @@ function LogoUpload({ label, logo, disabled, onUpload, onRemove }) {
       <label className="block text-sm font-medium text-stone-700">{label}</label>
 
       {logo ? (
-        <div className="relative group">
-          <div className="aspect-square bg-stone-100 rounded-xl overflow-hidden border border-stone-200">
-            <img
-              src={logo}
-              alt={label}
-              className="w-full h-full object-contain"
-            />
+        <div>
+          <div className="relative group">
+            <div className="aspect-square bg-stone-100 rounded-xl overflow-hidden border border-stone-200 flex items-center justify-center">
+              <img
+                src={logo}
+                alt={label}
+                className="object-contain"
+                style={{ width: `${size}%`, height: `${size}%` }}
+              />
+            </div>
+            {!disabled && (
+              <button
+                onClick={onRemove}
+                className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg
+                           opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                           hover:bg-red-700"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
           </div>
-          {!disabled && (
-            <button
-              onClick={onRemove}
-              className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg
-                         opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                         hover:bg-red-700"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          {!disabled && onSizeChange && (
+            <div className="mt-3 flex items-center gap-3 px-1 no-print">
+              <svg className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
               </svg>
-            </button>
+              <input
+                type="range"
+                min="20"
+                max="100"
+                value={size}
+                onChange={(e) => onSizeChange(parseInt(e.target.value))}
+                className="flex-1 accent-stone-900 h-1.5"
+              />
+              <span className="text-xs text-stone-600 font-medium w-10 text-right">{size}%</span>
+            </div>
           )}
         </div>
       ) : (
