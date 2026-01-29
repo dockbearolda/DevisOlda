@@ -266,22 +266,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 shadow-sm">
+      {/* Header - Fixe en haut */}
+      <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-stone-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-serif font-bold text-lg">O</span>
-              </div>
-              <div>
-                <h1 className="font-serif text-xl font-semibold text-stone-900 tracking-tight">
-                  Commande T-shirt OLDA
-                </h1>
-                <p className="text-xs text-stone-500 -mt-0.5">Gestion des Commandes</p>
-              </div>
-            </div>
-
+          <div className="flex items-center justify-center h-16">
             {/* Navigation - Stepper Haute Gamme */}
             <div className="flex items-center gap-6">
               {/* Flux Logistique - Navigation principale */}
