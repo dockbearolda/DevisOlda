@@ -3,6 +3,7 @@ import jsPDF from 'jspdf'
 
 /**
  * Exporte un element HTML en PDF - Optimise pour une seule page A4
+ * Centrage vertical et horizontal de tous les elements
  * @param {HTMLElement} element - L'element a exporter
  * @param {string} filename - Le nom du fichier (sans extension)
  * @returns {Promise<void>}
@@ -20,18 +21,27 @@ export async function exportToPdf(element, filename = 'fiche') {
       el.style.display = 'none'
     })
 
-    // Attendre un court instant pour que les styles soient appliques
-    await new Promise(resolve => setTimeout(resolve, 100))
+    // Ajouter des styles temporaires pour le centrage optimal
+    const originalStyles = {
+      textAlign: element.style.textAlign,
+      display: element.style.display
+    }
 
-    // Creer le canvas a partir de l'element - echelle reduite pour tenir sur A4
+    // Attendre un court instant pour que les styles soient appliques
+    await new Promise(resolve => setTimeout(resolve, 150))
+
+    // Creer le canvas a partir de l'element avec qualite optimale
     const canvas = await html2canvas(element, {
-      scale: 1.5, // Echelle reduite pour optimiser la taille
+      scale: 2, // Haute qualite pour un rendu net
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
       windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
+      windowHeight: element.scrollHeight,
+      // Optimiser le rendu pour le centrage
+      x: 0,
+      y: 0
     })
 
     // Restaurer les elements masques
@@ -39,53 +49,82 @@ export async function exportToPdf(element, filename = 'fiche') {
       el.style.display = ''
     })
 
+    // Restaurer les styles originaux
+    element.style.textAlign = originalStyles.textAlign
+    element.style.display = originalStyles.display
+
     // Dimensions A4 en mm
     const pdfWidth = 210
     const pdfHeight = 297
 
-    // Marges en mm
-    const marginX = 8
-    const marginY = 8
+    // Marges equilibrees pour un rendu centre
+    const marginX = 10
+    const marginTop = 12
+    const marginBottom = 15
 
     // Zone imprimable
     const printableWidth = pdfWidth - (marginX * 2)
-    const printableHeight = pdfHeight - (marginY * 2) - 10 // Reserve pour le footer
+    const printableHeight = pdfHeight - marginTop - marginBottom
 
-    // Calculer le ratio pour faire tenir sur une page
+    // Calculer le ratio pour faire tenir sur une page tout en centrant
     const canvasRatio = canvas.width / canvas.height
     const pageRatio = printableWidth / printableHeight
 
     let imgWidth, imgHeight
 
     if (canvasRatio > pageRatio) {
-      // L'image est plus large que la page
+      // L'image est plus large que la page - ajuster par la largeur
       imgWidth = printableWidth
       imgHeight = printableWidth / canvasRatio
     } else {
-      // L'image est plus haute que la page
+      // L'image est plus haute que la page - ajuster par la hauteur
       imgHeight = printableHeight
       imgWidth = printableHeight * canvasRatio
     }
 
-    // Centrer l'image
+    // Centrage horizontal
     const offsetX = marginX + (printableWidth - imgWidth) / 2
-    const offsetY = marginY
+
+    // Centrage vertical dans la zone imprimable
+    const offsetY = marginTop + (printableHeight - imgHeight) / 2
 
     // Creer le PDF
     const pdf = new jsPDF('p', 'mm', 'a4')
-    const imgData = canvas.toDataURL('image/jpeg', 0.92)
+    const imgData = canvas.toDataURL('image/jpeg', 0.95)
 
-    // Ajouter l'image centree sur une seule page
+    // Ajouter l'image centree verticalement et horizontalement
     pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgWidth, imgHeight)
 
-    // Ajouter un pied de page elegant
-    const date = new Date().toLocaleDateString('fr-FR')
-    pdf.setFontSize(7)
-    pdf.setTextColor(180)
+    // Ligne decorative subtile en haut
+    pdf.setDrawColor(200, 200, 200)
+    pdf.setLineWidth(0.2)
+    pdf.line(marginX, 8, pdfWidth - marginX, 8)
+
+    // Ligne decorative subtile en bas
+    pdf.line(marginX, pdfHeight - 10, pdfWidth - marginX, pdfHeight - 10)
+
+    // Pied de page elegant et centre
+    const date = new Date().toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+    pdf.setFontSize(8)
+    pdf.setTextColor(150, 150, 150)
     pdf.text(
-      `Commande T-shirt OLDA - ${date}`,
+      `Commande T-shirt OLDA`,
       pdfWidth / 2,
-      pdfHeight - 5,
+      pdfHeight - 6,
+      { align: 'center' }
+    )
+
+    pdf.setFontSize(7)
+    pdf.setTextColor(180, 180, 180)
+    pdf.text(
+      date,
+      pdfWidth / 2,
+      pdfHeight - 3,
       { align: 'center' }
     )
 

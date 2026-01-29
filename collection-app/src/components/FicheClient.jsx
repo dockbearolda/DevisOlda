@@ -4,8 +4,8 @@ import TshirtEditor from './TshirtEditor'
 import Modal from './Modal'
 import { exportToPdf } from '../utils/pdfExport'
 
-// Options de cibles
-const TARGET_OPTIONS = [
+// Options de collections (anciennement cibles/categories)
+const COLLECTION_OPTIONS = [
   { value: 'H', label: 'Homme' },
   { value: 'F', label: 'Femme' },
   { value: 'E', label: 'Enfant' },
@@ -35,6 +35,16 @@ const formatDate = (dateString) => {
   })
 }
 
+// Formater la date courte
+const formatDateShort = (dateString) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
+
 function FicheClient({ fiche, onUpdate, onValidate }) {
   const printRef = useRef(null)
   const editorRef = useRef(null)
@@ -56,7 +66,7 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
   const prixPerso = fiche.personalizationPrice || 0
   const total = prixTshirt + prixPerso
 
-  // Obtenir les references disponibles pour la cible selectionnee
+  // Obtenir les references disponibles pour la collection selectionnee
   const availableReferences = useMemo(() => {
     return fiche.target ? generateReferences(fiche.target) : []
   }, [fiche.target])
@@ -101,73 +111,85 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
       <div
         ref={printRef}
         className={`
-          card p-5 sm:p-6 transition-all duration-500
+          card p-6 sm:p-8 transition-all duration-500
           ${fiche.isUrgent && !fiche.isValidated ? 'animate-pulse-urgent ring-4 ring-red-500/50' : ''}
-          ${isCompleted ? 'bg-green-50 border-2 border-green-400 shadow-lg shadow-green-200' : ''}
+          ${isCompleted ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 shadow-xl shadow-green-100' : ''}
           ${fiche.isValidated && !isCompleted ? 'bg-stone-50' : ''}
         `}
       >
-        {/* En-tete avec Date Figee */}
-        <div className="flex items-start justify-between mb-4 pb-3 border-b border-stone-200">
-          <div>
-            {/* Date de creation - Proeminente et figee */}
-            <div className="mb-2">
-              <span className="inline-block px-3 py-1 bg-stone-900 text-white text-xs font-bold rounded-full uppercase tracking-wider">
+        {/* ============================================ */}
+        {/* EN-TETE: Date figee + Titre + Actions */}
+        {/* ============================================ */}
+        <div className="mb-6">
+          {/* Date de creation - Tout en haut, proeminente */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center px-4 py-2 bg-stone-900 text-white text-sm font-semibold rounded-full tracking-wide">
+                <svg className="w-4 h-4 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 {fiche.createdDateDisplay || formatDate(fiche.createdAt)}
               </span>
             </div>
-            <h2 className="font-serif text-lg font-bold text-stone-900">
+
+            {/* Actions - No Print */}
+            <div className="flex items-center gap-2 no-print">
+              {/* Bouton Urgence */}
+              {!fiche.isValidated && (
+                <button
+                  onClick={() => onUpdate({ isUrgent: !fiche.isUrgent })}
+                  className={`
+                    px-4 py-2 rounded-full font-bold text-xs tracking-wider transition-all duration-200
+                    ${fiche.isUrgent
+                      ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                      : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                    }
+                  `}
+                >
+                  URGENT
+                </button>
+              )}
+
+              {/* Bouton PDF */}
+              <button
+                onClick={handlePdfClick}
+                disabled={!canValidate && !fiche.isValidated}
+                className={`
+                  px-4 py-2 rounded-full font-bold text-xs tracking-wider transition-all duration-200
+                  flex items-center gap-2
+                  ${canValidate || fiche.isValidated
+                    ? 'bg-stone-900 text-white hover:bg-stone-800 shadow-md'
+                    : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                  }
+                `}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                PDF
+              </button>
+            </div>
+          </div>
+
+          {/* Titre de la fiche */}
+          <div className="text-center pb-4 border-b border-stone-200">
+            <h2 className="font-serif text-2xl font-bold text-stone-900 tracking-tight">
               {isCompleted ? 'COMMANDE TERMINEE' : fiche.isValidated ? 'FICHE VALIDEE' : 'Commande T-shirt OLDA'}
             </h2>
             {fiche.validatedAt && (
-              <p className="text-xs text-stone-500 mt-0.5">
+              <p className="text-sm text-stone-500 mt-1">
                 Validee le {formatDate(fiche.validatedAt)}
               </p>
             )}
           </div>
-
-          <div className="flex items-center gap-2 no-print">
-            {/* Bouton Urgence */}
-            {!fiche.isValidated && (
-              <button
-                onClick={() => onUpdate({ isUrgent: !fiche.isUrgent })}
-                className={`
-                  px-3 py-1.5 rounded-full font-bold text-xs transition-all duration-200
-                  ${fiche.isUrgent
-                    ? 'bg-stone-900 text-white'
-                    : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
-                  }
-                `}
-              >
-                URGENT
-              </button>
-            )}
-
-            {/* Bouton PDF */}
-            <button
-              onClick={handlePdfClick}
-              disabled={!canValidate && !fiche.isValidated}
-              className={`
-                px-3 py-1.5 rounded-full font-bold text-xs transition-all duration-200
-                flex items-center gap-1.5
-                ${canValidate || fiche.isValidated
-                  ? 'bg-stone-900 text-white hover:bg-stone-800'
-                  : 'bg-stone-300 text-stone-500 cursor-not-allowed'
-                }
-              `}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              PDF
-            </button>
-          </div>
         </div>
 
-        {/* Stepper de Production - Compact */}
+        {/* ============================================ */}
+        {/* STEPPER DE PRODUCTION - Haut de gamme */}
+        {/* ============================================ */}
         {fiche.isValidated && (
-          <div className="mb-4">
+          <div className="mb-6">
             <ProductionStepper
               steps={fiche.productionSteps}
               clientPhone={fiche.clientPhone}
@@ -184,52 +206,67 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
           </div>
         )}
 
-        {/* Formulaire - Layout compact pour A4 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Colonne 1 */}
-          <div className="space-y-3">
+        {/* ============================================ */}
+        {/* FORMULAIRE PRINCIPAL */}
+        {/* ============================================ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Colonne Gauche - Informations Client */}
+          <div className="space-y-5">
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
+              Informations Client
+            </h3>
+
             {/* Client */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Client</label>
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Nom du client
+              </label>
               <input
                 type="text"
                 value={fiche.clientName}
                 onChange={(e) => onUpdate({ clientName: e.target.value })}
                 disabled={fiche.isValidated}
-                className="w-full h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                 placeholder="Nom complet"
               />
             </div>
 
             {/* Telephone */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Telephone</label>
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Telephone
+              </label>
               <input
                 type="tel"
                 value={fiche.clientPhone}
                 onChange={(e) => onUpdate({ clientPhone: e.target.value })}
                 disabled={fiche.isValidated}
-                className="w-full h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                 placeholder="06 00 00 00 00"
               />
             </div>
 
-            {/* Cible */}
+            {/* Collection (anciennement Cible) */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Cible</label>
-              <div className="grid grid-cols-4 gap-1">
-                {TARGET_OPTIONS.map((option) => (
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Collection
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {COLLECTION_OPTIONS.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => onUpdate({ target: option.value, reference: '' })}
                     disabled={fiche.isValidated}
                     className={`
-                      py-2 rounded-lg text-xs font-bold transition-all duration-200
+                      py-3 rounded-xl text-sm font-bold transition-all duration-200
                       disabled:cursor-not-allowed
                       ${fiche.target === option.value
-                        ? 'bg-stone-900 text-white'
+                        ? 'bg-stone-900 text-white shadow-lg'
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                       }
                     `}
@@ -242,74 +279,96 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
 
             {/* Reference */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Reference</label>
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Reference
+              </label>
               <select
                 value={fiche.reference}
                 onChange={(e) => onUpdate({ reference: e.target.value })}
                 disabled={fiche.isValidated || !fiche.target}
-                className="w-full h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
               >
-                <option value="">Selectionnez</option>
+                <option value="">Selectionnez une reference</option>
                 {availableReferences.map((ref) => (
                   <option key={ref} value={ref}>{ref}</option>
                 ))}
-                <option value="MANUEL">MANUEL</option>
+                <option value="MANUEL">Reference manuelle</option>
               </select>
             </div>
 
             {/* Champ manuel */}
             {fiche.reference === 'MANUEL' && (
               <div>
-                <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Ref. manuelle</label>
+                <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                  Reference manuelle
+                </label>
                 <input
                   type="text"
                   value={fiche.manualReference || ''}
                   onChange={(e) => onUpdate({ manualReference: e.target.value })}
                   disabled={fiche.isValidated}
-                  className="w-full h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                             disabled:bg-stone-100 disabled:cursor-not-allowed"
-                  placeholder="Reference"
+                  className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                             focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                             disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                  placeholder="Entrez la reference"
                 />
               </div>
             )}
           </div>
 
-          {/* Colonne 2 */}
-          <div className="space-y-3">
-            {/* Date limite */}
+          {/* Colonne Droite - Details Commande */}
+          <div className="space-y-5">
+            <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
+              Details de la Commande
+            </h3>
+
+            {/* Date limite et Jours restants - MEME LIGNE */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Date limite</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="date"
-                  value={fiche.deadline}
-                  onChange={(e) => onUpdate({ deadline: e.target.value })}
-                  disabled={fiche.isValidated}
-                  className="flex-1 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                             disabled:bg-stone-100 disabled:cursor-not-allowed"
-                />
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Echeance
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <input
+                    type="date"
+                    value={fiche.deadline}
+                    onChange={(e) => onUpdate({ deadline: e.target.value })}
+                    disabled={fiche.isValidated}
+                    className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                               focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                               disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                  />
+                </div>
                 {daysRemaining !== null && (
-                  <span className={`px-2 py-1 text-xs font-bold rounded-full whitespace-nowrap ${
-                    daysRemaining <= 0 ? 'bg-red-500 text-white' :
-                    daysRemaining <= 3 ? 'bg-orange-500 text-white' :
-                    'bg-stone-900 text-white'
-                  }`}>
-                    {daysRemaining <= 0 ? 'DEPASSE' : `${daysRemaining}j`}
-                  </span>
+                  <div className={`
+                    flex items-center justify-center h-12 px-5 rounded-xl text-base font-bold
+                    ${daysRemaining <= 0
+                      ? 'bg-red-500 text-white'
+                      : daysRemaining <= 3
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-stone-900 text-white'
+                    }
+                  `}>
+                    {daysRemaining <= 0 ? 'DEPASSE' : `${daysRemaining} jour${daysRemaining > 1 ? 's' : ''}`}
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Taille */}
             <div>
-              <label className="text-xs font-bold text-stone-500 uppercase mb-1 block">Taille</label>
+              <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
+                Taille
+              </label>
               <select
                 value={fiche.size || 'M'}
                 onChange={(e) => onUpdate({ size: e.target.value })}
                 disabled={fiche.isValidated}
-                className="w-full h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-semibold
-                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
               >
                 <option value="XS">XS</option>
                 <option value="S">S</option>
@@ -320,18 +379,21 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
               </select>
             </div>
 
-            {/* Section Calcul de Prix - Elegante */}
-            <div className="bg-stone-50 rounded-xl p-3 space-y-2">
-              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Tarification</h3>
+            {/* Section Tarification */}
+            <div className="bg-stone-50 rounded-2xl p-5 space-y-4">
+              <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">
+                Tarification
+              </h4>
 
               {/* Prix T-Shirt */}
               <div className="flex items-center justify-between">
-                <label className="text-sm text-stone-600">Prix T-Shirt</label>
+                <label className="text-sm font-medium text-stone-600">Prix T-Shirt</label>
                 <select
                   value={fiche.tshirtPrice || 25}
                   onChange={(e) => onUpdate({ tshirtPrice: parseInt(e.target.value) })}
                   disabled={fiche.isValidated}
-                  className="w-24 h-8 px-2 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                             focus:outline-none focus:ring-2 focus:ring-stone-900
                              disabled:bg-stone-100 disabled:cursor-not-allowed"
                 >
                   {PRICE_OPTIONS.map(p => (
@@ -342,12 +404,13 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
 
               {/* Prix Personnalisation */}
               <div className="flex items-center justify-between">
-                <label className="text-sm text-stone-600">Personnalisation</label>
+                <label className="text-sm font-medium text-stone-600">Personnalisation</label>
                 <select
                   value={fiche.personalizationPrice || 0}
                   onChange={(e) => onUpdate({ personalizationPrice: parseInt(e.target.value) })}
                   disabled={fiche.isValidated}
-                  className="w-24 h-8 px-2 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                             focus:outline-none focus:ring-2 focus:ring-stone-900
                              disabled:bg-stone-100 disabled:cursor-not-allowed"
                 >
                   {PRICE_OPTIONS.map(p => (
@@ -356,61 +419,48 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
                 </select>
               </div>
 
-              {/* Ligne de separation elegante */}
-              <div className="border-t border-stone-200 pt-2 mt-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-stone-400 uppercase tracking-wider">
-                    {prixTshirt} + {prixPerso} =
-                  </span>
-                </div>
-              </div>
-
-              {/* Total - Mise en valeur */}
-              <div className={`
-                flex items-center justify-between py-2 px-3 rounded-lg
-                ${fiche.isPaid ? 'bg-green-100' : 'bg-red-50'}
-              `}>
-                <span className={`text-lg font-black ${fiche.isPaid ? 'text-green-700' : 'text-red-600'}`}>
-                  TOTAL
-                </span>
-                <span className={`text-2xl font-black tracking-tight ${fiche.isPaid ? 'text-green-700' : 'text-red-600'}`}>
-                  {total} EUR
+              {/* Formule */}
+              <div className="text-center py-2 border-t border-stone-200">
+                <span className="text-sm text-stone-400 font-medium tracking-wide">
+                  {prixTshirt} EUR + {prixPerso} EUR
                 </span>
               </div>
 
               {/* Statut Paiement */}
-              <div className="flex gap-0 p-0.5 bg-stone-200 rounded-full mt-2">
+              <div className="flex p-1 bg-stone-200 rounded-full">
                 <button
                   onClick={() => onUpdate({ isPaid: false })}
                   className={`
-                    flex-1 py-2 rounded-full text-xs font-bold transition-all duration-200
+                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
                     ${!fiche.isPaid
-                      ? 'bg-red-500 text-white shadow-md'
+                      ? 'bg-red-500 text-white shadow-lg'
                       : 'bg-transparent text-stone-400'
                     }
                   `}
                 >
-                  NON PAYE
+                  Non paye
                 </button>
                 <button
                   onClick={() => onUpdate({ isPaid: true })}
                   className={`
-                    flex-1 py-2 rounded-full text-xs font-bold transition-all duration-200
+                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
                     ${fiche.isPaid
-                      ? 'bg-green-500 text-white shadow-md'
+                      ? 'bg-green-500 text-white shadow-lg'
                       : 'bg-transparent text-stone-400'
                     }
                   `}
                 >
-                  PAYE
+                  Paye
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Editeur T-shirt - Compact */}
-        <div className="border-t border-stone-200 pt-4 mt-4">
+        {/* ============================================ */}
+        {/* EDITEUR T-SHIRT */}
+        {/* ============================================ */}
+        <div className="border-t border-stone-200 pt-6 mt-6">
           <TshirtEditor
             ref={editorRef}
             disabled={fiche.isValidated}
@@ -423,24 +473,64 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
           />
         </div>
 
-        {/* Bouton Validation - uniquement si non valide */}
-        {!fiche.isValidated && (
-          <div className="mt-4 no-print">
+        {/* ============================================ */}
+        {/* PIED DE PAGE: Total + Validation */}
+        {/* ============================================ */}
+        <div className="border-t border-stone-200 pt-6 mt-6">
+          {/* Total - Tout en bas, mis en valeur */}
+          <div className={`
+            flex items-center justify-between p-5 rounded-2xl mb-4
+            ${fiche.isPaid
+              ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+              : 'bg-gradient-to-r from-red-500 to-rose-500'
+            }
+          `}>
+            <div className="flex items-center gap-3">
+              <div className={`
+                w-12 h-12 rounded-full flex items-center justify-center
+                ${fiche.isPaid ? 'bg-white/20' : 'bg-white/20'}
+              `}>
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {fiche.isPaid ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  )}
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm font-medium uppercase tracking-wider">
+                  Total a payer
+                </p>
+                <p className="text-white text-xs">
+                  {fiche.isPaid ? 'Reglement effectue' : 'En attente de reglement'}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white text-4xl font-black tracking-tight">
+                {total} EUR
+              </p>
+            </div>
+          </div>
+
+          {/* Bouton Validation - uniquement si non valide */}
+          {!fiche.isValidated && (
             <button
               onClick={onValidate}
               disabled={!canValidate}
               className={`
-                w-full py-3 rounded-xl font-bold text-sm transition-all duration-200
+                w-full py-4 rounded-2xl font-bold text-sm uppercase tracking-widest transition-all duration-200 no-print
                 ${canValidate
-                  ? 'bg-stone-900 text-white hover:bg-stone-800'
+                  ? 'bg-stone-900 text-white hover:bg-stone-800 shadow-xl hover:shadow-2xl'
                   : 'bg-stone-200 text-stone-400 cursor-not-allowed'
                 }
               `}
             >
-              VALIDER LA COMMANDE
+              Valider la Commande
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Modal de confirmation PDF */}
