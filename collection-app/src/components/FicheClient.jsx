@@ -208,8 +208,8 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
       <div className="animate-fade-in">
         <div ref={printRef} className="max-w-3xl mx-auto">
 
-          {/* Stepper */}
-          <div className="mb-10">
+          {/* Stepper — masque dans le PDF */}
+          <div className="mb-10 no-print">
             <ProductionStepper
               steps={fiche.productionSteps}
               clientPhone={fiche.clientPhone}
