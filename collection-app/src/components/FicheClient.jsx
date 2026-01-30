@@ -356,7 +356,7 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                   onClick={() => {
                     const phone = fiche.clientPhone.replace(/\D/g, '')
                     const message = encodeURIComponent(
-                      `Bonjour ${fiche.clientName || ''},\n\nVotre commande OLDA est prête ! Vous pouvez venir la récupérer.\n\nMerci de votre confiance.`
+                      `Bonjour\nBonne nouvelle, votre commande est terminée ! ✅\nElle vous attend à l'atelier OLDA.\n\nÀ bientôt 👋`
                     )
                     window.open(`https://wa.me/33${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
                   }}

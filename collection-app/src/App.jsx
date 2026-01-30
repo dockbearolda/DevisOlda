@@ -286,7 +286,17 @@ function App() {
         setFiches(prev => [...prev, archivedFiche])
         setActiveTabId(ficheId)
       }
-      setCurrentView('commande')
+      // Router vers la bonne vue selon l'etat de la fiche
+      const f = archivedFiche
+      if (f.isValidated && f.productionSteps?.completed) {
+        setCurrentView('terminee')
+      } else if (f.isValidated && f.productionSteps?.preparation) {
+        setCurrentView('production')
+      } else if (f.isValidated) {
+        setCurrentView('preparation')
+      } else {
+        setCurrentView('commande')
+      }
     }
   }, [archive, fiches])
 
