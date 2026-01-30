@@ -1,7 +1,9 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import TabBar from './components/TabBar'
 import FicheClient from './components/FicheClient'
 import Dashboard from './components/Dashboard'
+import { db } from './firebase'
+import { collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from 'firebase/firestore'
 
 // Cle de stockage local
 const STORAGE_KEY = 'olda_commandes'
@@ -104,20 +106,71 @@ const loadArchive = () => {
   return []
 }
 
+// Ecrire un document Firestore (silencieux si pas de db)
+const firestoreSet = (path, id, data) => {
+  if (!db) return
+  setDoc(doc(db, path, id), data).catch(e => console.warn('Firestore write error:', e.message))
+}
+const firestoreDel = (path, id) => {
+  if (!db) return
+  deleteDoc(doc(db, path, id)).catch(e => console.warn('Firestore delete error:', e.message))
+}
+
 function App() {
   const [fiches, setFiches] = useState(() => loadFromStorage())
   const [archive, setArchive] = useState(() => loadArchive())
   const [activeTabId, setActiveTabId] = useState(fiches[0]?.id || '')
   const [currentView, setCurrentView] = useState('commande') // 'commande', 'preparation', 'production', 'terminee', 'dashboard'
+  const [firebaseReady, setFirebaseReady] = useState(false)
+  const skipRemoteSync = useRef(false)
+
+  // --- Firestore : chargement initial + ecoute temps reel ---
+  useEffect(() => {
+    if (!db) return
+
+    const unsubFiches = onSnapshot(
+      collection(db, 'fiches'),
+      (snapshot) => {
+        const remote = snapshot.docs.map(d => d.data())
+        if (remote.length > 0) {
+          skipRemoteSync.current = true
+          setFiches(remote)
+        }
+        setFirebaseReady(true)
+      },
+      () => setFirebaseReady(true)
+    )
+
+    const unsubArchive = onSnapshot(
+      collection(db, 'archive'),
+      (snapshot) => {
+        const remote = snapshot.docs.map(d => d.data())
+        skipRemoteSync.current = true
+        setArchive(remote)
+      },
+      () => {}
+    )
+
+    return () => { unsubFiches(); unsubArchive() }
+  }, [])
 
   // Sauvegarder dans localStorage a chaque modification
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fiches))
+    // Sync vers Firestore uniquement pour les changements locaux
+    if (db && !skipRemoteSync.current) {
+      fiches.forEach(f => firestoreSet('fiches', f.id, f))
+    }
+    skipRemoteSync.current = false
   }, [fiches])
 
   // Sauvegarder l'archive
   useEffect(() => {
     localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archive))
+    if (db && !skipRemoteSync.current) {
+      archive.forEach(f => firestoreSet('archive', f.id, f))
+    }
+    skipRemoteSync.current = false
   }, [archive])
 
   // Ajouter un nouvel onglet/fiche
@@ -138,6 +191,9 @@ function App() {
         return
       }
     }
+
+    // Supprimer de Firestore
+    firestoreDel('fiches', ficheId)
 
     setFiches(prev => {
       const newFiches = prev.filter(f => f.id !== ficheId)
@@ -236,6 +292,7 @@ function App() {
   const handleDeleteFromArchive = useCallback((ficheId) => {
     if (window.confirm('Supprimer definitivement cette commande de l\'archive ?')) {
       setArchive(prev => prev.filter(f => f.id !== ficheId))
+      firestoreDel('archive', ficheId)
     }
   }, [])
 

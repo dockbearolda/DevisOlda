@@ -360,10 +360,23 @@ const TshirtEditor = forwardRef(function TshirtEditor({
   logoBack
 }, ref) {
   const [activeView, setActiveView] = useState({ front: true, back: false })
-  const [selectedLogoFront, setSelectedLogoFront] = useState(logoFront || '')
-  const [selectedLogoBack, setSelectedLogoBack] = useState(logoBack || '')
-  const [uploadedImageFront, setUploadedImageFront] = useState(null)
-  const [uploadedImageBack, setUploadedImageBack] = useState(null)
+  const isDataUrl = (s) => s && typeof s === 'string' && s.startsWith('data:')
+  const [selectedLogoFront, setSelectedLogoFront] = useState(() => {
+    if (logoFront && !isDataUrl(logoFront)) return logoFront
+    return ''
+  })
+  const [selectedLogoBack, setSelectedLogoBack] = useState(() => {
+    if (logoBack && !isDataUrl(logoBack)) return logoBack
+    return ''
+  })
+  const [uploadedImageFront, setUploadedImageFront] = useState(() => {
+    if (isDataUrl(logoFront)) return logoFront
+    return null
+  })
+  const [uploadedImageBack, setUploadedImageBack] = useState(() => {
+    if (isDataUrl(logoBack)) return logoBack
+    return null
+  })
   const fileInputFrontRef = useRef(null)
   const fileInputBackRef = useRef(null)
   const containerFrontRef = useRef(null)
@@ -379,9 +392,11 @@ const TshirtEditor = forwardRef(function TshirtEditor({
       if (side === 'front') {
         setUploadedImageFront(evt.target.result)
         setSelectedLogoFront('')
+        onLogoFrontChange?.(evt.target.result)
       } else {
         setUploadedImageBack(evt.target.result)
         setSelectedLogoBack('')
+        onLogoBackChange?.(evt.target.result)
       }
     }
     reader.readAsDataURL(file)
@@ -393,9 +408,11 @@ const TshirtEditor = forwardRef(function TshirtEditor({
     if (side === 'front') {
       setUploadedImageFront(null)
       setSelectedLogoFront('')
+      onLogoFrontChange?.(null)
     } else {
       setUploadedImageBack(null)
       setSelectedLogoBack('')
+      onLogoBackChange?.(null)
     }
   }
 
@@ -501,6 +518,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 onChange={(e) => {
                   setSelectedLogoFront(e.target.value)
                   setUploadedImageFront(null)
+                  onLogoFrontChange?.(e.target.value || null)
                 }}
                 disabled={disabled}
                 className="flex-1 h-11 px-4 rounded-xl border border-stone-200 bg-white text-sm font-semibold
@@ -584,6 +602,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 onChange={(e) => {
                   setSelectedLogoBack(e.target.value)
                   setUploadedImageBack(null)
+                  onLogoBackChange?.(e.target.value || null)
                 }}
                 disabled={disabled}
                 className="flex-1 h-11 px-4 rounded-xl border border-stone-200 bg-white text-sm font-semibold

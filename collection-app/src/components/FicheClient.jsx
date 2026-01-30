@@ -276,14 +276,26 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                   <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
                                   rounded-2xl ring-1 ring-stone-200">
                     <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
-                    {/* Zone logo */}
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
-                      <div className="w-16 h-16 border border-dashed border-stone-300 rounded-lg
-                                      flex items-center justify-center">
-                        <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
-                          Logo
-                        </span>
-                      </div>
+                      {fiche.frontLogo ? (
+                        fiche.frontLogo.startsWith('data:') ? (
+                          <img src={fiche.frontLogo} alt="Logo avant" className="max-w-[90px] max-h-[90px] object-contain" />
+                        ) : (
+                          <span
+                            className="font-black text-center leading-none"
+                            style={{ color: fiche.logoColor || '#000000', fontSize: '20px' }}
+                          >
+                            {fiche.frontLogo}
+                          </span>
+                        )
+                      ) : (
+                        <div className="w-16 h-16 border border-dashed border-stone-300 rounded-lg
+                                        flex items-center justify-center">
+                          <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
+                            Logo
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -296,14 +308,26 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                   <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
                                   rounded-2xl ring-1 ring-stone-200">
                     <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
-                    {/* Zone logo */}
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
-                      <div className="w-20 h-20 border border-dashed border-stone-300 rounded-lg
-                                      flex items-center justify-center">
-                        <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
-                          Logo
-                        </span>
-                      </div>
+                      {fiche.backLogo ? (
+                        fiche.backLogo.startsWith('data:') ? (
+                          <img src={fiche.backLogo} alt="Logo arriere" className="max-w-[110px] max-h-[110px] object-contain" />
+                        ) : (
+                          <span
+                            className="font-black text-center leading-none"
+                            style={{ color: fiche.logoColor || '#000000', fontSize: '24px' }}
+                          >
+                            {fiche.backLogo}
+                          </span>
+                        )
+                      ) : (
+                        <div className="w-20 h-20 border border-dashed border-stone-300 rounded-lg
+                                        flex items-center justify-center">
+                          <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
+                            Logo
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -354,12 +378,13 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
               </div>
             </div>
 
-            {/* Bouton PDF — No Print */}
-            <div className="border-t border-stone-100 px-8 sm:px-12 py-6 no-print">
+            {/* Actions — No Print */}
+            <div className="border-t border-stone-100 px-8 sm:px-12 py-6 no-print space-y-3">
+              {/* Bouton PDF */}
               <button
                 onClick={generatePdf}
-                className="w-full py-3.5 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.15em]
-                           rounded-xl hover:bg-stone-800 transition-all duration-300 shadow-lg
+                className="w-full py-3.5 bg-stone-200 text-stone-700 font-semibold text-sm uppercase tracking-[0.15em]
+                           rounded-xl hover:bg-stone-300 transition-all duration-300
                            flex items-center justify-center gap-3"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -368,6 +393,28 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                 </svg>
                 Exporter PDF Atelier
               </button>
+
+              {/* Finaliser — uniquement apres production terminee */}
+              {fiche.productionSteps?.production && !fiche.productionSteps?.completed && (
+                <button
+                  onClick={() => {
+                    onUpdate({
+                      productionSteps: {
+                        ...fiche.productionSteps,
+                        completed: true
+                      }
+                    })
+                  }}
+                  className="w-full py-4 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.2em]
+                             rounded-xl hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl
+                             flex items-center justify-center gap-3"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Finaliser la commande
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -740,6 +787,10 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
             onTshirtColorChange={(color) => onUpdate({ tshirtColor: color })}
             onLogoColorChange={(color) => onUpdate({ logoColor: color })}
             onSizeChange={(size) => onUpdate({ size })}
+            logoFront={fiche.frontLogo}
+            logoBack={fiche.backLogo}
+            onLogoFrontChange={(logo) => onUpdate({ frontLogo: logo })}
+            onLogoBackChange={(logo) => onUpdate({ backLogo: logo })}
           />
         </div>
 
