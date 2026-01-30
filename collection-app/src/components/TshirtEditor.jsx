@@ -148,9 +148,12 @@ function DraggableLogo({
   }, [isDragging, isResizing, disabled, dragStart, resizeStart, getContainerBounds, size.width, size.height, minSize, maxSize])
 
   const handleTouchEnd = useCallback(() => {
+    if ((isDragging || isResizing) && onPositionChange) {
+      onPositionChange({ position, size })
+    }
     setIsDragging(false)
     setIsResizing(false)
-  }, [])
+  }, [isDragging, isResizing, position, size, onPositionChange])
 
   // Event listeners globaux
   useEffect(() => {
