@@ -659,3 +659,4 @@ const TshirtEditor = forwardRef(function TshirtEditor({
 })
 
 export default TshirtEditor
+export { TshirtSvgFront, TshirtSvgBack, TSHIRT_COLORS, LOGO_COLORS }

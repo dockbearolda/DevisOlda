@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect } from 'react'
 import ProductionStepper from './ProductionStepper'
-import TshirtEditor from './TshirtEditor'
+import TshirtEditor, { TshirtSvgFront, TshirtSvgBack, TSHIRT_COLORS, LOGO_COLORS } from './TshirtEditor'
 import Modal from './Modal'
 import { exportToPdf } from '../utils/pdfExport'
 
@@ -45,7 +45,7 @@ const formatDateShort = (dateString) => {
   })
 }
 
-function FicheClient({ fiche, onUpdate, onValidate }) {
+function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
   const printRef = useRef(null)
   const editorRef = useRef(null)
   const [showPdfModal, setShowPdfModal] = useState(false)
@@ -104,6 +104,276 @@ function FicheClient({ fiche, onUpdate, onValidate }) {
 
   // Verifier si la commande est terminee
   const isCompleted = fiche.isValidated && fiche.productionSteps?.completed
+
+  // Helper: nom de la collection
+  const getCollectionLabel = (target) => {
+    const col = COLLECTION_OPTIONS.find(c => c.value === target)
+    return col ? col.label : ''
+  }
+
+  // Helper: nom de la couleur
+  const getColorLabel = (hex, list) => {
+    const c = list.find(item => item.value === hex)
+    return c ? c.label : hex
+  }
+
+  // Helper: reference affichee
+  const displayReference = fiche.reference === 'MANUEL'
+    ? (fiche.manualReference || 'Manuel')
+    : (fiche.reference || '—')
+
+  // ============================================================
+  // VUE PREPARATION — Minimalisme absolu
+  // ============================================================
+  if (currentView === 'preparation') {
+    return (
+      <div className="animate-fade-in">
+        <div className="max-w-2xl mx-auto">
+
+          {/* Stepper haut de gamme */}
+          <div className="mb-16">
+            <ProductionStepper
+              steps={fiche.productionSteps}
+              clientPhone={fiche.clientPhone}
+              clientName={fiche.clientName}
+              onUpdateStep={(stepKey, value) => {
+                onUpdate({
+                  productionSteps: {
+                    ...fiche.productionSteps,
+                    [stepKey]: value
+                  }
+                })
+              }}
+            />
+          </div>
+
+          {/* Question de validation — centree, epuree */}
+          {!fiche.productionSteps?.preparation && (
+            <div className="flex flex-col items-center justify-center py-16">
+              {/* Ligne decorative */}
+              <div className="w-12 h-px bg-stone-300 mb-12" />
+
+              <p className="font-serif text-2xl sm:text-3xl text-stone-800 tracking-tight text-center leading-relaxed mb-16">
+                Preparation du t-shirt terminee ?
+              </p>
+
+              {/* Bouton de confirmation */}
+              <button
+                onClick={() => {
+                  onUpdate({
+                    productionSteps: {
+                      ...fiche.productionSteps,
+                      preparation: true
+                    }
+                  })
+                }}
+                className="px-12 py-4 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.2em]
+                           rounded-full hover:bg-stone-800 transition-all duration-300
+                           shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                Confirmer
+              </button>
+
+              {/* Ligne decorative */}
+              <div className="w-12 h-px bg-stone-300 mt-12" />
+            </div>
+          )}
+
+          {/* Message si deja prepare */}
+          {fiche.productionSteps?.preparation && (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="w-16 h-16 rounded-full bg-stone-900 flex items-center justify-center mb-8">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="font-serif text-xl text-stone-600 tracking-tight">
+                Preparation validee
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ============================================================
+  // VUE PRODUCTION — Fiche Atelier Studio
+  // ============================================================
+  if (currentView === 'production') {
+    const tshirtColorLabel = getColorLabel(fiche.tshirtColor || '#FFFFFF', TSHIRT_COLORS)
+    const logoColorLabel = getColorLabel(fiche.logoColor || '#000000', LOGO_COLORS)
+
+    return (
+      <div className="animate-fade-in">
+        <div ref={printRef} className="max-w-3xl mx-auto">
+
+          {/* Stepper */}
+          <div className="mb-10">
+            <ProductionStepper
+              steps={fiche.productionSteps}
+              clientPhone={fiche.clientPhone}
+              clientName={fiche.clientName}
+              onUpdateStep={(stepKey, value) => {
+                onUpdate({
+                  productionSteps: {
+                    ...fiche.productionSteps,
+                    [stepKey]: value
+                  }
+                })
+              }}
+            />
+          </div>
+
+          {/* Fiche Atelier */}
+          <div className="bg-white rounded-3xl ring-1 ring-stone-200 overflow-hidden">
+
+            {/* En-tete Studio */}
+            <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center">
+              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.3em] mb-3">
+                Fiche Atelier
+              </p>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
+                {fiche.clientName || 'Client'}
+              </h2>
+              <div className="flex items-center justify-center gap-3 mt-3">
+                {fiche.target && (
+                  <span className="text-sm font-medium text-stone-500">
+                    {getCollectionLabel(fiche.target)}
+                  </span>
+                )}
+                {fiche.target && displayReference !== '—' && (
+                  <span className="w-1 h-1 rounded-full bg-stone-300" />
+                )}
+                {displayReference !== '—' && (
+                  <span className="text-sm font-medium text-stone-500">
+                    {displayReference}
+                  </span>
+                )}
+                {fiche.size && (
+                  <>
+                    <span className="w-1 h-1 rounded-full bg-stone-300" />
+                    <span className="text-sm font-medium text-stone-500">
+                      Taille {fiche.size}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Visuels — Logo Avant / Logo Arriere */}
+            <div className="px-8 sm:px-12 py-10">
+              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.3em] mb-8 text-center">
+                Visuels de Production
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {/* Logo Avant */}
+                <div className="flex flex-col items-center">
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
+                    Avant
+                  </p>
+                  <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
+                                  rounded-2xl ring-1 ring-stone-200">
+                    <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
+                    {/* Zone logo */}
+                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
+                      <div className="w-16 h-16 border border-dashed border-stone-300 rounded-lg
+                                      flex items-center justify-center">
+                        <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
+                          Logo
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logo Arriere */}
+                <div className="flex flex-col items-center">
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
+                    Arriere
+                  </p>
+                  <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
+                                  rounded-2xl ring-1 ring-stone-200">
+                    <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
+                    {/* Zone logo */}
+                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
+                      <div className="w-20 h-20 border border-dashed border-stone-300 rounded-lg
+                                      flex items-center justify-center">
+                        <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
+                          Logo
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Couleurs de Production */}
+            <div className="border-t border-stone-100 px-8 sm:px-12 py-8">
+              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.3em] mb-6 text-center">
+                Couleurs de Production
+              </p>
+
+              <div className="flex items-center justify-center gap-12">
+                {/* Couleur T-shirt */}
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="w-14 h-14 rounded-full ring-1 ring-stone-200 shadow-inner"
+                    style={{ backgroundColor: fiche.tshirtColor || '#FFFFFF' }}
+                  />
+                  <div className="text-center">
+                    <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">
+                      T-Shirt
+                    </p>
+                    <p className="text-xs font-medium text-stone-700 mt-0.5">
+                      {tshirtColorLabel}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Separateur */}
+                <div className="w-px h-16 bg-stone-200" />
+
+                {/* Couleur Logo */}
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="w-14 h-14 rounded-full ring-1 ring-stone-200 shadow-inner"
+                    style={{ backgroundColor: fiche.logoColor || '#000000' }}
+                  />
+                  <div className="text-center">
+                    <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">
+                      Logo
+                    </p>
+                    <p className="text-xs font-medium text-stone-700 mt-0.5">
+                      {logoColorLabel}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bouton PDF — No Print */}
+            <div className="border-t border-stone-100 px-8 sm:px-12 py-6 no-print">
+              <button
+                onClick={generatePdf}
+                className="w-full py-3.5 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.15em]
+                           rounded-xl hover:bg-stone-800 transition-all duration-300 shadow-lg
+                           flex items-center justify-center gap-3"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Exporter PDF Atelier
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="animate-fade-in">

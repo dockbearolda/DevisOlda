@@ -14,7 +14,7 @@ const PRODUCTION_STEPS = [
     label: 'Preparation',
     description: 'Materiaux prets',
     modalTitle: 'Confirmation Preparation',
-    modalMessage: 'Le t-shirt a-t-il bien ete prepare ?'
+    modalMessage: 'Preparation du t-shirt terminee ?'
   },
   {
     key: 'production',

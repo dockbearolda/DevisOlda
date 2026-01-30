@@ -397,6 +397,7 @@ function App() {
               <FicheClient
                 key={activeFiche.id}
                 fiche={activeFiche}
+                currentView={currentView}
                 onUpdate={(updates) => {
                   handleUpdateFiche(activeFiche.id, updates)
                   syncArchive({ ...activeFiche, ...updates })
