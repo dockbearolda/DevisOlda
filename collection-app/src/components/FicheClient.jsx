@@ -123,11 +123,246 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
     : (fiche.reference || '—')
 
   // ============================================================
+  // VUE TERMINEE (FINI) — Objet Editorial, miroir du PDF
+  // ============================================================
+  if (currentView === 'terminee') {
+    const tshirtColorLabel = getColorLabel(fiche.tshirtColor || '#FFFFFF', TSHIRT_COLORS)
+    const logoColorLabel = getColorLabel(fiche.logoColor || '#000000', LOGO_COLORS)
+
+    return (
+      <div className="view-slide-enter">
+        <div ref={printRef} className="max-w-3xl mx-auto">
+
+          {/* Fiche Finale — Design Editorial */}
+          <div className="bg-white overflow-hidden" style={{ borderRadius: '0' }}>
+
+            {/* Bande verte superieure — Signature de completion */}
+            <div className="h-1" style={{ backgroundColor: '#00FF66' }} />
+
+            {/* En-tete Editorial */}
+            <div className="px-10 sm:px-16 py-12 text-center border-b border-stone-100">
+              {/* Badge Termine */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6"
+                   style={{ backgroundColor: '#00FF66' }}>
+                <svg className="w-4 h-4 text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-stone-900 text-[10px] font-bold uppercase tracking-[0.25em]">
+                  Commande Terminée
+                </span>
+              </div>
+
+              {/* Nom Client — Typographie editoriale */}
+              <h1 className="font-serif text-4xl sm:text-5xl font-bold text-stone-900 tracking-tight mb-4">
+                {fiche.clientName || 'Client'}
+              </h1>
+
+              {/* Meta-informations */}
+              <div className="flex items-center justify-center gap-4 text-sm text-stone-500">
+                {fiche.target && (
+                  <span className="font-medium">{getCollectionLabel(fiche.target)}</span>
+                )}
+                {displayReference !== '—' && (
+                  <>
+                    <span className="w-1 h-1 rounded-full bg-stone-300" />
+                    <span className="font-medium">{displayReference}</span>
+                  </>
+                )}
+                {fiche.size && (
+                  <>
+                    <span className="w-1 h-1 rounded-full bg-stone-300" />
+                    <span className="font-medium">Taille {fiche.size}</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Visuels — Disposition editoriale */}
+            <div className="px-10 sm:px-16 py-12">
+              <div className="grid grid-cols-2 gap-12">
+                {/* Logo Avant */}
+                <div className="flex flex-col items-center">
+                  <div className="relative w-full aspect-[3/4] bg-stone-50 flex items-center justify-center mb-4">
+                    <div className="relative w-[180px] h-[220px]">
+                      <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
+                      <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
+                        {fiche.frontLogo ? (
+                          fiche.frontLogo.startsWith('data:') ? (
+                            <img src={fiche.frontLogo} alt="Logo avant" className="max-w-[80px] max-h-[80px] object-contain" />
+                          ) : (
+                            <span
+                              className="font-black text-center leading-none"
+                              style={{ color: fiche.logoColor || '#000000', fontSize: '18px' }}
+                            >
+                              {fiche.frontLogo}
+                            </span>
+                          )
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em]">Avant</p>
+                </div>
+
+                {/* Logo Arriere */}
+                <div className="flex flex-col items-center">
+                  <div className="relative w-full aspect-[3/4] bg-stone-50 flex items-center justify-center mb-4">
+                    <div className="relative w-[180px] h-[220px]">
+                      <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
+                      <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
+                        {fiche.backLogo ? (
+                          fiche.backLogo.startsWith('data:') ? (
+                            <img src={fiche.backLogo} alt="Logo arriere" className="max-w-[100px] max-h-[100px] object-contain" />
+                          ) : (
+                            <span
+                              className="font-black text-center leading-none"
+                              style={{ color: fiche.logoColor || '#000000', fontSize: '22px' }}
+                            >
+                              {fiche.backLogo}
+                            </span>
+                          )
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em]">Arrière</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Specifications — Style tableau editorial */}
+            <div className="border-t border-stone-100 px-10 sm:px-16 py-10">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+                {/* Couleur T-Shirt */}
+                <div className="text-center">
+                  <div
+                    className="w-12 h-12 rounded-full mx-auto mb-3 ring-1 ring-stone-200"
+                    style={{ backgroundColor: fiche.tshirtColor || '#FFFFFF' }}
+                  />
+                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">T-Shirt</p>
+                  <p className="text-xs font-medium text-stone-700">{tshirtColorLabel}</p>
+                </div>
+
+                {/* Couleur Logo */}
+                <div className="text-center">
+                  <div
+                    className="w-12 h-12 rounded-full mx-auto mb-3 ring-1 ring-stone-200"
+                    style={{ backgroundColor: fiche.logoColor || '#000000' }}
+                  />
+                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Logo</p>
+                  <p className="text-xs font-medium text-stone-700">{logoColorLabel}</p>
+                </div>
+
+                {/* Prix Total */}
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full mx-auto mb-3 bg-stone-900 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">{total}</span>
+                  </div>
+                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Total</p>
+                  <p className="text-xs font-medium text-stone-700">{total} EUR</p>
+                </div>
+
+                {/* Statut Paiement */}
+                <div className="text-center">
+                  <div className={`w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center ${
+                    fiche.isPaid ? 'bg-green-500' : 'bg-red-500'
+                  }`}>
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {fiche.isPaid ? (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      ) : (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
+                      )}
+                    </svg>
+                  </div>
+                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Paiement</p>
+                  <p className="text-xs font-medium text-stone-700">{fiche.isPaid ? 'Réglé' : 'En attente'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pied de page — Dates */}
+            <div className="border-t border-stone-100 px-10 sm:px-16 py-6 flex items-center justify-between text-stone-400">
+              <div>
+                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Créée le</p>
+                <p className="text-xs font-medium text-stone-600">
+                  {fiche.createdAt ? formatDateShort(fiche.createdAt) : '—'}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Échéance</p>
+                <p className="text-xs font-medium text-stone-600">
+                  {fiche.deadline ? formatDateShort(fiche.deadline) : '—'}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Validée le</p>
+                <p className="text-xs font-medium text-stone-600">
+                  {fiche.validatedAt ? formatDateShort(fiche.validatedAt) : '—'}
+                </p>
+              </div>
+            </div>
+
+            {/* Actions — No Print */}
+            <div className="border-t border-stone-100 px-10 sm:px-16 py-8 no-print">
+              {/* Bouton WhatsApp */}
+              {fiche.clientPhone && (
+                <button
+                  onClick={() => {
+                    const phone = fiche.clientPhone.replace(/\D/g, '')
+                    const message = encodeURIComponent(
+                      `Bonjour ${fiche.clientName || ''},\n\nVotre commande OLDA est prête ! Vous pouvez venir la récupérer.\n\nMerci de votre confiance.`
+                    )
+                    window.open(`https://wa.me/33${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
+                  }}
+                  className="w-full py-4 font-semibold text-xs uppercase tracking-[0.25em]
+                             hover:opacity-90 transition-all duration-300
+                             shadow-lg hover:shadow-xl hover:-translate-y-0.5
+                             flex items-center justify-center gap-3"
+                  style={{
+                    backgroundColor: '#00FF66',
+                    color: '#0a0a0a',
+                    borderRadius: '0'
+                  }}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  NOTIFIER LE CLIENT
+                </button>
+              )}
+
+              {/* Lien PDF minimaliste */}
+              <button
+                onClick={generatePdf}
+                className="w-full text-center text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                           hover:text-stone-900 hover:underline transition-all duration-200
+                           flex items-center justify-center gap-2 cursor-pointer"
+                style={{
+                  marginTop: '16px',
+                  background: 'transparent',
+                  border: 'none'
+                }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Télécharger la fiche technique (PDF)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ============================================================
   // VUE PREPARATION — Minimalisme absolu
   // ============================================================
   if (currentView === 'preparation') {
     return (
-      <div className="animate-fade-in">
+      <div className="view-slide-enter">
         <div className="max-w-2xl mx-auto">
 
           {/* Question de validation — centree, epuree */}
@@ -188,7 +423,7 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
     const logoColorLabel = getColorLabel(fiche.logoColor || '#000000', LOGO_COLORS)
 
     return (
-      <div className="animate-fade-in">
+      <div className="view-slide-enter">
         <div ref={printRef} className="max-w-3xl mx-auto">
 
           {/* Stepper — masque dans le PDF */}
@@ -362,21 +597,7 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
             </div>
 
             {/* Actions — No Print */}
-            <div className="border-t border-stone-100 px-8 sm:px-12 py-6 no-print space-y-3">
-              {/* Bouton PDF */}
-              <button
-                onClick={generatePdf}
-                className="w-full py-3.5 bg-stone-200 text-stone-700 font-semibold text-sm uppercase tracking-[0.15em]
-                           rounded-xl hover:bg-stone-300 transition-all duration-300
-                           flex items-center justify-center gap-3"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Exporter PDF Atelier
-              </button>
-
+            <div className="border-t border-stone-100 px-8 sm:px-12 py-8 no-print">
               {/* Finaliser — uniquement apres production terminee */}
               {fiche.productionSteps?.production && !fiche.productionSteps?.completed && (
                 <button
@@ -388,16 +609,33 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                       }
                     })
                   }}
-                  className="w-full py-4 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.2em]
-                             rounded-xl hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl
-                             flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-stone-900 text-white font-semibold text-xs uppercase tracking-[0.25em]
+                             hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl
+                             hover:-translate-y-0.5"
+                  style={{ borderRadius: '0' }}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Finaliser la commande
+                  TERMINER LA PRODUCTION
                 </button>
               )}
+
+              {/* Lien PDF minimaliste — exactement 16px en dessous */}
+              <button
+                onClick={generatePdf}
+                className="w-full text-center text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                           hover:text-stone-900 hover:underline transition-all duration-200
+                           flex items-center justify-center gap-2 cursor-pointer"
+                style={{
+                  marginTop: fiche.productionSteps?.production && !fiche.productionSteps?.completed ? '16px' : '0',
+                  background: 'transparent',
+                  border: 'none'
+                }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Télécharger la fiche technique (PDF)
+              </button>
             </div>
           </div>
         </div>

@@ -458,8 +458,27 @@ function App() {
                 onUpdate={(updates) => {
                   handleUpdateFiche(activeFiche.id, updates)
                   syncArchive({ ...activeFiche, ...updates })
+
+                  // Auto-transition vers la vue suivante apres mise a jour des etapes
+                  if (updates.productionSteps) {
+                    const newSteps = { ...activeFiche.productionSteps, ...updates.productionSteps }
+
+                    // Preparation terminee → Production
+                    if (newSteps.preparation && !newSteps.completed && currentView === 'preparation') {
+                      setTimeout(() => setCurrentView('production'), 400)
+                    }
+
+                    // Production terminee → Fini
+                    if (newSteps.completed && currentView === 'production') {
+                      setTimeout(() => setCurrentView('terminee'), 400)
+                    }
+                  }
                 }}
-                onValidate={() => handleValidateFiche(activeFiche.id)}
+                onValidate={() => {
+                  handleValidateFiche(activeFiche.id)
+                  // Auto-transition vers Preparation apres validation
+                  setTimeout(() => setCurrentView('preparation'), 400)
+                }}
               />
             ) : fichesForCurrentView.length > 0 ? (
               // Auto-select first fiche in current view
