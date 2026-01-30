@@ -130,26 +130,9 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
       <div className="animate-fade-in">
         <div className="max-w-2xl mx-auto">
 
-          {/* Stepper haut de gamme */}
-          <div className="mb-16">
-            <ProductionStepper
-              steps={fiche.productionSteps}
-              clientPhone={fiche.clientPhone}
-              clientName={fiche.clientName}
-              onUpdateStep={(stepKey, value) => {
-                onUpdate({
-                  productionSteps: {
-                    ...fiche.productionSteps,
-                    [stepKey]: value
-                  }
-                })
-              }}
-            />
-          </div>
-
           {/* Question de validation — centree, epuree */}
           {!fiche.productionSteps?.preparation && (
-            <div className="flex flex-col items-center justify-center py-16">
+            <div className="flex flex-col items-center justify-center py-24">
               {/* Ligne decorative */}
               <div className="w-12 h-px bg-stone-300 mb-12" />
 
@@ -181,7 +164,7 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
 
           {/* Message si deja prepare */}
           {fiche.productionSteps?.preparation && (
-            <div className="flex flex-col items-center justify-center py-16">
+            <div className="flex flex-col items-center justify-center py-24">
               <div className="w-16 h-16 rounded-full bg-stone-900 flex items-center justify-center mb-8">
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
