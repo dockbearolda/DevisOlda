@@ -177,21 +177,33 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
               </div>
             </div>
 
-            {/* Visuels — Disposition editoriale */}
+            {/* Visuels — Disposition verticale */}
             <div className="px-10 sm:px-16 py-12">
-              <div className="grid grid-cols-2 gap-8">
+              <div className="flex flex-col items-center gap-10">
                 {/* Logo Avant */}
                 <div className="flex flex-col items-center">
-                  <div className="relative w-[180px] h-[220px] bg-stone-50 mx-auto mb-4">
+                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Avant</p>
+                  <div className="relative w-[200px] h-[240px] bg-stone-50">
                     <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-6">
                       {fiche.frontLogo ? (
                         fiche.frontLogo.startsWith('data:') ? (
-                          <img src={fiche.frontLogo} alt="Logo avant" className="max-w-[70px] max-h-[70px] object-contain" />
+                          <img
+                            src={fiche.frontLogo}
+                            alt="Logo avant"
+                            className="object-contain"
+                            style={{
+                              maxWidth: `${Math.min(fiche.frontLogoSize || 100, 120)}px`,
+                              maxHeight: `${Math.min(fiche.frontLogoSize || 100, 120)}px`
+                            }}
+                          />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
-                            style={{ color: fiche.logoColor || '#000000', fontSize: '16px' }}
+                            style={{
+                              color: fiche.logoColor || '#000000',
+                              fontSize: `${Math.min((fiche.frontLogoSize || 100) * 0.22, 26)}px`
+                            }}
                           >
                             {fiche.frontLogo}
                           </span>
@@ -199,21 +211,35 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                       ) : null}
                     </div>
                   </div>
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em]">Avant</p>
                 </div>
+
+                {/* Séparateur */}
+                <div className="w-16 h-px bg-stone-200" />
 
                 {/* Logo Arriere */}
                 <div className="flex flex-col items-center">
-                  <div className="relative w-[180px] h-[220px] bg-stone-50 mx-auto mb-4">
+                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Arrière</p>
+                  <div className="relative w-[200px] h-[240px] bg-stone-50">
                     <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-6">
                       {fiche.backLogo ? (
                         fiche.backLogo.startsWith('data:') ? (
-                          <img src={fiche.backLogo} alt="Logo arriere" className="max-w-[90px] max-h-[90px] object-contain" />
+                          <img
+                            src={fiche.backLogo}
+                            alt="Logo arriere"
+                            className="object-contain"
+                            style={{
+                              maxWidth: `${Math.min(fiche.backLogoSize || 100, 140)}px`,
+                              maxHeight: `${Math.min(fiche.backLogoSize || 100, 140)}px`
+                            }}
+                          />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
-                            style={{ color: fiche.logoColor || '#000000', fontSize: '20px' }}
+                            style={{
+                              color: fiche.logoColor || '#000000',
+                              fontSize: `${Math.min((fiche.backLogoSize || 100) * 0.28, 30)}px`
+                            }}
                           >
                             {fiche.backLogo}
                           </span>
@@ -221,7 +247,6 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                       ) : null}
                     </div>
                   </div>
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em]">Arrière</p>
                 </div>
               </div>
             </div>
@@ -493,11 +518,22 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
                       {fiche.frontLogo ? (
                         fiche.frontLogo.startsWith('data:') ? (
-                          <img src={fiche.frontLogo} alt="Logo avant" className="max-w-[90px] max-h-[90px] object-contain" />
+                          <img
+                            src={fiche.frontLogo}
+                            alt="Logo avant"
+                            className="object-contain"
+                            style={{
+                              maxWidth: `${Math.min(fiche.frontLogoSize || 100, 130)}px`,
+                              maxHeight: `${Math.min(fiche.frontLogoSize || 100, 130)}px`
+                            }}
+                          />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
-                            style={{ color: fiche.logoColor || '#000000', fontSize: '20px' }}
+                            style={{
+                              color: fiche.logoColor || '#000000',
+                              fontSize: `${Math.min((fiche.frontLogoSize || 100) * 0.25, 28)}px`
+                            }}
                           >
                             {fiche.frontLogo}
                           </span>
@@ -517,7 +553,7 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                 {/* Logo Arriere */}
                 <div className="flex flex-col items-center">
                   <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
-                    Arriere
+                    Arrière
                   </p>
                   <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
                                   rounded-2xl ring-1 ring-stone-200">
@@ -525,11 +561,22 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                     <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
                       {fiche.backLogo ? (
                         fiche.backLogo.startsWith('data:') ? (
-                          <img src={fiche.backLogo} alt="Logo arriere" className="max-w-[110px] max-h-[110px] object-contain" />
+                          <img
+                            src={fiche.backLogo}
+                            alt="Logo arriere"
+                            className="object-contain"
+                            style={{
+                              maxWidth: `${Math.min(fiche.backLogoSize || 100, 150)}px`,
+                              maxHeight: `${Math.min(fiche.backLogoSize || 100, 150)}px`
+                            }}
+                          />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
-                            style={{ color: fiche.logoColor || '#000000', fontSize: '24px' }}
+                            style={{
+                              color: fiche.logoColor || '#000000',
+                              fontSize: `${Math.min((fiche.backLogoSize || 100) * 0.3, 32)}px`
+                            }}
                           >
                             {fiche.backLogo}
                           </span>

@@ -5,30 +5,30 @@ import Modal from './Modal'
 const PRODUCTION_STEPS = [
   {
     key: 'validated',
-    label: 'Validee',
-    description: 'Commande confirmee',
+    label: 'Validée',
+    description: 'Commande confirmée',
     locked: true
   },
   {
     key: 'preparation',
-    label: 'Preparation',
-    description: 'Materiaux prets',
-    modalTitle: 'Confirmation Preparation',
-    modalMessage: 'Preparation du t-shirt terminee ?'
+    label: 'Préparation',
+    description: 'Matériaux prêts',
+    modalTitle: 'Confirmation Préparation',
+    modalMessage: "L'étiquette du t-shirt a-t-elle été retirée ?"
   },
   {
     key: 'production',
     label: 'Production',
     description: 'En fabrication',
     modalTitle: 'Confirmation Production',
-    modalMessage: "L'etiquette a-t-elle ete retiree sur le produit ?"
+    modalMessage: 'Préparation du t-shirt terminée ?'
   },
   {
     key: 'completed',
-    label: 'Terminee',
-    description: 'Prete a livrer',
+    label: 'Terminée',
+    description: 'Prête à livrer',
     modalTitle: 'Finalisation',
-    modalMessage: 'Confirmer que la commande est terminee et prete pour le client ?'
+    modalMessage: 'Confirmer que la commande est terminée et prête pour le client.'
   }
 ]
 
