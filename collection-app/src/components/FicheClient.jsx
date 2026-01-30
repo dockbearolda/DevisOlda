@@ -183,33 +183,45 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                 {/* Logo Avant */}
                 <div className="flex flex-col items-center">
                   <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Avant</p>
-                  <div className="relative w-[200px] h-[240px] bg-stone-50">
+                  <div className="relative w-[200px] h-[240px] bg-stone-50 overflow-hidden">
                     <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
-                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-6">
-                      {fiche.frontLogo ? (
-                        fiche.frontLogo.startsWith('data:') ? (
+                    {fiche.frontLogo && (
+                      <div
+                        className="absolute z-10 flex items-center justify-center"
+                        style={fiche.frontLogoPosition ? {
+                          left: `${fiche.frontLogoPosition.position.x * (200/300)}px`,
+                          top: `${fiche.frontLogoPosition.position.y * (240/350)}px`,
+                          width: `${fiche.frontLogoPosition.size.width * (200/300)}px`,
+                          height: `${fiche.frontLogoPosition.size.height * (240/350)}px`
+                        } : {
+                          left: '50%',
+                          top: '45%',
+                          transform: 'translate(-50%, -50%)',
+                          width: `${Math.min(fiche.frontLogoSize || 100, 120)}px`,
+                          height: `${Math.min(fiche.frontLogoSize || 100, 120)}px`
+                        }}
+                      >
+                        {fiche.frontLogo.startsWith('data:') ? (
                           <img
                             src={fiche.frontLogo}
                             alt="Logo avant"
-                            className="object-contain"
-                            style={{
-                              maxWidth: `${Math.min(fiche.frontLogoSize || 100, 120)}px`,
-                              maxHeight: `${Math.min(fiche.frontLogoSize || 100, 120)}px`
-                            }}
+                            className="max-w-full max-h-full object-contain"
                           />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
                             style={{
                               color: fiche.logoColor || '#000000',
-                              fontSize: `${Math.min((fiche.frontLogoSize || 100) * 0.22, 26)}px`
+                              fontSize: fiche.frontLogoPosition
+                                ? `${Math.min(fiche.frontLogoPosition.size.width * (200/300) * 0.35, 32)}px`
+                                : `${Math.min((fiche.frontLogoSize || 100) * 0.22, 26)}px`
                             }}
                           >
                             {fiche.frontLogo}
                           </span>
-                        )
-                      ) : null}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -219,33 +231,45 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                 {/* Logo Arriere */}
                 <div className="flex flex-col items-center">
                   <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Arrière</p>
-                  <div className="relative w-[200px] h-[240px] bg-stone-50">
+                  <div className="relative w-[200px] h-[240px] bg-stone-50 overflow-hidden">
                     <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
-                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-6">
-                      {fiche.backLogo ? (
-                        fiche.backLogo.startsWith('data:') ? (
+                    {fiche.backLogo && (
+                      <div
+                        className="absolute z-10 flex items-center justify-center"
+                        style={fiche.backLogoPosition ? {
+                          left: `${fiche.backLogoPosition.position.x * (200/300)}px`,
+                          top: `${fiche.backLogoPosition.position.y * (240/350)}px`,
+                          width: `${fiche.backLogoPosition.size.width * (200/300)}px`,
+                          height: `${fiche.backLogoPosition.size.height * (240/350)}px`
+                        } : {
+                          left: '50%',
+                          top: '45%',
+                          transform: 'translate(-50%, -50%)',
+                          width: `${Math.min(fiche.backLogoSize || 100, 140)}px`,
+                          height: `${Math.min(fiche.backLogoSize || 100, 140)}px`
+                        }}
+                      >
+                        {fiche.backLogo.startsWith('data:') ? (
                           <img
                             src={fiche.backLogo}
                             alt="Logo arriere"
-                            className="object-contain"
-                            style={{
-                              maxWidth: `${Math.min(fiche.backLogoSize || 100, 140)}px`,
-                              maxHeight: `${Math.min(fiche.backLogoSize || 100, 140)}px`
-                            }}
+                            className="max-w-full max-h-full object-contain"
                           />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
                             style={{
                               color: fiche.logoColor || '#000000',
-                              fontSize: `${Math.min((fiche.backLogoSize || 100) * 0.28, 30)}px`
+                              fontSize: fiche.backLogoPosition
+                                ? `${Math.min(fiche.backLogoPosition.size.width * (200/300) * 0.35, 36)}px`
+                                : `${Math.min((fiche.backLogoSize || 100) * 0.28, 30)}px`
                             }}
                           >
                             {fiche.backLogo}
                           </span>
-                        )
-                      ) : null}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -513,40 +537,54 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                     Avant
                   </p>
                   <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
-                                  rounded-2xl ring-1 ring-stone-200">
+                                  rounded-2xl ring-1 ring-stone-200 overflow-hidden">
                     <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
-                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
-                      {fiche.frontLogo ? (
-                        fiche.frontLogo.startsWith('data:') ? (
+                    {fiche.frontLogo ? (
+                      <div
+                        className="absolute z-10 flex items-center justify-center"
+                        style={fiche.frontLogoPosition ? {
+                          left: `${fiche.frontLogoPosition.position.x * (220/300)}px`,
+                          top: `${fiche.frontLogoPosition.position.y * (260/350)}px`,
+                          width: `${fiche.frontLogoPosition.size.width * (220/300)}px`,
+                          height: `${fiche.frontLogoPosition.size.height * (260/350)}px`
+                        } : {
+                          left: '50%',
+                          top: '45%',
+                          transform: 'translate(-50%, -50%)',
+                          width: `${Math.min(fiche.frontLogoSize || 100, 130)}px`,
+                          height: `${Math.min(fiche.frontLogoSize || 100, 130)}px`
+                        }}
+                      >
+                        {fiche.frontLogo.startsWith('data:') ? (
                           <img
                             src={fiche.frontLogo}
                             alt="Logo avant"
-                            className="object-contain"
-                            style={{
-                              maxWidth: `${Math.min(fiche.frontLogoSize || 100, 130)}px`,
-                              maxHeight: `${Math.min(fiche.frontLogoSize || 100, 130)}px`
-                            }}
+                            className="max-w-full max-h-full object-contain"
                           />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
                             style={{
                               color: fiche.logoColor || '#000000',
-                              fontSize: `${Math.min((fiche.frontLogoSize || 100) * 0.25, 28)}px`
+                              fontSize: fiche.frontLogoPosition
+                                ? `${Math.min(fiche.frontLogoPosition.size.width * (220/300) * 0.35, 36)}px`
+                                : `${Math.min((fiche.frontLogoSize || 100) * 0.25, 28)}px`
                             }}
                           >
                             {fiche.frontLogo}
                           </span>
-                        )
-                      ) : (
+                        )}
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center z-10">
                         <div className="w-16 h-16 border border-dashed border-stone-300 rounded-lg
                                         flex items-center justify-center">
                           <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
                             Logo
                           </span>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -556,40 +594,54 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                     Arrière
                   </p>
                   <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
-                                  rounded-2xl ring-1 ring-stone-200">
+                                  rounded-2xl ring-1 ring-stone-200 overflow-hidden">
                     <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
-                    <div className="absolute inset-0 flex items-center justify-center z-10 pt-4">
-                      {fiche.backLogo ? (
-                        fiche.backLogo.startsWith('data:') ? (
+                    {fiche.backLogo ? (
+                      <div
+                        className="absolute z-10 flex items-center justify-center"
+                        style={fiche.backLogoPosition ? {
+                          left: `${fiche.backLogoPosition.position.x * (220/300)}px`,
+                          top: `${fiche.backLogoPosition.position.y * (260/350)}px`,
+                          width: `${fiche.backLogoPosition.size.width * (220/300)}px`,
+                          height: `${fiche.backLogoPosition.size.height * (260/350)}px`
+                        } : {
+                          left: '50%',
+                          top: '45%',
+                          transform: 'translate(-50%, -50%)',
+                          width: `${Math.min(fiche.backLogoSize || 100, 150)}px`,
+                          height: `${Math.min(fiche.backLogoSize || 100, 150)}px`
+                        }}
+                      >
+                        {fiche.backLogo.startsWith('data:') ? (
                           <img
                             src={fiche.backLogo}
                             alt="Logo arriere"
-                            className="object-contain"
-                            style={{
-                              maxWidth: `${Math.min(fiche.backLogoSize || 100, 150)}px`,
-                              maxHeight: `${Math.min(fiche.backLogoSize || 100, 150)}px`
-                            }}
+                            className="max-w-full max-h-full object-contain"
                           />
                         ) : (
                           <span
                             className="font-black text-center leading-none"
                             style={{
                               color: fiche.logoColor || '#000000',
-                              fontSize: `${Math.min((fiche.backLogoSize || 100) * 0.3, 32)}px`
+                              fontSize: fiche.backLogoPosition
+                                ? `${Math.min(fiche.backLogoPosition.size.width * (220/300) * 0.35, 40)}px`
+                                : `${Math.min((fiche.backLogoSize || 100) * 0.3, 32)}px`
                             }}
                           >
                             {fiche.backLogo}
                           </span>
-                        )
-                      ) : (
+                        )}
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center z-10">
                         <div className="w-20 h-20 border border-dashed border-stone-300 rounded-lg
                                         flex items-center justify-center">
                           <span className="text-[9px] text-stone-400 font-medium uppercase tracking-wider">
                             Logo
                           </span>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1055,6 +1107,10 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
             logoBack={fiche.backLogo}
             onLogoFrontChange={(logo) => onUpdate({ frontLogo: logo })}
             onLogoBackChange={(logo) => onUpdate({ backLogo: logo })}
+            logoFrontPosition={fiche.frontLogoPosition}
+            logoBackPosition={fiche.backLogoPosition}
+            onLogoFrontPositionChange={(pos) => onUpdate({ frontLogoPosition: pos })}
+            onLogoBackPositionChange={(pos) => onUpdate({ backLogoPosition: pos })}
           />
         </div>
 
