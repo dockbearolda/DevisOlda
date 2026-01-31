@@ -21,8 +21,8 @@ const generateReferences = (prefix) => {
   return refs
 }
 
-// Prix T-shirt (0 a 100 par 1)
-const TSHIRT_PRICE_OPTIONS = Array.from({ length: 101 }, (_, i) => i)
+// Prix T-shirt (1 a 100 par 1)
+const TSHIRT_PRICE_OPTIONS = Array.from({ length: 100 }, (_, i) => i + 1)
 
 // Prix personnalisation (0 a 100 par 5)
 const PERSO_PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]

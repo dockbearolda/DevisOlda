@@ -31,7 +31,7 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab, viewLa
           {/* Tabs Container */}
           <div
             ref={tabsContainerRef}
-            className="flex-1 flex items-center gap-2 overflow-x-auto scrollbar-hide py-2 px-1"
+            className="flex-1 flex items-center gap-2 overflow-x-auto scrollbar-hide py-2 pl-2 pr-1"
           >
             {fiches.map((fiche) => (
               <Tab
