@@ -930,14 +930,14 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
               <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
                 Echeance
               </label>
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
+              <div className="flex items-center gap-4 overflow-hidden">
+                <div className="flex-1 min-w-0">
                   <input
                     type="date"
                     value={fiche.deadline}
                     onChange={(e) => onUpdate({ deadline: e.target.value })}
                     disabled={fiche.isValidated}
-                    className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                    className="w-full max-w-[200px] h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
                                focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
                                disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                   />
