@@ -70,7 +70,7 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab, viewLa
 import { forwardRef } from 'react'
 
 const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref) {
-  const displayName = fiche.clientName || 'Nouveau Client'
+  const displayName = fiche.clientName || 'Sans nom'
   const truncatedName = displayName.length > 15 ? displayName.substring(0, 15) + '...' : displayName
 
   return (

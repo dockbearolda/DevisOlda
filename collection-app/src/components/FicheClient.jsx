@@ -72,7 +72,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
   }, [fiche.target])
 
   // Verifier si le formulaire est valide pour validation
-  const canValidate = fiche.clientName && fiche.clientName !== 'Nouveau Client' && fiche.clientPhone
+  const canValidate = fiche.clientName && fiche.clientPhone
 
   // Gerer le clic sur le bouton PDF
   const handlePdfClick = () => {
