@@ -678,7 +678,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in pt-2">
       {/* Fiche Container - Optimisee pour A4 */}
       <div
         ref={printRef}
@@ -812,12 +812,12 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
               <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
                 Telephone
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 overflow-hidden">
                 <select
                   value={fiche.phoneCountryCode || '33'}
                   onChange={(e) => onUpdate({ phoneCountryCode: e.target.value })}
                   disabled={fiche.isValidated}
-                  className="h-12 px-2 rounded-xl border border-stone-200 bg-white text-sm font-medium
+                  className="shrink-0 w-24 h-12 px-2 rounded-xl border border-stone-200 bg-white text-sm font-medium
                              focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
                              disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                 >
@@ -844,7 +844,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                   value={fiche.clientPhone}
                   onChange={(e) => onUpdate({ clientPhone: e.target.value })}
                   disabled={fiche.isValidated}
-                  className="flex-1 h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                  className="flex-1 min-w-0 h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
                              focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
                              disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                   placeholder="06 00 00 00 00"

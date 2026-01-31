@@ -332,7 +332,7 @@ function App() {
   const fichesForCurrentView = getFichesForView()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col pt-14 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col pt-14">
       {/* Header - Fixe en haut */}
       <header className="bg-white border-b border-stone-200 shadow-sm fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
