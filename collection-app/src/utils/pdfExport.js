@@ -160,8 +160,26 @@ export async function exportToPdf(element, filename = 'fiche') {
       .replace(/\s+/g, '_')
       .substring(0, 50)
 
-    // Telecharger le PDF
-    pdf.save(`${cleanFilename}_${formatDate(new Date())}.pdf`)
+    // Generer le PDF et l'ouvrir dans un nouvel onglet (compatible mobile)
+    const pdfBlob = pdf.output('blob')
+    const pdfUrl = URL.createObjectURL(pdfBlob)
+
+    // Ouvrir dans un nouvel onglet - l'utilisateur peut telecharger depuis la
+    const newWindow = window.open(pdfUrl, '_blank')
+
+    // Si le popup est bloque, fallback sur le telechargement direct
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+      // Creer un lien de telechargement
+      const link = document.createElement('a')
+      link.href = pdfUrl
+      link.download = `${cleanFilename}_${formatDate(new Date())}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+
+    // Nettoyer l'URL apres un delai
+    setTimeout(() => URL.revokeObjectURL(pdfUrl), 10000)
 
   } catch (error) {
     console.error('Erreur lors de l\'export PDF:', error)

@@ -21,8 +21,11 @@ const generateReferences = (prefix) => {
   return refs
 }
 
-// Prix disponibles
-const PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
+// Prix T-shirt (1 a 100 par 1)
+const TSHIRT_PRICE_OPTIONS = Array.from({ length: 100 }, (_, i) => i + 1)
+
+// Prix personnalisation (0 a 100 par 5)
+const PERSO_PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
 
 // Formater la date
 const formatDate = (dateString) => {
@@ -434,7 +437,20 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
           }`}>
 
             {/* En-tete Studio */}
-            <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center">
+            <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center relative">
+              {/* Bouton Modifier (crayon) en haut à droite */}
+              <button
+                onClick={() => onUpdate({ isValidated: false })}
+                className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600
+                           hover:bg-stone-100 rounded-full transition-all duration-200 no-print"
+                title="Modifier la commande"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+
               <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.3em] mb-3">
                 Fiche Atelier
               </p>
@@ -1027,7 +1043,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                            focus:outline-none focus:ring-2 focus:ring-stone-900
                            disabled:bg-stone-100 disabled:cursor-not-allowed"
               >
-                {PRICE_OPTIONS.map(p => (
+                {TSHIRT_PRICE_OPTIONS.map(p => (
                   <option key={p} value={p}>{p} EUR</option>
                 ))}
               </select>
@@ -1044,7 +1060,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                            focus:outline-none focus:ring-2 focus:ring-stone-900
                            disabled:bg-stone-100 disabled:cursor-not-allowed"
               >
-                {PRICE_OPTIONS.map(p => (
+                {PERSO_PRICE_OPTIONS.map(p => (
                   <option key={p} value={p}>{p} EUR</option>
                 ))}
               </select>
