@@ -460,7 +460,11 @@ function App() {
 
                   // Auto-transition vers Commande si on desactive la validation (bouton modifier)
                   if (updates.isValidated === false && currentView === 'production') {
-                    setTimeout(() => setCurrentView('commande'), 400)
+                    const ficheId = activeFiche.id
+                    setTimeout(() => {
+                      setCurrentView('commande')
+                      setActiveTabId(ficheId)
+                    }, 400)
                   }
 
                   // Auto-transition vers la vue suivante apres mise a jour des etapes
