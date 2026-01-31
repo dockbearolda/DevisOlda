@@ -355,10 +355,11 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                 <button
                   onClick={() => {
                     const phone = fiche.clientPhone.replace(/\D/g, '')
+                    const countryCode = fiche.phoneCountryCode || '33'
                     const message = encodeURIComponent(
                       `Bonjour\nBonne nouvelle, votre commande est terminée ! ✅\nElle vous attend à l'atelier OLDA.\n\nÀ bientôt 👋`
                     )
-                    window.open(`https://wa.me/33${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
+                    window.open(`https://wa.me/${countryCode}${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
                   }}
                   className="w-full py-4 font-semibold text-xs uppercase tracking-[0.25em]
                              hover:opacity-90 transition-all duration-300
@@ -763,6 +764,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
               steps={fiche.productionSteps}
               clientPhone={fiche.clientPhone}
               clientName={fiche.clientName}
+              phoneCountryCode={fiche.phoneCountryCode}
               onUpdateStep={(stepKey, value) => {
                 onUpdate({
                   productionSteps: {
@@ -808,16 +810,39 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
               <label className="block text-xs font-semibold text-stone-600 uppercase tracking-wider mb-2">
                 Telephone
               </label>
-              <input
-                type="tel"
-                value={fiche.clientPhone}
-                onChange={(e) => onUpdate({ clientPhone: e.target.value })}
-                disabled={fiche.isValidated}
-                className="w-full h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
-                           focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
-                           disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
-                placeholder="06 00 00 00 00"
-              />
+              <div className="flex gap-2">
+                <select
+                  value={fiche.phoneCountryCode || '33'}
+                  onChange={(e) => onUpdate({ phoneCountryCode: e.target.value })}
+                  disabled={fiche.isValidated}
+                  className="h-12 px-2 rounded-xl border border-stone-200 bg-white text-sm font-medium
+                             focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                             disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                >
+                  <option value="33">🇫🇷 +33</option>
+                  <option value="1">🇺🇸 +1</option>
+                  <option value="44">🇬🇧 +44</option>
+                  <option value="49">🇩🇪 +49</option>
+                  <option value="34">🇪🇸 +34</option>
+                  <option value="39">🇮🇹 +39</option>
+                  <option value="32">🇧🇪 +32</option>
+                  <option value="41">🇨🇭 +41</option>
+                  <option value="352">🇱🇺 +352</option>
+                  <option value="212">🇲🇦 +212</option>
+                  <option value="216">🇹🇳 +216</option>
+                  <option value="213">🇩🇿 +213</option>
+                </select>
+                <input
+                  type="tel"
+                  value={fiche.clientPhone}
+                  onChange={(e) => onUpdate({ clientPhone: e.target.value })}
+                  disabled={fiche.isValidated}
+                  className="flex-1 h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
+                             focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                             disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
+                  placeholder="06 00 00 00 00"
+                />
+              </div>
             </div>
 
             {/* Collection (anciennement Cible) */}

@@ -25,7 +25,7 @@ const PRODUCTION_STEPS = [
   }
 ]
 
-function ProductionStepper({ steps, onUpdateStep, clientPhone, clientName }) {
+function ProductionStepper({ steps, onUpdateStep, clientPhone, clientName, phoneCountryCode }) {
   const [modalConfig, setModalConfig] = useState({ isOpen: false, step: null })
 
   // Determiner l'etape courante
@@ -58,10 +58,11 @@ function ProductionStepper({ steps, onUpdateStep, clientPhone, clientName }) {
   const handleWhatsApp = () => {
     if (!clientPhone) return
     const phone = clientPhone.replace(/\D/g, '')
+    const countryCode = phoneCountryCode || '33'
     const message = encodeURIComponent(
       `Bonjour\nBonne nouvelle, votre commande est terminée ! ✅\nElle vous attend à l'atelier OLDA.\n\nÀ bientôt 👋`
     )
-    window.open(`https://wa.me/33${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
+    window.open(`https://wa.me/${countryCode}${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
   }
 
   return (

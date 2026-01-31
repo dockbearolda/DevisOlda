@@ -23,10 +23,11 @@ const formatDateFr = (date) => {
 }
 
 // Cree une nouvelle fiche vide avec date figee
-const createEmptyFiche = (name = 'Nouveau Client') => ({
+const createEmptyFiche = (name = '') => ({
   id: generateId(),
   clientName: name,
   clientPhone: '',
+  phoneCountryCode: '33',
   clientEmail: '',
   deadline: '',
   isUrgent: false,
@@ -188,7 +189,7 @@ function App() {
     const fiche = fiches.find(f => f.id === ficheId)
 
     // Si la fiche n'est pas validee et a des donnees, demander confirmation
-    if (fiche && !fiche.isValidated && (fiche.clientName !== 'Nouveau Client' || fiche.clientPhone)) {
+    if (fiche && !fiche.isValidated && (fiche.clientName || fiche.clientPhone)) {
       if (!window.confirm('Cette fiche contient des donnees non sauvegardees. Voulez-vous vraiment la fermer ?')) {
         return
       }
