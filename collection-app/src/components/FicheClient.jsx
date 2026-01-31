@@ -844,8 +844,8 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                   value={fiche.clientPhone}
                   onChange={(e) => onUpdate({ clientPhone: e.target.value })}
                   disabled={fiche.isValidated}
-                  className="flex-1 min-w-0 h-12 px-4 rounded-xl border border-stone-200 bg-white text-base font-medium
-                             focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
+                  className="flex-1 min-w-0 h-12 px-4 rounded-xl border-2 border-stone-200 bg-white text-base font-medium
+                             focus:outline-none focus:border-stone-900
                              disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                   placeholder="06 00 00 00 00"
                 />
@@ -979,82 +979,6 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                 <option value="XXL">XXL</option>
               </select>
             </div>
-
-            {/* Section Tarification */}
-            <div className="bg-stone-50 rounded-2xl p-5 space-y-4">
-              <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">
-                Tarification
-              </h4>
-
-              {/* Prix T-Shirt */}
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-stone-600">Prix T-Shirt</label>
-                <select
-                  value={fiche.tshirtPrice || 25}
-                  onChange={(e) => onUpdate({ tshirtPrice: parseInt(e.target.value) })}
-                  disabled={fiche.isValidated}
-                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
-                             focus:outline-none focus:ring-2 focus:ring-stone-900
-                             disabled:bg-stone-100 disabled:cursor-not-allowed"
-                >
-                  {PRICE_OPTIONS.map(p => (
-                    <option key={p} value={p}>{p} EUR</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Prix Personnalisation */}
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-stone-600">Personnalisation</label>
-                <select
-                  value={fiche.personalizationPrice || 0}
-                  onChange={(e) => onUpdate({ personalizationPrice: parseInt(e.target.value) })}
-                  disabled={fiche.isValidated}
-                  className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
-                             focus:outline-none focus:ring-2 focus:ring-stone-900
-                             disabled:bg-stone-100 disabled:cursor-not-allowed"
-                >
-                  {PRICE_OPTIONS.map(p => (
-                    <option key={p} value={p}>{p} EUR</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Formule */}
-              <div className="text-center py-2 border-t border-stone-200">
-                <span className="text-sm text-stone-400 font-medium tracking-wide">
-                  {prixTshirt} EUR + {prixPerso} EUR
-                </span>
-              </div>
-
-              {/* Statut Paiement */}
-              <div className="flex p-1 bg-stone-200 rounded-full">
-                <button
-                  onClick={() => onUpdate({ isPaid: false })}
-                  className={`
-                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
-                    ${!fiche.isPaid
-                      ? 'bg-red-500 text-white shadow-lg'
-                      : 'bg-transparent text-stone-400'
-                    }
-                  `}
-                >
-                  Non paye
-                </button>
-                <button
-                  onClick={() => onUpdate({ isPaid: true })}
-                  className={`
-                    flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
-                    ${fiche.isPaid
-                      ? 'bg-green-500 text-white shadow-lg'
-                      : 'bg-transparent text-stone-400'
-                    }
-                  `}
-                >
-                  Paye
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1083,9 +1007,85 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
         </div>
 
         {/* ============================================ */}
-        {/* PIED DE PAGE: Total + Validation */}
+        {/* PIED DE PAGE: Tarification + Total + Validation */}
         {/* ============================================ */}
         <div className="border-t border-stone-200 pt-6 mt-6">
+          {/* Section Tarification */}
+          <div className="bg-stone-50 rounded-2xl p-5 space-y-4 mb-4">
+            <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest">
+              Tarification
+            </h4>
+
+            {/* Prix T-Shirt */}
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-stone-600">Prix T-Shirt</label>
+              <select
+                value={fiche.tshirtPrice || 25}
+                onChange={(e) => onUpdate({ tshirtPrice: parseInt(e.target.value) })}
+                disabled={fiche.isValidated}
+                className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                           focus:outline-none focus:ring-2 focus:ring-stone-900
+                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+              >
+                {PRICE_OPTIONS.map(p => (
+                  <option key={p} value={p}>{p} EUR</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Prix Personnalisation */}
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-stone-600">Personnalisation</label>
+              <select
+                value={fiche.personalizationPrice || 0}
+                onChange={(e) => onUpdate({ personalizationPrice: parseInt(e.target.value) })}
+                disabled={fiche.isValidated}
+                className="w-28 h-10 px-3 rounded-lg border border-stone-200 bg-white text-sm font-bold text-right
+                           focus:outline-none focus:ring-2 focus:ring-stone-900
+                           disabled:bg-stone-100 disabled:cursor-not-allowed"
+              >
+                {PRICE_OPTIONS.map(p => (
+                  <option key={p} value={p}>{p} EUR</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Formule */}
+            <div className="text-center py-2 border-t border-stone-200">
+              <span className="text-sm text-stone-400 font-medium tracking-wide">
+                {prixTshirt} EUR + {prixPerso} EUR
+              </span>
+            </div>
+
+            {/* Statut Paiement */}
+            <div className="flex p-1 bg-stone-200 rounded-full">
+              <button
+                onClick={() => onUpdate({ isPaid: false })}
+                className={`
+                  flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
+                  ${!fiche.isPaid
+                    ? 'bg-red-500 text-white shadow-lg'
+                    : 'bg-transparent text-stone-400'
+                  }
+                `}
+              >
+                Non paye
+              </button>
+              <button
+                onClick={() => onUpdate({ isPaid: true })}
+                className={`
+                  flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200
+                  ${fiche.isPaid
+                    ? 'bg-green-500 text-white shadow-lg'
+                    : 'bg-transparent text-stone-400'
+                  }
+                `}
+              >
+                Paye
+              </button>
+            </div>
+          </div>
+
           {/* Total - Tout en bas, mis en valeur */}
           <div className={`
             flex items-center justify-between p-5 rounded-2xl mb-4
