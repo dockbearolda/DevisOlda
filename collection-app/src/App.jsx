@@ -458,6 +458,11 @@ function App() {
                   handleUpdateFiche(activeFiche.id, updates)
                   syncArchive({ ...activeFiche, ...updates })
 
+                  // Auto-transition vers Commande si on desactive la validation (bouton modifier)
+                  if (updates.isValidated === false && currentView === 'production') {
+                    setTimeout(() => setCurrentView('commande'), 400)
+                  }
+
                   // Auto-transition vers la vue suivante apres mise a jour des etapes
                   if (updates.productionSteps) {
                     const newSteps = { ...activeFiche.productionSteps, ...updates.productionSteps }
