@@ -16,7 +16,7 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab, viewLa
   }, [activeTabId])
 
   return (
-    <div className="bg-stone-100 border-b border-stone-200">
+    <div className="bg-stone-100 border-b border-stone-200 sticky top-14 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4 py-3">
           {/* Label de la vue */}
@@ -70,7 +70,7 @@ function TabBar({ fiches, activeTabId, onSelectTab, onCloseTab, onAddTab, viewLa
 import { forwardRef } from 'react'
 
 const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref) {
-  const displayName = fiche.clientName || 'Nouveau Client'
+  const displayName = fiche.clientName || 'Sans nom'
   const truncatedName = displayName.length > 15 ? displayName.substring(0, 15) + '...' : displayName
 
   return (
@@ -83,7 +83,7 @@ const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref)
           ? 'bg-white text-stone-900 shadow-sm ring-1 ring-stone-200'
           : 'bg-stone-200/50 text-stone-600 hover:bg-stone-200 hover:text-stone-800'
         }
-        ${fiche.isUrgent && !fiche.isValidated ? 'animate-pulse-urgent' : ''}
+        ${fiche.isUrgent && !fiche.productionSteps?.completed ? 'animate-pulse-urgent' : ''}
       `}
       onClick={onSelect}
     >
@@ -104,7 +104,7 @@ const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref)
       </span>
 
       {/* Urgent Badge */}
-      {fiche.isUrgent && !fiche.isValidated && (
+      {fiche.isUrgent && !fiche.productionSteps?.completed && (
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
       )}
 

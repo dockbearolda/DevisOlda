@@ -27,6 +27,20 @@ export async function exportToPdf(element, filename = 'fiche') {
       display: element.style.display
     }
 
+    // Corriger les SVGs avec currentColor pour html2canvas
+    const svgs = element.querySelectorAll('svg')
+    svgs.forEach(svg => {
+      const computedColor = window.getComputedStyle(svg).color
+      svg.querySelectorAll('[stroke="currentColor"]').forEach(el => {
+        el.setAttribute('stroke', computedColor)
+        el.dataset.originalStroke = 'currentColor'
+      })
+      svg.querySelectorAll('[fill="currentColor"]').forEach(el => {
+        el.setAttribute('fill', computedColor)
+        el.dataset.originalFill = 'currentColor'
+      })
+    })
+
     // Attendre un court instant pour que les styles soient appliques
     await new Promise(resolve => setTimeout(resolve, 150))
 
@@ -52,6 +66,18 @@ export async function exportToPdf(element, filename = 'fiche') {
     // Restaurer les styles originaux
     element.style.textAlign = originalStyles.textAlign
     element.style.display = originalStyles.display
+
+    // Restaurer les SVGs avec currentColor
+    svgs.forEach(svg => {
+      svg.querySelectorAll('[data-original-stroke]').forEach(el => {
+        el.setAttribute('stroke', el.dataset.originalStroke)
+        delete el.dataset.originalStroke
+      })
+      svg.querySelectorAll('[data-original-fill]').forEach(el => {
+        el.setAttribute('fill', el.dataset.originalFill)
+        delete el.dataset.originalFill
+      })
+    })
 
     // Dimensions A4 en mm
     const pdfWidth = 210

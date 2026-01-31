@@ -12,6 +12,7 @@ function DraggableLogo({
   maxSize = 200,
   containerRef,
   onRemove,
+  onPositionChange,
   disabled = false,
   side = 'front'
 }) {
@@ -22,6 +23,20 @@ function DraggableLogo({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 })
   const logoRef = useRef(null)
+
+  // Mettre a jour la position si initialPosition change
+  useEffect(() => {
+    if (initialPosition) {
+      setPosition(initialPosition)
+    }
+  }, [initialPosition.x, initialPosition.y])
+
+  // Mettre a jour la taille si initialSize change
+  useEffect(() => {
+    if (initialSize) {
+      setSize(initialSize)
+    }
+  }, [initialSize.width, initialSize.height])
 
   // Calculer les limites du container
   const getContainerBounds = useCallback(() => {
@@ -74,19 +89,25 @@ function DraggableLogo({
   }, [isDragging, isResizing, disabled, dragStart, resizeStart, getContainerBounds, size.width, size.height, minSize, maxSize])
 
   const handleMouseUp = useCallback(() => {
+    // Notifier le changement de position/taille
+    if ((isDragging || isResizing) && onPositionChange) {
+      onPositionChange({ position, size })
+    }
     setIsDragging(false)
     setIsResizing(false)
-  }, [])
+  }, [isDragging, isResizing, position, size, onPositionChange])
 
   // Gestion du resize
   const handleResizeStart = useCallback((e) => {
     if (disabled) return
     e.preventDefault()
     e.stopPropagation()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
     setIsResizing(true)
     setResizeStart({
-      x: e.clientX,
-      y: e.clientY,
+      x: clientX,
+      y: clientY,
       width: size.width,
       height: size.height
     })
@@ -104,26 +125,42 @@ function DraggableLogo({
   }, [disabled, isResizing, position])
 
   const handleTouchMove = useCallback((e) => {
+    if (isResizing && !disabled) {
+      e.preventDefault()
+      const touch = e.touches[0]
+      const deltaX = touch.clientX - resizeStart.x
+      const aspectRatio = resizeStart.width / resizeStart.height
+      let newWidth = Math.max(minSize, Math.min(maxSize, resizeStart.width + deltaX))
+      let newHeight = newWidth / aspectRatio
+      if (newHeight > maxSize) { newHeight = maxSize; newWidth = newHeight * aspectRatio }
+      if (newHeight < minSize) { newHeight = minSize; newWidth = newHeight * aspectRatio }
+      setSize({ width: newWidth, height: newHeight })
+      return
+    }
     if (isDragging && !disabled) {
+      e.preventDefault()
       const touch = e.touches[0]
       const bounds = getContainerBounds()
       const newX = Math.max(bounds.minX, Math.min(bounds.maxX - size.width, touch.clientX - dragStart.x))
       const newY = Math.max(bounds.minY, Math.min(bounds.maxY - size.height, touch.clientY - dragStart.y))
       setPosition({ x: newX, y: newY })
     }
-  }, [isDragging, disabled, dragStart, getContainerBounds, size.width, size.height])
+  }, [isDragging, isResizing, disabled, dragStart, resizeStart, getContainerBounds, size.width, size.height, minSize, maxSize])
 
   const handleTouchEnd = useCallback(() => {
+    if ((isDragging || isResizing) && onPositionChange) {
+      onPositionChange({ position, size })
+    }
     setIsDragging(false)
     setIsResizing(false)
-  }, [])
+  }, [isDragging, isResizing, position, size, onPositionChange])
 
   // Event listeners globaux
   useEffect(() => {
     if (isDragging || isResizing) {
       window.addEventListener('mousemove', handleMouseMove)
       window.addEventListener('mouseup', handleMouseUp)
-      window.addEventListener('touchmove', handleTouchMove)
+      window.addEventListener('touchmove', handleTouchMove, { passive: false })
       window.addEventListener('touchend', handleTouchEnd)
       return () => {
         window.removeEventListener('mousemove', handleMouseMove)
@@ -143,7 +180,8 @@ function DraggableLogo({
         top: position.y,
         width: size.width,
         height: size.height,
-        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.2s'
+        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.2s',
+        touchAction: 'none'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -198,9 +236,11 @@ function DraggableLogo({
       {/* Poignee de redimensionnement */}
       {!disabled && (
         <div
-          className="absolute -bottom-2 -right-2 w-5 h-5 bg-blue-500 hover:bg-blue-600 rounded-full cursor-se-resize
+          className="absolute -bottom-2 -right-2 w-7 h-7 bg-blue-500 hover:bg-blue-600 rounded-full cursor-se-resize
                      flex items-center justify-center shadow-lg transition-all hover:scale-110 z-30"
           onMouseDown={handleResizeStart}
+          onTouchStart={handleResizeStart}
+          style={{ touchAction: 'none' }}
           title="Redimensionner (proportionnel)"
         >
           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,14 +378,31 @@ const TshirtEditor = forwardRef(function TshirtEditor({
   onSizeChange,
   onLogoFrontChange,
   onLogoBackChange,
+  onLogoFrontPositionChange,
+  onLogoBackPositionChange,
   logoFront,
-  logoBack
+  logoBack,
+  logoFrontPosition,
+  logoBackPosition
 }, ref) {
   const [activeView, setActiveView] = useState({ front: true, back: false })
-  const [selectedLogoFront, setSelectedLogoFront] = useState(logoFront || '')
-  const [selectedLogoBack, setSelectedLogoBack] = useState(logoBack || '')
-  const [uploadedImageFront, setUploadedImageFront] = useState(null)
-  const [uploadedImageBack, setUploadedImageBack] = useState(null)
+  const isDataUrl = (s) => s && typeof s === 'string' && s.startsWith('data:')
+  const [selectedLogoFront, setSelectedLogoFront] = useState(() => {
+    if (logoFront && !isDataUrl(logoFront)) return logoFront
+    return ''
+  })
+  const [selectedLogoBack, setSelectedLogoBack] = useState(() => {
+    if (logoBack && !isDataUrl(logoBack)) return logoBack
+    return ''
+  })
+  const [uploadedImageFront, setUploadedImageFront] = useState(() => {
+    if (isDataUrl(logoFront)) return logoFront
+    return null
+  })
+  const [uploadedImageBack, setUploadedImageBack] = useState(() => {
+    if (isDataUrl(logoBack)) return logoBack
+    return null
+  })
   const fileInputFrontRef = useRef(null)
   const fileInputBackRef = useRef(null)
   const containerFrontRef = useRef(null)
@@ -361,9 +418,11 @@ const TshirtEditor = forwardRef(function TshirtEditor({
       if (side === 'front') {
         setUploadedImageFront(evt.target.result)
         setSelectedLogoFront('')
+        onLogoFrontChange?.(evt.target.result)
       } else {
         setUploadedImageBack(evt.target.result)
         setSelectedLogoBack('')
+        onLogoBackChange?.(evt.target.result)
       }
     }
     reader.readAsDataURL(file)
@@ -375,9 +434,11 @@ const TshirtEditor = forwardRef(function TshirtEditor({
     if (side === 'front') {
       setUploadedImageFront(null)
       setSelectedLogoFront('')
+      onLogoFrontChange?.(null)
     } else {
       setUploadedImageBack(null)
       setSelectedLogoBack('')
+      onLogoBackChange?.(null)
     }
   }
 
@@ -483,6 +544,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 onChange={(e) => {
                   setSelectedLogoFront(e.target.value)
                   setUploadedImageFront(null)
+                  onLogoFrontChange?.(e.target.value || null)
                 }}
                 disabled={disabled}
                 className="flex-1 h-11 px-4 rounded-xl border border-stone-200 bg-white text-sm font-semibold
@@ -517,7 +579,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           <div
             ref={containerFrontRef}
             className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+                       rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgFront color={tshirtColor} />
 
@@ -528,12 +590,13 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 isText={!uploadedImageFront && !!selectedLogoFront}
                 textContent={selectedLogoFront}
                 logoColor={logoColor}
-                initialPosition={{ x: 100, y: 120 }}
-                initialSize={{ width: 100, height: 100 }}
+                initialPosition={logoFrontPosition?.position || { x: 100, y: 120 }}
+                initialSize={logoFrontPosition?.size || { width: 100, height: 100 }}
                 minSize={40}
                 maxSize={180}
                 containerRef={containerFrontRef}
                 onRemove={() => handleRemoveImage('front')}
+                onPositionChange={onLogoFrontPositionChange}
                 disabled={disabled}
                 side="front"
               />
@@ -566,6 +629,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 onChange={(e) => {
                   setSelectedLogoBack(e.target.value)
                   setUploadedImageBack(null)
+                  onLogoBackChange?.(e.target.value || null)
                 }}
                 disabled={disabled}
                 className="flex-1 h-11 px-4 rounded-xl border border-stone-200 bg-white text-sm font-semibold
@@ -600,7 +664,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           <div
             ref={containerBackRef}
             className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
-                       rounded-2xl border border-stone-200 overflow-hidden shadow-inner"
+                       rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgBack color={tshirtColor} />
 
@@ -611,12 +675,13 @@ const TshirtEditor = forwardRef(function TshirtEditor({
                 isText={!uploadedImageBack && !!selectedLogoBack}
                 textContent={selectedLogoBack}
                 logoColor={logoColor}
-                initialPosition={{ x: 75, y: 100 }}
-                initialSize={{ width: 150, height: 150 }}
+                initialPosition={logoBackPosition?.position || { x: 75, y: 100 }}
+                initialSize={logoBackPosition?.size || { width: 150, height: 150 }}
                 minSize={50}
                 maxSize={200}
                 containerRef={containerBackRef}
                 onRemove={() => handleRemoveImage('back')}
+                onPositionChange={onLogoBackPositionChange}
                 disabled={disabled}
                 side="back"
               />
@@ -641,3 +706,4 @@ const TshirtEditor = forwardRef(function TshirtEditor({
 })
 
 export default TshirtEditor
+export { TshirtSvgFront, TshirtSvgBack, TSHIRT_COLORS, LOGO_COLORS }
