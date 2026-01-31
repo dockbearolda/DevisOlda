@@ -21,8 +21,11 @@ const generateReferences = (prefix) => {
   return refs
 }
 
-// Prix disponibles
-const PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
+// Prix T-shirt (1 a 100 par 1)
+const TSHIRT_PRICE_OPTIONS = Array.from({ length: 100 }, (_, i) => i + 1)
+
+// Prix personnalisation (0 a 100 par 5)
+const PERSO_PRICE_OPTIONS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
 
 // Formater la date
 const formatDate = (dateString) => {
@@ -1027,7 +1030,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                            focus:outline-none focus:ring-2 focus:ring-stone-900
                            disabled:bg-stone-100 disabled:cursor-not-allowed"
               >
-                {PRICE_OPTIONS.map(p => (
+                {TSHIRT_PRICE_OPTIONS.map(p => (
                   <option key={p} value={p}>{p} EUR</option>
                 ))}
               </select>
@@ -1044,7 +1047,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                            focus:outline-none focus:ring-2 focus:ring-stone-900
                            disabled:bg-stone-100 disabled:cursor-not-allowed"
               >
-                {PRICE_OPTIONS.map(p => (
+                {PERSO_PRICE_OPTIONS.map(p => (
                   <option key={p} value={p}>{p} EUR</option>
                 ))}
               </select>
