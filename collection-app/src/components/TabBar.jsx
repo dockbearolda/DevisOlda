@@ -83,7 +83,7 @@ const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref)
           ? 'bg-white text-stone-900 shadow-sm ring-1 ring-stone-200'
           : 'bg-stone-200/50 text-stone-600 hover:bg-stone-200 hover:text-stone-800'
         }
-        ${fiche.isUrgent && !fiche.isValidated ? 'animate-pulse-urgent' : ''}
+        ${fiche.isUrgent && !fiche.productionSteps?.completed ? 'animate-pulse-urgent' : ''}
       `}
       onClick={onSelect}
     >
@@ -104,7 +104,7 @@ const Tab = forwardRef(function Tab({ fiche, isActive, onSelect, onClose }, ref)
       </span>
 
       {/* Urgent Badge */}
-      {fiche.isUrgent && !fiche.isValidated && (
+      {fiche.isUrgent && !fiche.productionSteps?.completed && (
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
       )}
 

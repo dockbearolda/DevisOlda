@@ -429,7 +429,9 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
         <div ref={printRef} className="max-w-3xl mx-auto">
 
           {/* Fiche Atelier */}
-          <div className="bg-white rounded-3xl ring-1 ring-stone-200 overflow-hidden">
+          <div className={`bg-white rounded-3xl ring-1 ring-stone-200 overflow-hidden ${
+            fiche.isUrgent ? 'animate-pulse-urgent ring-4 ring-red-500/50' : ''
+          }`}>
 
             {/* En-tete Studio */}
             <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center">
