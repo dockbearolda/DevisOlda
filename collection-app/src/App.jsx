@@ -455,17 +455,16 @@ function App() {
                 fiche={activeFiche}
                 currentView={currentView}
                 onUpdate={(updates) => {
-                  handleUpdateFiche(activeFiche.id, updates)
-                  syncArchive({ ...activeFiche, ...updates })
+                  const ficheId = activeFiche.id
 
                   // Auto-transition vers Commande si on desactive la validation (bouton modifier)
                   if (updates.isValidated === false && currentView === 'production') {
-                    const ficheId = activeFiche.id
-                    setTimeout(() => {
-                      setCurrentView('commande')
-                      setActiveTabId(ficheId)
-                    }, 400)
+                    setCurrentView('commande')
+                    setActiveTabId(ficheId)
                   }
+
+                  handleUpdateFiche(ficheId, updates)
+                  syncArchive({ ...activeFiche, ...updates })
 
                   // Auto-transition vers la vue suivante apres mise a jour des etapes
                   if (updates.productionSteps) {
