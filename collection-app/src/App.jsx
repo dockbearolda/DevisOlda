@@ -226,7 +226,7 @@ function App() {
 
       // Si la fiche est validee, seules certaines mises a jour sont autorisees
       if (fiche.isValidated) {
-        const allowedUpdates = ['productionSteps', 'isPaid', 'frontLogoSize', 'backLogoSize', 'frontLogoPosition', 'backLogoPosition']
+        const allowedUpdates = ['productionSteps', 'isPaid', 'frontLogoSize', 'backLogoSize', 'frontLogoPosition', 'backLogoPosition', 'isValidated']
         const filteredUpdates = Object.keys(updates)
           .filter(key => allowedUpdates.includes(key))
           .reduce((obj, key) => ({ ...obj, [key]: updates[key] }), {})
@@ -457,14 +457,16 @@ function App() {
                 onUpdate={(updates) => {
                   const ficheId = activeFiche.id
 
-                  // Auto-transition vers Commande si on desactive la validation (bouton modifier)
-                  if (updates.isValidated === false && currentView === 'production') {
-                    setCurrentView('commande')
-                    setActiveTabId(ficheId)
-                  }
-
                   handleUpdateFiche(ficheId, updates)
                   syncArchive({ ...activeFiche, ...updates })
+
+                  // Auto-transition vers Commande si on desactive la validation (bouton modifier)
+                  if (updates.isValidated === false && currentView === 'production') {
+                    setTimeout(() => {
+                      setCurrentView('commande')
+                      setActiveTabId(ficheId)
+                    }, 100)
+                  }
 
                   // Auto-transition vers la vue suivante apres mise a jour des etapes
                   if (updates.productionSteps) {
