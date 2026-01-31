@@ -10,18 +10,11 @@ const PRODUCTION_STEPS = [
     locked: true
   },
   {
-    key: 'preparation',
-    label: 'Préparation',
-    description: 'Matériaux prêts',
-    modalTitle: 'Confirmation Préparation',
-    modalMessage: "L'étiquette du t-shirt a-t-elle été retirée ?"
-  },
-  {
     key: 'production',
     label: 'Production',
     description: 'En fabrication',
     modalTitle: 'Confirmation Production',
-    modalMessage: 'Préparation du t-shirt terminée ?'
+    modalMessage: 'Confirmer le lancement en production ?'
   },
   {
     key: 'completed',
@@ -224,9 +217,8 @@ function ProductionStepper({ steps, onUpdateStep, clientPhone, clientName }) {
                          hover:-translate-y-0.5"
               style={{ borderRadius: '0' }}
             >
-              {currentStepIndex === 1 && 'MARQUER COMME PRÉPARÉ'}
-              {currentStepIndex === 2 && 'TERMINER LA PRODUCTION'}
-              {currentStepIndex === 3 && 'FINALISER LA COMMANDE'}
+              {currentStepIndex === 1 && 'LANCER LA PRODUCTION'}
+              {currentStepIndex === 2 && 'FINALISER LA COMMANDE'}
             </button>
           )}
 

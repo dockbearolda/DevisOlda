@@ -403,64 +403,6 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
   }
 
   // ============================================================
-  // VUE PREPARATION — Minimalisme absolu
-  // ============================================================
-  if (currentView === 'preparation') {
-    return (
-      <div className="view-slide-enter">
-        <div className="max-w-2xl mx-auto">
-
-          {/* Question de validation — centree, epuree */}
-          {!fiche.productionSteps?.preparation && (
-            <div className="flex flex-col items-center justify-center py-24">
-              {/* Ligne decorative */}
-              <div className="w-12 h-px bg-stone-300 mb-12" />
-
-              <p className="font-serif text-2xl sm:text-3xl text-stone-800 tracking-tight text-center leading-relaxed mb-16">
-                Preparation du t-shirt terminee ?
-              </p>
-
-              {/* Bouton de confirmation */}
-              <button
-                onClick={() => {
-                  onUpdate({
-                    productionSteps: {
-                      ...fiche.productionSteps,
-                      preparation: true
-                    }
-                  })
-                }}
-                className="px-12 py-4 bg-stone-900 text-white font-semibold text-sm uppercase tracking-[0.2em]
-                           rounded-full hover:bg-stone-800 transition-all duration-300
-                           shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-              >
-                Confirmer
-              </button>
-
-              {/* Ligne decorative */}
-              <div className="w-12 h-px bg-stone-300 mt-12" />
-            </div>
-          )}
-
-          {/* Message si deja prepare */}
-          {fiche.productionSteps?.preparation && (
-            <div className="flex flex-col items-center justify-center py-24">
-              <div className="w-16 h-16 rounded-full bg-stone-900 flex items-center justify-center mb-8">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="font-serif text-xl text-stone-600 tracking-tight">
-                Preparation validee
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  // ============================================================
   // VUE PRODUCTION — Fiche Atelier Studio
   // ============================================================
   if (currentView === 'production') {
@@ -470,23 +412,6 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
     return (
       <div className="view-slide-enter">
         <div ref={printRef} className="max-w-3xl mx-auto">
-
-          {/* Stepper — masque dans le PDF */}
-          <div className="mb-10 no-print">
-            <ProductionStepper
-              steps={fiche.productionSteps}
-              clientPhone={fiche.clientPhone}
-              clientName={fiche.clientName}
-              onUpdateStep={(stepKey, value) => {
-                onUpdate({
-                  productionSteps: {
-                    ...fiche.productionSteps,
-                    [stepKey]: value
-                  }
-                })
-              }}
-            />
-          </div>
 
           {/* Fiche Atelier */}
           <div className="bg-white rounded-3xl ring-1 ring-stone-200 overflow-hidden">
@@ -693,8 +618,8 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
 
             {/* Actions — No Print */}
             <div className="border-t border-stone-100 px-8 sm:px-12 py-8 no-print">
-              {/* Finaliser — uniquement apres production terminee */}
-              {fiche.productionSteps?.production && !fiche.productionSteps?.completed && (
+              <div className="flex items-center gap-4">
+                {/* Terminer la production */}
                 <button
                   onClick={() => {
                     onUpdate({
@@ -704,33 +629,30 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                       }
                     })
                   }}
-                  className="w-full py-4 bg-stone-900 text-white font-semibold text-xs uppercase tracking-[0.25em]
+                  className="flex-1 py-4 bg-stone-900 text-white font-semibold text-xs uppercase tracking-[0.25em]
                              hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl
                              hover:-translate-y-0.5"
                   style={{ borderRadius: '0' }}
                 >
                   TERMINER LA PRODUCTION
                 </button>
-              )}
 
-              {/* Lien PDF minimaliste — exactement 16px en dessous */}
-              <button
-                onClick={generatePdf}
-                className="w-full text-center text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                           hover:text-stone-900 hover:underline transition-all duration-200
-                           flex items-center justify-center gap-2 cursor-pointer"
-                style={{
-                  marginTop: fiche.productionSteps?.production && !fiche.productionSteps?.completed ? '16px' : '0',
-                  background: 'transparent',
-                  border: 'none'
-                }}
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Télécharger la fiche technique (PDF)
-              </button>
+                {/* PDF */}
+                <button
+                  onClick={generatePdf}
+                  className="py-4 px-6 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                             hover:text-stone-900 transition-all duration-200
+                             flex items-center justify-center gap-2 cursor-pointer
+                             ring-1 ring-stone-200 hover:ring-stone-400"
+                  style={{ borderRadius: '0', background: 'transparent' }}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  PDF
+                </button>
+              </div>
             </div>
           </div>
         </div>

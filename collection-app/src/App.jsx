@@ -290,10 +290,8 @@ function App() {
       const f = archivedFiche
       if (f.isValidated && f.productionSteps?.completed) {
         setCurrentView('terminee')
-      } else if (f.isValidated && f.productionSteps?.preparation) {
-        setCurrentView('production')
       } else if (f.isValidated) {
-        setCurrentView('preparation')
+        setCurrentView('production')
       } else {
         setCurrentView('commande')
       }
@@ -313,8 +311,7 @@ function App() {
 
   // Compteurs pour le flux logistique
   const commandesNonValidees = fiches.filter(f => !f.isValidated).length
-  const enPreparation = fiches.filter(f => f.isValidated && f.productionSteps?.validated && !f.productionSteps?.preparation).length
-  const enProduction = fiches.filter(f => f.isValidated && f.productionSteps?.preparation && !f.productionSteps?.completed).length
+  const enProduction = fiches.filter(f => f.isValidated && !f.productionSteps?.completed).length
   const terminees = fiches.filter(f => f.isValidated && f.productionSteps?.completed).length
 
   // Filtrer les fiches selon la vue actuelle
@@ -322,10 +319,8 @@ function App() {
     switch (currentView) {
       case 'commande':
         return fiches.filter(f => !f.isValidated)
-      case 'preparation':
-        return fiches.filter(f => f.isValidated && f.productionSteps?.validated && !f.productionSteps?.preparation)
       case 'production':
-        return fiches.filter(f => f.isValidated && f.productionSteps?.preparation && !f.productionSteps?.completed)
+        return fiches.filter(f => f.isValidated && !f.productionSteps?.completed)
       case 'terminee':
         return fiches.filter(f => f.isValidated && f.productionSteps?.completed)
       default:
@@ -345,7 +340,6 @@ function App() {
             <nav className="flex bg-stone-100 rounded-full p-1 flex-shrink-0">
               {[
                 { key: 'commande', label: 'Commande', count: commandesNonValidees, activeClass: 'bg-stone-900 text-white shadow-md' },
-                { key: 'preparation', label: 'Prep', count: enPreparation, activeClass: 'bg-amber-500 text-white shadow-md' },
                 { key: 'production', label: 'Prod', count: enProduction, activeClass: 'bg-blue-500 text-white shadow-md' },
                 { key: 'terminee', label: 'Fini', count: terminees, activeClass: 'bg-emerald-500 text-white shadow-md' },
               ].map(({ key, label, count, activeClass }) => (
@@ -404,7 +398,6 @@ function App() {
             onAddTab={currentView === 'commande' ? handleAddTab : null}
             viewLabel={
               currentView === 'commande' ? 'Nouvelles commandes' :
-              currentView === 'preparation' ? 'En preparation' :
               currentView === 'production' ? 'En production' :
               'Commandes terminees'
             }
@@ -418,11 +411,6 @@ function App() {
                   {currentView === 'commande' && (
                     <svg className="w-10 h-10 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  )}
-                  {currentView === 'preparation' && (
-                    <svg className="w-10 h-10 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   )}
                   {currentView === 'production' && (
@@ -439,14 +427,12 @@ function App() {
                 </div>
                 <h3 className="text-xl font-serif font-semibold text-stone-700 mb-2">
                   {currentView === 'commande' && 'Aucune nouvelle commande'}
-                  {currentView === 'preparation' && 'Aucune commande en preparation'}
                   {currentView === 'production' && 'Aucune commande en production'}
                   {currentView === 'terminee' && 'Aucune commande terminee'}
                 </h3>
                 <p className="text-stone-500 mb-6">
                   {currentView === 'commande' && 'Cliquez sur "Nouvelle commande" pour creer une fiche'}
-                  {currentView === 'preparation' && 'Les commandes validees apparaitront ici'}
-                  {currentView === 'production' && 'Les commandes preparees passeront ici'}
+                  {currentView === 'production' && 'Les commandes validees passeront ici'}
                   {currentView === 'terminee' && 'Les commandes terminees seront listees ici'}
                 </p>
                 {currentView === 'commande' && (
