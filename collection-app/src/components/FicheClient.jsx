@@ -437,7 +437,20 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
           }`}>
 
             {/* En-tete Studio */}
-            <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center">
+            <div className="border-b border-stone-100 px-8 sm:px-12 py-8 text-center relative">
+              {/* Bouton Modifier (crayon) en haut à droite */}
+              <button
+                onClick={() => onUpdate({ isValidated: false })}
+                className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600
+                           hover:bg-stone-100 rounded-full transition-all duration-200 no-print"
+                title="Modifier la commande"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+
               <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.3em] mb-3">
                 Fiche Atelier
               </p>
@@ -639,23 +652,6 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
             {/* Actions — No Print */}
             <div className="border-t border-stone-100 px-8 sm:px-12 py-8 no-print">
               <div className="flex items-center gap-4">
-                {/* Modifier la commande */}
-                <button
-                  onClick={() => onUpdate({ isValidated: false })}
-                  className="py-4 px-6 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                             hover:text-stone-900 transition-all duration-200
-                             flex items-center justify-center gap-2 cursor-pointer
-                             ring-1 ring-stone-200 hover:ring-stone-400"
-                  style={{ borderRadius: '0', background: 'transparent' }}
-                  title="Modifier la commande"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
-                  Modifier
-                </button>
-
                 {/* Terminer la production */}
                 <button
                   onClick={() => {
