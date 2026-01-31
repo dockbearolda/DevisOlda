@@ -27,7 +27,7 @@ const createEmptyFiche = (name = '') => ({
   id: generateId(),
   clientName: name,
   clientPhone: '',
-  phoneCountryCode: '33',
+  phoneCountryCode: '590',
   clientEmail: '',
   deadline: '',
   isUrgent: false,

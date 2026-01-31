@@ -819,12 +819,12 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                              focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent
                              disabled:bg-stone-100 disabled:cursor-not-allowed transition-all"
                 >
-                  <option value="33">🇫🇷 +33</option>
+                  <option value="590">🇲🇫 +590</option>
                   <option value="590">🇬🇵 +590</option>
                   <option value="596">🇲🇶 +596</option>
                   <option value="594">🇬🇫 +594</option>
-                  <option value="590">🇲🇫 +590</option>
                   <option value="1721">🇸🇽 +1721</option>
+                  <option value="33">🇫🇷 +33</option>
                   <option value="1">🇺🇸 +1</option>
                   <option value="44">🇬🇧 +44</option>
                   <option value="49">🇩🇪 +49</option>
