@@ -45,7 +45,7 @@ const formatDateShort = (dateString) => {
   })
 }
 
-function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
+function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
   const printRef = useRef(null)
   const editorRef = useRef(null)
   const [showPdfModal, setShowPdfModal] = useState(false)
@@ -377,24 +377,38 @@ function FicheClient({ fiche, onUpdate, onValidate, currentView }) {
                 </button>
               )}
 
-              {/* Lien PDF minimaliste */}
-              <button
-                onClick={generatePdf}
-                className="w-full text-center text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                           hover:text-stone-900 hover:underline transition-all duration-200
-                           flex items-center justify-center gap-2 cursor-pointer"
-                style={{
-                  marginTop: '16px',
-                  background: 'transparent',
-                  border: 'none'
-                }}
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Télécharger la fiche technique (PDF)
-              </button>
+              {/* PDF et Archiver */}
+              <div className="flex items-center gap-4 mt-4">
+                <button
+                  onClick={generatePdf}
+                  className="flex-1 py-3 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                             hover:text-stone-900 transition-all duration-200
+                             flex items-center justify-center gap-2 cursor-pointer
+                             ring-1 ring-stone-200 hover:ring-stone-400"
+                  style={{ borderRadius: '0', background: 'transparent' }}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  PDF
+                </button>
+
+                <button
+                  onClick={onArchive}
+                  className="flex-1 py-3 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                             hover:text-stone-900 transition-all duration-200
+                             flex items-center justify-center gap-2 cursor-pointer
+                             ring-1 ring-stone-200 hover:ring-stone-400"
+                  style={{ borderRadius: '0', background: 'transparent' }}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  </svg>
+                  ARCHIVER
+                </button>
+              </div>
             </div>
           </div>
         </div>

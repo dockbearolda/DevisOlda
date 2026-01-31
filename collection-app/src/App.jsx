@@ -341,7 +341,7 @@ function App() {
               {[
                 { key: 'commande', label: 'Commande', count: commandesNonValidees, activeClass: 'bg-stone-900 text-white shadow-md' },
                 { key: 'production', label: 'Prod', count: enProduction, activeClass: 'bg-blue-500 text-white shadow-md' },
-                { key: 'terminee', label: 'Fini', count: terminees, activeClass: 'bg-emerald-500 text-white shadow-md' },
+                { key: 'terminee', label: 'Terminé', count: terminees, activeClass: 'bg-emerald-500 text-white shadow-md' },
               ].map(({ key, label, count, activeClass }) => (
                 <button
                   key={key}
@@ -461,12 +461,7 @@ function App() {
                   if (updates.productionSteps) {
                     const newSteps = { ...activeFiche.productionSteps, ...updates.productionSteps }
 
-                    // Preparation terminee → Production
-                    if (newSteps.preparation && !newSteps.completed && currentView === 'preparation') {
-                      setTimeout(() => setCurrentView('production'), 400)
-                    }
-
-                    // Production terminee → Fini
+                    // Production terminee → Terminé
                     if (newSteps.completed && currentView === 'production') {
                       setTimeout(() => setCurrentView('terminee'), 400)
                     }
@@ -474,9 +469,10 @@ function App() {
                 }}
                 onValidate={() => {
                   handleValidateFiche(activeFiche.id)
-                  // Auto-transition vers Preparation apres validation
-                  setTimeout(() => setCurrentView('preparation'), 400)
+                  // Auto-transition vers Production apres validation
+                  setTimeout(() => setCurrentView('production'), 400)
                 }}
+                onArchive={() => handleCloseTab(activeFiche.id)}
               />
             ) : fichesForCurrentView.length > 0 ? (
               // Auto-select first fiche in current view
