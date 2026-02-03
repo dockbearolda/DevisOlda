@@ -17,19 +17,40 @@ export const sendToGoogleSheets = async (fiche) => {
       delai: formatDeadline(fiche.deadline)
     }
 
-    // Envoyer les donnees via POST
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Google Apps Script necessite no-cors
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+    console.log('Envoi vers Google Sheets:', data)
+
+    // Methode 1: Utiliser un formulaire pour contourner CORS
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = GOOGLE_SCRIPT_URL
+    form.target = 'google-sheets-iframe'
+    form.style.display = 'none'
+
+    // Ajouter les donnees comme champs caches
+    Object.entries(data).forEach(([key, value]) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = key
+      input.value = value
+      form.appendChild(input)
     })
 
-    // Avec mode no-cors, on ne peut pas lire la reponse
-    // On considere que c'est un succes si aucune erreur n'est levee
-    console.log('Donnees envoyees vers Google Sheets:', data)
+    // Creer une iframe cachee pour recevoir la reponse
+    let iframe = document.getElementById('google-sheets-iframe')
+    if (!iframe) {
+      iframe = document.createElement('iframe')
+      iframe.id = 'google-sheets-iframe'
+      iframe.name = 'google-sheets-iframe'
+      iframe.style.display = 'none'
+      document.body.appendChild(iframe)
+    }
+
+    // Soumettre le formulaire
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
+
+    console.log('Donnees envoyees vers Google Sheets avec succes')
     return true
 
   } catch (error) {
