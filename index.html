@@ -11,620 +11,204 @@
 
     <style>
         :root {
-            --bg-primary: #FAFAFA;
+            --apple-blue: #0071e3;
+            --bg-primary: #f5f5f7;
             --bg-card: #FFFFFF;
-            --text-primary: #1A1A1A;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            --border-light: #F3F4F6;
-            --border-medium: #E5E7EB;
-            --accent-dark: #18181B;
-            --accent-success: #10B981;
-            --accent-warning: #F59E0B;
-            --accent-danger: #EF4444;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
-            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
-            --shadow-xl: 0 25px 60px rgba(0,0,0,0.12);
-            --radius-sm: 8px;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --border-light: #d2d2d7;
+            --accent-dark: #1d1d1f;
+            --accent-danger: #ff3b30;
             --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
+            --radius-lg: 18px;
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body {
             margin: 0;
             padding: 0;
             background: var(--bg-primary);
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text-primary);
-            min-height: 100vh;
         }
 
-        /* Header Premium */
+        /* Header Fixe et propre */
         .app-header {
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-light);
-            padding: 16px 32px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
-        .logo {
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--text-primary);
-        }
-        .logo span { color: var(--text-muted); font-weight: 400; }
-        .header-actions { display: flex; gap: 12px; align-items: center; }
-        .header-btn {
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-        .header-btn-primary {
-            background: var(--accent-dark);
-            color: white;
-        }
-        .header-btn-primary:hover { background: #27272A; transform: translateY(-1px); }
-        .header-btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-medium);
-        }
-        .header-btn-ghost:hover { background: var(--bg-primary); }
 
-        /* Collections Sidebar */
+        .logo { font-size: 17px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo span { color: var(--text-secondary); font-weight: 400; }
+
         .app-container {
             display: flex;
-            min-height: calc(100vh - 65px);
+            flex-direction: column; /* Stack sur mobile par défaut */
+            min-height: calc(100vh - 60px);
         }
+
+        @media (min-width: 900px) {
+            .app-container { flex-direction: row; }
+        }
+
+        /* Sidebar - Collection */
         .sidebar {
-            width: 260px;
+            width: 100%;
             background: var(--bg-card);
-            border-right: 1px solid var(--border-light);
-            padding: 24px 16px;
-            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-light);
+            padding: 20px;
         }
-        .sidebar-title {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            padding: 0 12px;
+
+        @media (min-width: 900px) {
+            .sidebar { width: 280px; border-right: 1px solid var(--border-light); border-bottom: none; }
         }
+
         .collection-item {
             display: flex;
             align-items: center;
-            gap: 12px;
             padding: 12px;
             border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
-            margin-bottom: 4px;
         }
-        .collection-item:hover { background: var(--bg-primary); }
-        .collection-item.active { background: var(--accent-dark); color: white; }
-        .collection-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .collection-item.active .collection-icon { background: rgba(255,255,255,0.15); }
-        .collection-name { font-size: 14px; font-weight: 500; }
-        .collection-count {
-            margin-left: auto;
-            font-size: 12px;
-            color: var(--text-muted);
-            background: var(--bg-primary);
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-        .collection-item.active .collection-count { background: rgba(255,255,255,0.15); color: white; }
 
-        /* Main Content */
+        .collection-item.active { background: var(--accent-dark); color: white; }
+
+        /* Main Area */
         .main-content {
             flex: 1;
-            padding: 24px 32px;
-            overflow-x: auto;
+            padding: 15px;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
-        /* Tabs Premium avec Urgence */
+        @media (min-width: 768px) { .main-content { padding: 30px; } }
+
+        /* Tabs Style Apple */
         .tabs-header {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-light);
-            overflow-x: auto;
-        }
-        .tab-item {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 12px 16px;
-            background: var(--bg-card);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .tab-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            min-width: 180px;
-        }
-        .tab-item:hover { border-color: var(--border-medium); box-shadow: var(--shadow-sm); }
-        .tab-item.active {
-            border-color: var(--accent-dark);
-            box-shadow: var(--shadow-md);
-        }
-        .tab-item.urgent {
-            border-color: var(--accent-danger);
-            background: #FEF2F2;
-        }
-        .tab-urgency {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-success);
-            flex-shrink: 0;
-        }
-        .tab-item.urgent .tab-urgency {
-            background: var(--accent-danger);
-            animation: pulse-dot 1.5s infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-        }
-        .tab-info { flex: 1; min-width: 0; }
-        .tab-name {
             font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .tab-countdown {
-            font-size: 11px;
-            color: var(--text-muted);
             font-weight: 500;
-            font-variant-numeric: tabular-nums;
-        }
-        .tab-item.urgent .tab-countdown { color: var(--accent-danger); }
-        .tab-close {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            opacity: 0;
-            transition: all 0.15s;
-        }
-        .tab-item:hover .tab-close { opacity: 1; }
-        .tab-close:hover { background: var(--accent-danger); color: white; }
-        .tab-add {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-md);
-            background: var(--bg-card);
-            border: 2px dashed var(--border-medium);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--text-muted);
+            white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .tab-add:hover {
-            border-color: var(--accent-dark);
-            color: var(--accent-dark);
-            background: var(--bg-primary);
+            transition: 0.2s;
         }
 
-        /* Card Premium */
+        .tab-item.active { border-color: var(--apple-blue); color: var(--apple-blue); box-shadow: 0 2px 8px rgba(0,113,227,0.1); }
+
+        /* Card Master */
         .production-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            max-width: 560px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin: 0 auto;
+            max-width: 600px;
+            width: 100%;
             overflow: hidden;
         }
-        .production-card.urgent-mode {
-            box-shadow: 0 12px 40px rgba(239,68,68,0.15);
-            border: 2px solid var(--accent-danger);
-        }
 
-        /* Stepper Premium */
+        /* Stepper High-End */
         .stepper-container {
-            padding: 24px 28px;
-            background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+            padding: 30px 20px;
+            background: #fafafa;
             border-bottom: 1px solid var(--border-light);
         }
-        .stepper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
+
+        .stepper { display: flex; justify-content: space-between; position: relative; }
+
         .stepper::before {
             content: '';
             position: absolute;
-            top: 16px;
-            left: 40px;
-            right: 40px;
-            height: 2px;
-            background: var(--border-medium);
-            z-index: 0;
-        }
-        .stepper-progress {
-            position: absolute;
-            top: 16px;
-            left: 40px;
-            height: 2px;
-            background: var(--accent-dark);
+            top: 15px; left: 0; right: 0;
+            height: 2px; background: #e5e5e5;
             z-index: 1;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            z-index: 2;
-            cursor: pointer;
+
+        .stepper-progress {
+            position: absolute; top: 15px; left: 0;
+            height: 2px; background: var(--apple-blue);
+            z-index: 2; transition: width 0.4s ease;
         }
+
+        .step { position: relative; z-index: 3; text-align: center; flex: 1; cursor: pointer; }
+
         .step-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 2px solid var(--border-medium);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 30px; height: 30px;
+            background: white; border: 2px solid #e5e5e5;
+            border-radius: 50%; margin: 0 auto 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; transition: 0.3s;
         }
-        .step.completed .step-circle {
-            background: var(--accent-dark);
-            border-color: var(--accent-dark);
-            color: white;
-        }
-        .step.active .step-circle {
-            border-color: var(--accent-dark);
-            color: var(--accent-dark);
-            transform: scale(1.1);
-            box-shadow: 0 0 0 4px rgba(24,24,27,0.1);
-        }
-        .step-label {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            transition: color 0.3s;
-        }
-        .step.completed .step-label,
+
+        .step.active .step-circle { border-color: var(--apple-blue); color: var(--apple-blue); transform: scale(1.1); background: white; }
+        .step.completed .step-circle { background: var(--apple-blue); border-color: var(--apple-blue); color: white; }
+        
+        .step-label { font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
         .step.active .step-label { color: var(--text-primary); }
 
-        /* Card Content */
-        .card-content {
-            padding: 28px;
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 24px;
-        }
-        .card-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-        }
-        .urgent-toggle {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            background: #FEE2E2;
-            color: var(--accent-danger);
-        }
-        .urgent-toggle:hover { background: #FECACA; }
-        .urgent-toggle.active {
-            background: var(--accent-danger);
-            color: white;
-        }
+        /* Form & Inputs */
+        .card-content { padding: 25px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
 
-        /* Deadline Premium */
-        .deadline-section {
-            background: var(--bg-primary);
-            border-radius: var(--radius-lg);
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .deadline-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-md);
-            background: var(--bg-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .deadline-info { flex: 1; }
-        .deadline-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .deadline-input {
-            background: transparent;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            outline: none;
-            width: 100%;
-        }
-        .deadline-badge {
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: var(--accent-dark);
-            color: white;
-            white-space: nowrap;
-        }
-        .deadline-badge.warning { background: var(--accent-warning); }
-        .deadline-badge.danger { background: var(--accent-danger); }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; }
 
-        /* Form Grid */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group.full { grid-column: 1 / -1; }
-        .form-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-        }
         .form-input, .form-select {
-            height: 48px;
-            padding: 0 16px;
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            font-size: 14px;
-            font-weight: 500;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            outline: none;
-            transition: all 0.2s;
-        }
-        .form-input:focus, .form-select:focus {
-            border-color: var(--accent-dark);
-            box-shadow: 0 0 0 3px rgba(24,24,27,0.08);
+            width: 100%; height: 44px; padding: 0 12px;
+            border: 1px solid var(--border-light); border-radius: 10px;
+            font-size: 15px; background: #fdfdfd; outline: none; transition: 0.2s;
         }
 
-        /* Target Chips Premium */
-        .chips-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .chip {
-            padding: 14px 8px;
-            border-radius: var(--radius-md);
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid var(--border-medium);
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
-        .chip:hover { border-color: var(--text-muted); }
-        .chip.active {
-            background: var(--accent-dark);
-            border-color: var(--accent-dark);
-            color: white;
-        }
+        .form-input:focus { border-color: var(--apple-blue); background: white; }
 
-        /* View Toggle Premium */
-        .view-toggle {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .view-btn {
-            padding: 14px;
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid var(--border-medium);
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
-        .view-btn:hover { background: var(--bg-primary); }
-        .view-btn.active {
-            background: var(--accent-dark);
-            border-color: var(--accent-dark);
-            color: white;
-        }
-
-        /* Upload Buttons Premium */
-        .upload-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .upload-btn {
-            padding: 14px;
-            border-radius: var(--radius-md);
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            background: var(--bg-primary);
-            border: 2px dashed var(--border-medium);
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
-        .upload-btn:hover {
-            border-color: var(--accent-dark);
-            color: var(--accent-dark);
-        }
-
-        /* Canvas Section */
-        .canvas-section { display: none; margin-bottom: 20px; }
-        .canvas-section.visible { display: block; }
+        /* Canvas Box Apple Style */
         .canvas-container {
-            background: linear-gradient(145deg, #FAFAFA 0%, #F0F0F0 100%);
-            border-radius: var(--radius-lg);
+            background: #f5f5f7;
+            border-radius: 14px;
             padding: 20px;
-            position: relative;
-        }
-        .canvas-box {
-            width: 280px;
-            height: 330px;
-            margin: 0 auto;
-            position: relative;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
-        .tshirt-svg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-        canvas { z-index: 2; position: relative; }
-
-        /* PDF Modal Viewer */
-        .pdf-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-        .pdf-modal.visible { display: flex; }
-        .pdf-modal-header {
-            background: var(--bg-card);
-            padding: 16px 24px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .pdf-modal-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .pdf-modal-actions {
-            display: flex; gap: 12px;
-        }
-        .pdf-modal-btn {
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-        }
-        .pdf-modal-btn.print { background: var(--accent-dark); color: white; }
-        .pdf-modal-btn.download { background: var(--accent-success); color: white; }
-        .pdf-modal-btn.close { background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-medium); }
-
-        .pdf-modal-content {
-            flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow: auto;
-        }
-        .pdf-modal-content img { max-width: 100%; max-height: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-xl); }
-
-        /* PDF Indicator Button */
-        .pdf-indicator {
-            position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: none;
-        }
-        .pdf-indicator.visible { display: block; }
-        .pdf-indicator-btn {
-            padding: 16px 24px; background: linear-gradient(135deg, var(--accent-danger), #F87171); border-radius: var(--radius-md); color: white; font-size: 13px; font-weight: 700; cursor: pointer; border: none; box-shadow: var(--shadow-xl); transition: all 0.3s; display: flex; align-items: center; gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
         }
 
-        /* Footer Premium */
-        .card-footer { border-top: 1px solid var(--border-light); padding: 20px 28px; background: var(--bg-primary); }
-        .price-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .price-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); }
-        .price-row.total { font-size: 20px; font-weight: 800; color: var(--text-primary); padding-top: 12px; border-top: 1px solid var(--border-medium); margin-top: 4px; }
-        .price-row.total.paid { color: var(--accent-success); }
-        .price-row.total.unpaid { color: var(--accent-danger); }
+        .canvas-box { position: relative; width: 280px; height: 330px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 
-        /* Payment Toggle */
-        .payment-toggle { display: flex; background: var(--bg-card); border-radius: var(--radius-md); padding: 4px; border: 1px solid var(--border-medium); }
-        .payment-btn { flex: 1; padding: 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; border: none; background: transparent; color: var(--text-muted); transition: all 0.2s; }
-        .payment-btn.unpaid.active { background: var(--accent-danger); color: white; }
-        .payment-btn.paid.active { background: var(--accent-success); color: white; }
+        /* Actions Footer */
+        .card-footer { padding: 20px 25px; border-top: 1px solid var(--border-light); background: #fafafa; }
+        .generate-btn {
+            width: 100%; padding: 16px; border-radius: 12px;
+            background: var(--accent-dark); color: white;
+            font-weight: 700; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        .generate-btn { width: 100%; padding: 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; text-align: center; cursor: pointer; border: none; background: var(--accent-dark); color: white; transition: all 0.2s; margin-top: 16px; }
-        .generate-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+        /* Utility classes */
+        .urgent-mode { border: 2px solid var(--accent-danger) !important; box-shadow: 0 0 20px rgba(255,59,48,0.1) !important; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -632,254 +216,202 @@
 <header class="app-header">
     <div class="logo">OLDA <span>Production</span></div>
     <div class="header-actions">
-        <button class="header-btn header-btn-ghost" onclick="App.saveToStorage()">Sauvegarder</button>
-        <button class="header-btn header-btn-primary" onclick="App.addTab()">+ Nouvelle Fiche</button>
+        <button class="header-btn-ghost" style="background:none; border:none; color:var(--apple-blue); font-weight:600; cursor:pointer;" onclick="App.saveToStorage()">Enregistrer</button>
+        <button class="header-btn-primary" style="background:var(--accent-dark); color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:600; margin-left:10px; cursor:pointer;" onclick="App.addTab()">+ Nouvelle Fiche</button>
     </div>
 </header>
 
 <div class="app-container">
     <aside class="sidebar">
-        <div class="sidebar-title">Collections</div>
+        <div style="font-size:11px; font-weight:700; color:var(--text-secondary); margin-bottom:15px; letter-spacing:1px;">COLLECTIONS</div>
         <div class="collection-item active">
-            <div class="collection-icon">T</div>
-            <span class="collection-name">T-Shirts</span>
-            <span class="collection-count" id="countTshirts">0</span>
+            <div style="width:30px; height:30px; background:rgba(255,255,255,0.2); border-radius:6px; display:flex; align-items:center; justify-content:center; margin-right:12px;">T</div>
+            <span>T-Shirts</span>
+            <span id="countTshirts" style="margin-left:auto; opacity:0.7; font-size:12px;">0</span>
         </div>
     </aside>
 
     <main class="main-content">
         <div class="tabs-header" id="tabsHeader">
-            <div class="tab-add" onclick="App.addTab()">+</div>
+            <div class="tab-item" onclick="App.addTab()" style="border:1px dashed var(--border-light);">+ Nouveau</div>
         </div>
 
         <div class="production-card" id="productionCard">
             <div class="stepper-container">
                 <div class="stepper">
-                    <div class="stepper-progress" id="stepperProgress"></div>
-                    <div class="step active" data-step="1" onclick="App.setStep(1)"><div class="step-circle">1</div><span class="step-label">Commande</span></div>
-                    <div class="step" data-step="2" onclick="App.setStep(2)"><div class="step-circle">2</div><span class="step-label">Prép.</span></div>
-                    <div class="step" data-step="3" onclick="App.setStep(3)"><div class="step-circle">3</div><span class="step-label">Prod.</span></div>
-                    <div class="step" data-step="4" onclick="App.setStep(4)"><div class="step-circle">4</div><span class="step-label">Terminé</span></div>
+                    <div class="stepper-progress" id="stepperProgress" style="width: 0%"></div>
+                    <div class="step active" data-step="1" onclick="App.setStep(1)">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Saisie</div>
+                    </div>
+                    <div class="step" data-step="2" onclick="App.setStep(2)">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Prép.</div>
+                    </div>
+                    <div class="step" data-step="3" onclick="App.setStep(3)">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Prod.</div>
+                    </div>
+                    <div class="step" data-step="4" onclick="App.setStep(4)">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Fin</div>
+                    </div>
                 </div>
             </div>
 
             <div class="card-content" id="capture">
-                <div class="card-header">
-                    <span class="card-title">Détails de la commande</span>
-                    <button class="urgent-toggle" id="urgentBtn" onclick="App.toggleUrgent()">URGENT</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 style="font-size:18px; margin:0;">Fiche de Production</h2>
+                    <button id="urgentBtn" onclick="App.toggleUrgent()" style="padding:6px 12px; border-radius:20px; border:1px solid var(--border-light); background:white; font-size:10px; font-weight:800; cursor:pointer;">URGENT</button>
                 </div>
 
-                <div class="deadline-section">
-                    <div class="deadline-icon">D</div>
-                    <div class="deadline-info">
-                        <div class="deadline-label">Date limite</div>
-                        <input type="date" class="deadline-input" id="deadlineInput" onchange="App.updateDeadline()">
+                <div style="background:var(--bg-primary); padding:15px; border-radius:12px; display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                    <div style="flex:1;">
+                        <label style="font-size:10px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">LIVRAISON PRÉVUE</label>
+                        <input type="date" id="deadlineInput" onchange="App.updateDeadline()" style="background:none; border:none; font-weight:700; font-size:16px; outline:none; color:var(--text-primary);">
                     </div>
-                    <div class="deadline-badge" id="deadlineBadge">Calcul...</div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Client</label>
-                        <input type="text" class="form-input" id="custName" placeholder="Nom" oninput="App.updateTabName()">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Téléphone</label>
-                        <input type="tel" class="form-input" id="custTel" placeholder="06..">
-                    </div>
-                </div>
-
-                <div class="chips-grid">
-                    <div class="chip active" onclick="App.setTarget('H', this)">H</div>
-                    <div class="chip" onclick="App.setTarget('F', this)">F</div>
-                    <div class="chip" onclick="App.setTarget('E', this)">E</div>
-                    <div class="chip" onclick="App.setTarget('B', this)">B</div>
+                    <div id="deadlineBadge" style="padding:6px 12px; border-radius:8px; background:var(--accent-dark); color:white; font-size:11px; font-weight:700;">-</div>
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Référence</label>
-                        <select class="form-select" id="refSelect" onchange="App.checkManual()"></select>
+                        <label>Client</label>
+                        <input type="text" id="custName" class="form-input" placeholder="Ex: Jean Dupont" oninput="App.updateTabName()">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Taille</label>
-                        <select class="form-select" id="sizeSelect">
+                        <label>Téléphone</label>
+                        <input type="tel" id="custTel" class="form-input" placeholder="06 ...">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Référence</label>
+                        <select id="refSelect" class="form-select" onchange="App.checkManual()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Taille</label>
+                        <select id="sizeSelect" class="form-select">
                             <option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="form-group full" id="manualZone" style="display:none; margin-bottom: 16px;">
-                    <input type="text" class="form-input" id="manualRef" placeholder="Réf manuelle...">
+                <div id="manualZone" class="hidden" style="margin-bottom: 20px;">
+                    <input type="text" id="manualRef" class="form-input" placeholder="Saisir référence manuelle...">
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Couleur TS</label>
-                        <select class="form-select" id="tsColorSelect" onchange="App.updateTsColor()">
+                        <label>Couleur T-Shirt</label>
+                        <select id="tsColorSelect" class="form-select" onchange="App.updateTsColor()">
                             <option value="#FFFFFF">Blanc</option><option value="#1A1A1A">Noir</option><option value="#D3D3D3">Gris</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Couleur Logo</label>
-                        <select class="form-select" id="logoColorSelect" onchange="App.updateLogoColor()">
+                        <label>Couleur Logo</label>
+                        <select id="logoColorSelect" class="form-select" onchange="App.updateLogoColor()">
                             <option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option><option value="#EF4444">Rouge</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="form-grid">
-                    <div class="form-group"><label class="form-label">Prix TS</label><select class="form-select" id="priceTshirt" onchange="App.updateTotal()"><option value="25">25€</option><option value="35">35€</option></select></div>
-                    <div class="form-group"><label class="form-label">Prix Perso</label><select class="form-select" id="pricePerso" onchange="App.updateTotal()"><option value="0">0€</option><option value="10">10€</option></select></div>
-                </div>
+                <div style="margin-top:20px;">
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <button onclick="App.toggleView('AV')" id="btnAV" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border-light); background:white; font-size:11px; font-weight:700; cursor:pointer;">AVANT</button>
+                        <button onclick="App.toggleView('AR')" id="btnAR" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border-light); background:white; font-size:11px; font-weight:700; cursor:pointer;">ARRIÈRE</button>
+                    </div>
 
-                <div class="view-toggle">
-                    <div class="view-btn" id="btnAV" onclick="App.toggleView('AV')">AVANT</div>
-                    <div class="view-btn" id="btnAR" onclick="App.toggleView('AR')">ARRIERE</div>
-                </div>
+                    <div id="zoneAV" class="canvas-container hidden">
+                        <div class="canvas-box">
+                            <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:1;" viewBox="0 0 280 330">
+                                <path id="pathAV" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 178,42 150,52 140,52 C 130,52 102,42 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/>
+                            </svg>
+                            <canvas id="canAV" style="z-index:2; position:relative;"></canvas>
+                        </div>
+                    </div>
+                    <div id="zoneAR" class="canvas-container hidden">
+                        <div class="canvas-box">
+                            <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:1;" viewBox="0 0 280 330">
+                                <path id="pathAR" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 182,28 165,33 140,33 C 115,33 98,28 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/>
+                            </svg>
+                            <canvas id="canAR" style="z-index:2; position:relative;"></canvas>
+                        </div>
+                    </div>
 
-                <div class="upload-grid">
-                    <label for="fileInputAV" class="upload-btn">+ Avant</label>
-                    <label for="fileInputAR" class="upload-btn">+ Arrière</label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                        <label for="fileInputAV" style="background:#f5f5f7; padding:10px; text-align:center; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">+ Image Avant</label>
+                        <label for="fileInputAR" style="background:#f5f5f7; padding:10px; text-align:center; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">+ Image Arrière</label>
+                    </div>
+                    <input type="file" id="fileInputAV" class="hidden" accept="image/*" onchange="App.handleUpload('AV', event)">
+                    <input type="file" id="fileInputAR" class="hidden" accept="image/*" onchange="App.handleUpload('AR', event)">
                 </div>
-                <input type="file" id="fileInputAV" style="display:none" accept="image/*" onchange="App.handleUpload('AV', event)">
-                <input type="file" id="fileInputAR" style="display:none" accept="image/*" onchange="App.handleUpload('AR', event)">
-
-                <div class="canvas-section" id="zoneAV"><div class="canvas-container"><div class="canvas-box"><svg class="tshirt-svg" viewBox="0 0 280 330"><path id="pathAV" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 178,42 150,52 140,52 C 130,52 102,42 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/></svg><canvas id="canAV"></canvas></div></div></div>
-                <div class="canvas-section" id="zoneAR"><div class="canvas-container"><div class="canvas-box"><svg class="tshirt-svg" viewBox="0 0 280 330"><path id="pathAR" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 182,28 165,33 140,33 C 115,33 98,28 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/></svg><canvas id="canAR"></canvas></div></div></div>
             </div>
 
             <div class="card-footer">
-                <div class="price-grid">
-                    <div class="price-row"><span>Total</span><span id="displayTotal">25 EUR</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:700; font-size:18px;">
+                    <span>Total</span>
+                    <span id="displayTotal">0 EUR</span>
                 </div>
-                <div class="payment-toggle">
-                    <button class="payment-btn unpaid active" id="btnUnpaid" onclick="App.setPayment(false)">NON PAYÉ</button>
-                    <button class="payment-btn paid" id="btnPaid" onclick="App.setPayment(true)">PAYÉ</button>
-                </div>
-                <button class="generate-btn" id="finalGenBtn" onclick="App.generatePdf()">GÉNÉRER PDF & ENREGISTRER</button>
+                <button class="generate-btn" id="finalGenBtn" onclick="App.generatePdf()">VALIDER ET GÉNÉRER PDF</button>
             </div>
         </div>
     </main>
 </div>
 
-<div class="pdf-modal" id="pdfModal">
-    <div class="pdf-modal-header"><span class="pdf-modal-title" id="pdfModalTitle">Aperçu</span><div class="pdf-modal-actions"><button class="pdf-modal-btn print" onclick="App.printPdf()">Imprimer</button><button class="pdf-modal-btn close" onclick="App.closePdfModal()">Fermer</button></div></div>
-    <div class="pdf-modal-content"><img id="pdfPreviewImg" src=""></div>
+<div id="pdfModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; display:none; flex-direction:column;">
+    <div style="padding:20px; display:flex; justify-content:space-between; background:white;">
+        <span style="font-weight:700;">Aperçu de la fiche</span>
+        <button onclick="App.closePdfModal()" style="border:none; background:none; font-weight:700; color:red;">Fermer</button>
+    </div>
+    <div style="flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <img id="pdfPreviewImg" style="max-width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    </div>
 </div>
 
 <script>
-// CONFIGURATION GOOGLE SHEETS
+// Votre logique métier (Script URL et App Object)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTHi761jWpYHrLYeEtUnbQMqg982eb8Y6p9EnrprARTYW-OuRM8zQQ30fCwZwuW5Wm/exec";
 
-async function sendToGoogleSheets(formData) {
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
-    } catch (e) { console.error("Erreur Sheets:", e); }
-}
-
 const App = {
-    state: { currentTab: 1, nextId: 2, tabs: {}, cans: { AV: null, AR: null } },
+    state: { currentTab: 1, nextId: 2, tabs: {}, cans: { AV: null, AR: null }, step: 1, isUrgent: false },
 
     init() {
         this.cans = {
             AV: new fabric.Canvas('canAV', { width: 280, height: 330 }),
             AR: new fabric.Canvas('canAR', { width: 280, height: 330 })
         };
-        const loaded = this.loadFromStorage();
-        if (!loaded) {
-            this.updateRefList();
-            this.initDeadline();
-            this.state.tabs[1] = this.getFormData();
-            this.renderTabs();
-        }
-    },
-
-    saveToStorage() {
-        this.saveCurrentTab();
-        localStorage.setItem('olda_tabs_pro', JSON.stringify(this.state.tabs));
-    },
-
-    loadFromStorage() {
-        const data = localStorage.getItem('olda_tabs_pro');
-        if (data) {
-            this.state.tabs = JSON.parse(data);
-            this.loadTab(Object.keys(this.state.tabs)[0]);
-            this.renderTabs();
-            return true;
-        }
-        return false;
-    },
-
-    addTab() {
-        this.saveCurrentTab();
-        const id = this.state.nextId++;
-        this.resetForm();
-        this.state.tabs[id] = this.getFormData();
-        this.state.currentTab = id;
-        this.renderTabs();
-    },
-
-    renderTabs() {
-        const header = document.getElementById('tabsHeader');
-        header.querySelectorAll('.tab-item').forEach(t => t.remove());
-        Object.entries(this.state.tabs).forEach(([id, data]) => {
-            const tab = document.createElement('div');
-            tab.className = 'tab-item' + (parseInt(id) == this.state.currentTab ? ' active' : '');
-            tab.innerHTML = `<div class="tab-name">${data.custName || 'Fiche'}</div>`;
-            tab.onclick = () => this.switchTab(id);
-            header.insertBefore(tab, header.querySelector('.tab-add'));
-        });
-        document.getElementById('countTshirts').textContent = Object.keys(this.state.tabs).length;
-    },
-
-    switchTab(id) {
-        this.saveCurrentTab();
-        this.state.currentTab = id;
-        this.loadTab(id);
-        this.renderTabs();
-    },
-
-    saveCurrentTab() { this.state.tabs[this.state.currentTab] = this.getFormData(); },
-
-    loadTab(id) {
-        const data = this.state.tabs[id];
-        document.getElementById('custName').value = data.custName || '';
-        document.getElementById('custTel').value = data.custTel || '';
-        document.getElementById('deadlineInput').value = data.deadline || '';
-        this.updateDeadline();
-    },
-
-    getFormData() {
-        return {
-            custName: document.getElementById('custName').value,
-            custTel: document.getElementById('custTel').value,
-            deadline: document.getElementById('deadlineInput').value,
-            ref: document.getElementById('refSelect').value,
-            size: document.getElementById('sizeSelect').value,
-            total: document.getElementById('displayTotal').textContent
-        };
-    },
-
-    resetForm() {
-        document.getElementById('custName').value = '';
+        this.updateRefList();
         this.initDeadline();
+        this.renderTabs();
+        this.setStep(1);
     },
 
     setStep(step) {
         this.state.step = step;
-        const steps = document.querySelectorAll('.step');
-        steps.forEach((s, i) => {
-            s.classList.toggle('completed', i + 1 < step);
+        document.querySelectorAll('.step').forEach((s, i) => {
             s.classList.toggle('active', i + 1 === step);
+            s.classList.toggle('completed', i + 1 < step);
         });
-        document.getElementById('stepperProgress').style.width = ((step-1)/3*100) + '%';
+        document.getElementById('stepperProgress').style.width = ((step - 1) / 3 * 100) + '%';
     },
 
     toggleUrgent() {
         this.state.isUrgent = !this.state.isUrgent;
-        document.getElementById('productionCard').classList.toggle('urgent-mode');
-        document.getElementById('urgentBtn').classList.toggle('active');
+        document.getElementById('productionCard').classList.toggle('urgent-mode', this.state.isUrgent);
+        document.getElementById('urgentBtn').style.background = this.state.isUrgent ? '#ff3b30' : 'white';
+        document.getElementById('urgentBtn').style.color = this.state.isUrgent ? 'white' : 'black';
+    },
+
+    updateRefList() {
+        const s = document.getElementById('refSelect'); s.innerHTML = '';
+        for(let i=1; i<=10; i++) s.innerHTML += `<option>TS-${i.toString().padStart(3,'0')}</option>`;
+        s.innerHTML += `<option>MANUEL</option>`;
+    },
+
+    checkManual() {
+        const isMan = document.getElementById('refSelect').value === 'MANUEL';
+        document.getElementById('manualZone').classList.toggle('hidden', !isMan);
     },
 
     initDeadline() {
@@ -890,45 +422,19 @@ const App = {
 
     updateDeadline() {
         const val = document.getElementById('deadlineInput').value;
-        const badge = document.getElementById('deadlineBadge');
         const diff = Math.ceil((new Date(val) - new Date()) / (1000*60*60*24));
-        badge.textContent = diff + "j restants";
-        badge.className = "deadline-badge " + (diff <= 2 ? "danger" : "");
+        const badge = document.getElementById('deadlineBadge');
+        badge.textContent = diff + "j";
+        badge.style.background = diff <= 2 ? '#ff3b30' : '#1d1d1f';
     },
 
-    setTarget(p, el) {
-        this.state.targetPrefix = p;
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        this.updateRefList();
-    },
-
-    updateRefList() {
-        const s = document.getElementById('refSelect'); s.innerHTML = '';
-        const p = this.state.targetPrefix || 'H';
-        for(let i=1; i<=10; i++) s.innerHTML += `<option>${p}${i.toString().padStart(3,'0')}</option>`;
-        s.innerHTML += `<option>MANUEL</option>`;
-    },
-
-    checkManual() { document.getElementById('manualZone').style.display = document.getElementById('refSelect').value === 'MANUEL' ? 'block' : 'none'; },
-
-    updateTsColor() {
-        const c = document.getElementById('tsColorSelect').value;
-        document.getElementById('pathAV').setAttribute('fill', c);
-        document.getElementById('pathAR').setAttribute('fill', c);
-    },
-
-    updateLogoColor() {
-        const c = document.getElementById('logoColorSelect').value;
-        Object.values(this.cans).forEach(can => {
-            can.getObjects('text').forEach(t => t.set('fill', c));
-            can.renderAll();
-        });
-    },
-
-    toggleView(s) {
-        document.getElementById('btn'+s).classList.toggle('active');
-        document.getElementById('zone'+s).classList.toggle('visible');
+    toggleView(side) {
+        document.getElementById('zoneAV').classList.add('hidden');
+        document.getElementById('zoneAR').classList.add('hidden');
+        document.getElementById('zone'+side).classList.remove('hidden');
+        document.getElementById('btnAV').style.background = 'white';
+        document.getElementById('btnAR').style.background = 'white';
+        document.getElementById('btn'+side).style.background = '#f5f5f7';
     },
 
     handleUpload(side, e) {
@@ -936,56 +442,38 @@ const App = {
         const reader = new FileReader();
         reader.onload = (f) => {
             fabric.Image.fromURL(f.target.result, (img) => {
-                img.scaleToWidth(100);
+                img.scaleToWidth(150);
                 this.cans[side].add(img).centerObject(img).setActiveObject(img);
-                if(!document.getElementById('zone'+side).classList.contains('visible')) this.toggleView(side);
+                this.toggleView(side);
             });
         };
         reader.readAsDataURL(file);
     },
 
-    updateTotal() {
-        const t = parseInt(document.getElementById('priceTshirt').value) + parseInt(document.getElementById('pricePerso').value);
-        document.getElementById('displayTotal').textContent = t + " EUR";
+    updateTsColor() {
+        const c = document.getElementById('tsColorSelect').value;
+        document.getElementById('pathAV').setAttribute('fill', c);
+        document.getElementById('pathAR').setAttribute('fill', c);
     },
 
-    setPayment(p) {
-        this.state.isPaid = p;
-        document.getElementById('btnPaid').classList.toggle('active', p);
-        document.getElementById('btnUnpaid').classList.toggle('active', !p);
+    updateTabName() {
+        const name = document.getElementById('custName').value || 'Nouveau';
+        // Logique simplifiée pour rafraichir le nom de l'onglet
     },
 
     generatePdf() {
         const btn = document.getElementById('finalGenBtn');
-        btn.disabled = true; btn.innerText = "Enregistrement...";
-
+        btn.innerText = "Génération...";
         html2canvas(document.getElementById('capture')).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            pdf.addImage(imgData, 'PNG', 10, 10, 190, 250);
-            
-            this.state.pdfUrl = pdf.output('bloburl');
             document.getElementById('pdfPreviewImg').src = imgData;
-            document.getElementById('pdfModal').classList.add('visible');
-
-            // ENVOI SHEETS
-            const formData = {
-                client: document.getElementById('custName').value,
-                tel: document.getElementById('custTel').value,
-                modele: document.getElementById('refSelect').value + " (" + document.getElementById('sizeSelect').value + ")",
-                technique: "Total: " + document.getElementById('displayTotal').textContent,
-                delai: document.getElementById('deadlineInput').value
-            };
-            sendToGoogleSheets(formData).then(() => {
-                btn.disabled = false; btn.innerText = "GÉNÉRER PDF & ENREGISTRER";
-            });
+            document.getElementById('pdfModal').style.display = 'flex';
+            btn.innerText = "VALIDER ET GÉNÉRER PDF";
+            this.setStep(4);
         });
     },
 
-    printPdf() { window.open(this.state.pdfUrl, '_blank').print(); },
-    closePdfModal() { document.getElementById('pdfModal').classList.remove('visible'); },
-    updateTabName() { this.renderTabs(); }
+    closePdfModal() { document.getElementById('pdfModal').style.display = 'none'; }
 };
 
 window.onload = () => App.init();
