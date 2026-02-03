@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuaRKqmP_V1FZkND0i4zPOMHyNHXthWI5SwPw-FTKlUV0PP6tNJfC0C_-nEt_8tVB2/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
 
 /**
  * Envoie les donnees d'une commande vers Google Sheets
@@ -12,11 +12,18 @@ export const sendToGoogleSheets = async (fiche) => {
     const data = {
       client: fiche.clientName || '',
       tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
-      modele: getModelReference(fiche),
-      technique: getTechniqueInfo(fiche),
-      delai: formatDeadline(fiche.deadline),
-      logoFront: fiche.frontLogo ? 'Oui' : 'Non',
-      logoBack: fiche.backLogo ? 'Oui' : 'Non'
+      collection: getCollectionName(fiche.target),
+      reference: getModelReference(fiche),
+      echeance: formatDeadline(fiche.deadline),
+      taille: fiche.size || 'M',
+      couleurTshirt: getColorName(fiche.tshirtColor),
+      couleurLogo: getColorName(fiche.logoColor),
+      logoAvant: fiche.frontLogo ? 'Oui' : 'Non',
+      logoArriere: fiche.backLogo ? 'Oui' : 'Non',
+      prixTshirt: fiche.tshirtPrice || 25,
+      prixPerso: fiche.personalizationPrice || 0,
+      paye: fiche.isPaid ? 'Oui' : '',
+      nonPaye: fiche.isPaid ? '' : 'Oui'
     }
 
     console.log('Envoi vers Google Sheets:', data)
@@ -44,9 +51,16 @@ export const sendToGoogleSheets = async (fiche) => {
 const formatPhoneNumber = (countryCode, phone) => {
   if (!phone) return ''
   const cleanPhone = phone.replace(/\D/g, '')
-  // Si le numero commence par 0, le retirer pour ajouter le code pays
   const phoneWithoutLeadingZero = cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone
   return `+${countryCode || '590'}${phoneWithoutLeadingZero}`
+}
+
+/**
+ * Obtient le nom de la collection
+ */
+const getCollectionName = (target) => {
+  const collections = { H: 'Homme', F: 'Femme', E: 'Enfant', B: 'Bebe' }
+  return collections[target] || ''
 }
 
 /**
@@ -56,28 +70,14 @@ const getModelReference = (fiche) => {
   if (fiche.reference === 'MANUEL') {
     return fiche.manualReference || 'Manuel'
   }
-  return fiche.reference || 'Non specifie'
+  return fiche.reference || ''
 }
 
 /**
- * Obtient les informations de technique/personnalisation
+ * Obtient le nom de la couleur
  */
-const getTechniqueInfo = (fiche) => {
-  const parts = []
-
-  // Collection (Homme/Femme/Enfant/Bebe)
-  if (fiche.target) {
-    const collections = { H: 'Homme', F: 'Femme', E: 'Enfant', B: 'Bebe' }
-    parts.push(collections[fiche.target] || fiche.target)
-  }
-
-  // Taille
-  if (fiche.size) {
-    parts.push(`Taille ${fiche.size}`)
-  }
-
-  // Couleurs
-  const tshirtColors = {
+const getColorName = (hex) => {
+  const colors = {
     '#FFFFFF': 'Blanc', '#000000': 'Noir', '#1A1A1A': 'Noir',
     '#D3D3D3': 'Gris', '#E5E5E5': 'Gris clair', '#9CA3AF': 'Gris moyen',
     '#EF4444': 'Rouge', '#F59E0B': 'Orange', '#EAB308': 'Jaune',
@@ -85,25 +85,14 @@ const getTechniqueInfo = (fiche) => {
     '#EC4899': 'Rose', '#0EA5E9': 'Bleu ciel', '#14B8A6': 'Turquoise',
     '#F97316': 'Orange vif', '#A855F7': 'Violet clair'
   }
-
-  if (fiche.tshirtColor) {
-    const colorName = tshirtColors[fiche.tshirtColor] || fiche.tshirtColor
-    parts.push(`T-shirt ${colorName}`)
-  }
-
-  if (fiche.logoColor && fiche.logoColor !== fiche.tshirtColor) {
-    const logoColorName = tshirtColors[fiche.logoColor] || fiche.logoColor
-    parts.push(`Logo ${logoColorName}`)
-  }
-
-  return parts.join(' | ') || 'Standard'
+  return colors[hex] || hex || ''
 }
 
 /**
  * Formate la date d'echeance
  */
 const formatDeadline = (deadline) => {
-  if (!deadline) return 'Non defini'
+  if (!deadline) return ''
 
   try {
     const date = new Date(deadline)
