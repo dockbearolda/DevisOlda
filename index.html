@@ -580,8 +580,7 @@
             color: var(--text-primary);
         }
         .pdf-modal-actions {
-            display: flex;
-            gap: 12px;
+            display: flex; gap: 12px;
         }
         .pdf-modal-btn {
             padding: 10px 20px;
@@ -592,159 +591,44 @@
             border: none;
             transition: all 0.2s;
         }
-        .pdf-modal-btn.print {
-            background: var(--accent-dark);
-            color: white;
-        }
-        .pdf-modal-btn.print:hover { background: #27272A; }
-        .pdf-modal-btn.download {
-            background: var(--accent-success);
-            color: white;
-        }
-        .pdf-modal-btn.download:hover { background: #059669; }
-        .pdf-modal-btn.close {
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-medium);
-        }
-        .pdf-modal-btn.close:hover { background: var(--border-light); }
+        .pdf-modal-btn.print { background: var(--accent-dark); color: white; }
+        .pdf-modal-btn.download { background: var(--accent-success); color: white; }
+        .pdf-modal-btn.close { background: var(--bg-primary); color: var(--text-secondary); border: 1px solid var(--border-medium); }
+
         .pdf-modal-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            overflow: auto;
+            flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow: auto;
         }
-        .pdf-modal-content iframe {
-            width: 100%;
-            max-width: 800px;
-            height: 100%;
-            border: none;
-            border-radius: var(--radius-md);
-            background: white;
-        }
-        .pdf-modal-content img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-xl);
-        }
+        .pdf-modal-content img { max-width: 100%; max-height: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-xl); }
 
         /* PDF Indicator Button */
         .pdf-indicator {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 1000;
-            display: none;
+            position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: none;
         }
         .pdf-indicator.visible { display: block; }
         .pdf-indicator-btn {
-            padding: 16px 24px;
-            background: linear-gradient(135deg, var(--accent-danger), #F87171);
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            box-shadow: var(--shadow-xl);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 16px 24px; background: linear-gradient(135deg, var(--accent-danger), #F87171); border-radius: var(--radius-md); color: white; font-size: 13px; font-weight: 700; cursor: pointer; border: none; box-shadow: var(--shadow-xl); transition: all 0.3s; display: flex; align-items: center; gap: 10px;
         }
-        .pdf-indicator-btn:hover { transform: scale(1.05); }
 
         /* Footer Premium */
-        .card-footer {
-            border-top: 1px solid var(--border-light);
-            padding: 20px 28px;
-            background: var(--bg-primary);
-        }
-        .price-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .price-row.total {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-primary);
-            padding-top: 12px;
-            border-top: 1px solid var(--border-medium);
-            margin-top: 4px;
-        }
+        .card-footer { border-top: 1px solid var(--border-light); padding: 20px 28px; background: var(--bg-primary); }
+        .price-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .price-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); }
+        .price-row.total { font-size: 20px; font-weight: 800; color: var(--text-primary); padding-top: 12px; border-top: 1px solid var(--border-medium); margin-top: 4px; }
         .price-row.total.paid { color: var(--accent-success); }
         .price-row.total.unpaid { color: var(--accent-danger); }
 
-        /* Payment Toggle Premium */
-        .payment-toggle {
-            display: flex;
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            padding: 4px;
-            border: 1px solid var(--border-medium);
-        }
-        .payment-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
+        /* Payment Toggle */
+        .payment-toggle { display: flex; background: var(--bg-card); border-radius: var(--radius-md); padding: 4px; border: 1px solid var(--border-medium); }
+        .payment-btn { flex: 1; padding: 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; border: none; background: transparent; color: var(--text-muted); transition: all 0.2s; }
         .payment-btn.unpaid.active { background: var(--accent-danger); color: white; }
         .payment-btn.paid.active { background: var(--accent-success); color: white; }
 
-        /* Generate Button */
-        .generate-btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: var(--radius-md);
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            background: var(--accent-dark);
-            color: white;
-            transition: all 0.2s;
-            margin-top: 16px;
-        }
-        .generate-btn:hover { background: #27272A; transform: translateY(-1px); }
-
-        /* Urgent Mode Styles */
-        .production-card.urgent-mode .stepper-container {
-            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-        }
-        .production-card.urgent-mode .deadline-section {
-            background: #FEE2E2;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main-content { padding: 16px; }
-        }
+        .generate-btn { width: 100%; padding: 18px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; text-align: center; cursor: pointer; border: none; background: var(--accent-dark); color: white; transition: all 0.2s; margin-top: 16px; }
+        .generate-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-<!-- App Header -->
 <header class="app-header">
     <div class="logo">OLDA <span>Production</span></div>
     <div class="header-actions">
@@ -754,108 +638,67 @@
 </header>
 
 <div class="app-container">
-    <!-- Sidebar Collections -->
     <aside class="sidebar">
         <div class="sidebar-title">Collections</div>
-        <div class="collection-item active" data-collection="tshirts">
+        <div class="collection-item active">
             <div class="collection-icon">T</div>
             <span class="collection-name">T-Shirts</span>
             <span class="collection-count" id="countTshirts">0</span>
         </div>
-        <div class="collection-item" data-collection="polos">
-            <div class="collection-icon">P</div>
-            <span class="collection-name">Polos</span>
-            <span class="collection-count">0</span>
-        </div>
-        <div class="collection-item" data-collection="sweats">
-            <div class="collection-icon">S</div>
-            <span class="collection-name">Sweats</span>
-            <span class="collection-count">0</span>
-        </div>
-        <div class="collection-item" data-collection="casquettes">
-            <div class="collection-icon">C</div>
-            <span class="collection-name">Casquettes</span>
-            <span class="collection-count">0</span>
-        </div>
-        <div class="collection-item" data-collection="accessoires">
-            <div class="collection-icon">A</div>
-            <span class="collection-name">Accessoires</span>
-            <span class="collection-count">0</span>
-        </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Tabs with Urgency -->
         <div class="tabs-header" id="tabsHeader">
             <div class="tab-add" onclick="App.addTab()">+</div>
         </div>
 
-        <!-- Production Card -->
         <div class="production-card" id="productionCard">
-            <!-- Stepper -->
             <div class="stepper-container">
                 <div class="stepper">
-                    <div class="stepper-progress" id="stepperProgress" style="width: 0%;"></div>
-                    <div class="step completed" data-step="1" onclick="App.setStep(1)">
-                        <div class="step-circle">1</div>
-                        <span class="step-label">Commande</span>
-                    </div>
-                    <div class="step" data-step="2" onclick="App.setStep(2)">
-                        <div class="step-circle">2</div>
-                        <span class="step-label">Preparation</span>
-                    </div>
-                    <div class="step" data-step="3" onclick="App.setStep(3)">
-                        <div class="step-circle">3</div>
-                        <span class="step-label">Production</span>
-                    </div>
-                    <div class="step" data-step="4" onclick="App.setStep(4)">
-                        <div class="step-circle">4</div>
-                        <span class="step-label">Termine</span>
-                    </div>
+                    <div class="stepper-progress" id="stepperProgress"></div>
+                    <div class="step active" data-step="1" onclick="App.setStep(1)"><div class="step-circle">1</div><span class="step-label">Commande</span></div>
+                    <div class="step" data-step="2" onclick="App.setStep(2)"><div class="step-circle">2</div><span class="step-label">Prép.</span></div>
+                    <div class="step" data-step="3" onclick="App.setStep(3)"><div class="step-circle">3</div><span class="step-label">Prod.</span></div>
+                    <div class="step" data-step="4" onclick="App.setStep(4)"><div class="step-circle">4</div><span class="step-label">Terminé</span></div>
                 </div>
             </div>
 
             <div class="card-content" id="capture">
                 <div class="card-header">
-                    <span class="card-title">Details de la commande</span>
+                    <span class="card-title">Détails de la commande</span>
                     <button class="urgent-toggle" id="urgentBtn" onclick="App.toggleUrgent()">URGENT</button>
                 </div>
 
-                <!-- Deadline -->
                 <div class="deadline-section">
                     <div class="deadline-icon">D</div>
                     <div class="deadline-info">
                         <div class="deadline-label">Date limite</div>
                         <input type="date" class="deadline-input" id="deadlineInput" onchange="App.updateDeadline()">
                     </div>
-                    <div class="deadline-badge" id="deadlineBadge">7 jours restants</div>
+                    <div class="deadline-badge" id="deadlineBadge">Calcul...</div>
                 </div>
 
-                <!-- Client Info -->
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Client</label>
-                        <input type="text" class="form-input" id="custName" placeholder="Nom du client" oninput="App.updateTabName()">
+                        <input type="text" class="form-input" id="custName" placeholder="Nom" oninput="App.updateTabName()">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Telephone</label>
-                        <input type="tel" class="form-input" id="custTel" placeholder="06 00 00 00 00">
+                        <label class="form-label">Téléphone</label>
+                        <input type="tel" class="form-input" id="custTel" placeholder="06..">
                     </div>
                 </div>
 
-                <!-- Target -->
                 <div class="chips-grid">
-                    <div class="chip active" onclick="App.setTarget('H', this)">Homme</div>
-                    <div class="chip" onclick="App.setTarget('F', this)">Femme</div>
-                    <div class="chip" onclick="App.setTarget('E', this)">Enfant</div>
-                    <div class="chip" onclick="App.setTarget('B', this)">Bebe</div>
+                    <div class="chip active" onclick="App.setTarget('H', this)">H</div>
+                    <div class="chip" onclick="App.setTarget('F', this)">F</div>
+                    <div class="chip" onclick="App.setTarget('E', this)">E</div>
+                    <div class="chip" onclick="App.setTarget('B', this)">B</div>
                 </div>
 
-                <!-- Reference & Size -->
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Reference</label>
+                        <label class="form-label">Référence</label>
                         <select class="form-select" id="refSelect" onchange="App.checkManual()"></select>
                     </div>
                     <div class="form-group">
@@ -867,287 +710,107 @@
                 </div>
 
                 <div class="form-group full" id="manualZone" style="display:none; margin-bottom: 16px;">
-                    <label class="form-label">Reference manuelle</label>
-                    <input type="text" class="form-input" id="manualRef" placeholder="Entrez votre reference...">
+                    <input type="text" class="form-input" id="manualRef" placeholder="Réf manuelle...">
                 </div>
 
-                <!-- Colors -->
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Couleur T-Shirt</label>
+                        <label class="form-label">Couleur TS</label>
                         <select class="form-select" id="tsColorSelect" onchange="App.updateTsColor()">
-                            <option value="#FFFFFF">Blanc</option>
-                            <option value="#1A1A1A">Noir</option>
-                            <option value="#FDFD96">Jaune</option>
-                            <option value="#FFD1DC">Rose</option>
-                            <option value="#B3E5FC">Bleu Ciel</option>
-                            <option value="#C1E1C1">Vert Menthe</option>
-                            <option value="#E6E6FA">Lavande</option>
-                            <option value="#D3D3D3">Gris</option>
+                            <option value="#FFFFFF">Blanc</option><option value="#1A1A1A">Noir</option><option value="#D3D3D3">Gris</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Couleur Logo</label>
                         <select class="form-select" id="logoColorSelect" onchange="App.updateLogoColor()">
-                            <option value="#000000">Noir</option>
-                            <option value="#FFFFFF">Blanc</option>
-                            <option value="#EF4444">Rouge</option>
-                            <option value="#3B82F6">Bleu</option>
-                            <option value="#10B981">Vert</option>
-                            <option value="#F59E0B">Or</option>
+                            <option value="#000000">Noir</option><option value="#FFFFFF">Blanc</option><option value="#EF4444">Rouge</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Prices -->
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Prix T-Shirt</label>
-                        <select class="form-select" id="priceTshirt" onchange="App.updateTotal()">
-                            <option value="0">0 EUR</option>
-                            <option value="15">15 EUR</option>
-                            <option value="20">20 EUR</option>
-                            <option value="25" selected>25 EUR</option>
-                            <option value="30">30 EUR</option>
-                            <option value="35">35 EUR</option>
-                            <option value="40">40 EUR</option>
-                            <option value="50">50 EUR</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Prix Personnalisation</label>
-                        <select class="form-select" id="pricePerso" onchange="App.updateTotal()">
-                            <option value="0" selected>0 EUR</option>
-                            <option value="5">5 EUR</option>
-                            <option value="10">10 EUR</option>
-                            <option value="15">15 EUR</option>
-                            <option value="20">20 EUR</option>
-                            <option value="25">25 EUR</option>
-                            <option value="30">30 EUR</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label class="form-label">Prix TS</label><select class="form-select" id="priceTshirt" onchange="App.updateTotal()"><option value="25">25€</option><option value="35">35€</option></select></div>
+                    <div class="form-group"><label class="form-label">Prix Perso</label><select class="form-select" id="pricePerso" onchange="App.updateTotal()"><option value="0">0€</option><option value="10">10€</option></select></div>
                 </div>
 
-                <!-- View Toggle -->
                 <div class="view-toggle">
                     <div class="view-btn" id="btnAV" onclick="App.toggleView('AV')">AVANT</div>
                     <div class="view-btn" id="btnAR" onclick="App.toggleView('AR')">ARRIERE</div>
                 </div>
 
-                <!-- Upload -->
                 <div class="upload-grid">
-                    <label for="fileInputAV" class="upload-btn">+ Logo Avant</label>
-                    <label for="fileInputAR" class="upload-btn">+ Logo Arriere</label>
+                    <label for="fileInputAV" class="upload-btn">+ Avant</label>
+                    <label for="fileInputAR" class="upload-btn">+ Arrière</label>
                 </div>
-                <input type="file" id="fileInputAV" style="display:none" accept="image/*,.pdf" onchange="App.handleUpload('AV', event)">
-                <input type="file" id="fileInputAR" style="display:none" accept="image/*,.pdf" onchange="App.handleUpload('AR', event)">
+                <input type="file" id="fileInputAV" style="display:none" accept="image/*" onchange="App.handleUpload('AV', event)">
+                <input type="file" id="fileInputAR" style="display:none" accept="image/*" onchange="App.handleUpload('AR', event)">
 
-                <!-- Canvas AV -->
-                <div class="canvas-section" id="zoneAV">
-                    <div class="canvas-container">
-                        <div class="canvas-box">
-                            <svg class="tshirt-svg" viewBox="0 0 280 330">
-                                <defs>
-                                    <linearGradient id="shadeAV" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.4)"/>
-                                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
-                                    </linearGradient>
-                                </defs>
-                                <path id="pathAV" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 178,42 150,52 140,52 C 130,52 102,42 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/>
-                                <path d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 178,42 150,52 140,52 C 130,52 102,42 93,23 Z" fill="url(#shadeAV)" opacity="0.5"/>
-                                <path d="M 93,23 C 102,42 130,52 140,52 C 150,52 178,42 187,23" fill="none" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            <canvas id="canAV"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Canvas AR -->
-                <div class="canvas-section" id="zoneAR">
-                    <div class="canvas-container">
-                        <div class="canvas-box">
-                            <svg class="tshirt-svg" viewBox="0 0 280 330">
-                                <defs>
-                                    <linearGradient id="shadeAR" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:rgba(255,255,255,0.4)"/>
-                                        <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
-                                    </linearGradient>
-                                </defs>
-                                <path id="pathAR" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 182,28 165,33 140,33 C 115,33 98,28 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/>
-                                <path d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 182,28 165,33 140,33 C 115,33 98,28 93,23 Z" fill="url(#shadeAR)" opacity="0.5"/>
-                                <path d="M 93,23 C 98,28 115,33 140,33 C 165,33 182,28 187,23" fill="none" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
-                                <rect x="130" y="36" width="20" height="10" rx="1" fill="#F9FAFB" stroke="#E5E7EB" stroke-width="0.5"/>
-                            </svg>
-                            <canvas id="canAR"></canvas>
-                        </div>
-                    </div>
-                </div>
+                <div class="canvas-section" id="zoneAV"><div class="canvas-container"><div class="canvas-box"><svg class="tshirt-svg" viewBox="0 0 280 330"><path id="pathAV" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 178,42 150,52 140,52 C 130,52 102,42 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/></svg><canvas id="canAV"></canvas></div></div></div>
+                <div class="canvas-section" id="zoneAR"><div class="canvas-container"><div class="canvas-box"><svg class="tshirt-svg" viewBox="0 0 280 330"><path id="pathAR" d="M 93,23 L 65,33 L 14,65 L 33,108 L 51,94 L 51,300 L 229,300 L 229,94 L 247,108 L 266,65 L 215,33 L 187,23 C 182,28 165,33 140,33 C 115,33 98,28 93,23 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/></svg><canvas id="canAR"></canvas></div></div></div>
             </div>
 
-            <!-- Footer -->
             <div class="card-footer">
                 <div class="price-grid">
-                    <div class="price-row">
-                        <span>T-Shirt</span>
-                        <span id="displayTshirt">25 EUR</span>
-                    </div>
-                    <div class="price-row">
-                        <span>Personnalisation</span>
-                        <span id="displayPerso">0 EUR</span>
-                    </div>
-                    <div class="price-row total" id="totalRow">
-                        <span>Total</span>
-                        <span id="displayTotal">25 EUR</span>
-                    </div>
+                    <div class="price-row"><span>Total</span><span id="displayTotal">25 EUR</span></div>
                 </div>
                 <div class="payment-toggle">
-                    <button class="payment-btn unpaid active" id="btnUnpaid" onclick="App.setPayment(false)">NON PAYE</button>
-                    <button class="payment-btn paid" id="btnPaid" onclick="App.setPayment(true)">PAYE</button>
+                    <button class="payment-btn unpaid active" id="btnUnpaid" onclick="App.setPayment(false)">NON PAYÉ</button>
+                    <button class="payment-btn paid" id="btnPaid" onclick="App.setPayment(true)">PAYÉ</button>
                 </div>
-                <button class="generate-btn" onclick="App.generatePdf()">GENERER PDF</button>
+                <button class="generate-btn" id="finalGenBtn" onclick="App.generatePdf()">GÉNÉRER PDF & ENREGISTRER</button>
             </div>
         </div>
     </main>
 </div>
 
-<!-- PDF Modal Viewer -->
 <div class="pdf-modal" id="pdfModal">
-    <div class="pdf-modal-header">
-        <span class="pdf-modal-title" id="pdfModalTitle">Apercu PDF</span>
-        <div class="pdf-modal-actions">
-            <button class="pdf-modal-btn print" onclick="App.printPdf()">Imprimer</button>
-            <button class="pdf-modal-btn download" onclick="App.downloadPdf()">Telecharger</button>
-            <button class="pdf-modal-btn close" onclick="App.closePdfModal()">Fermer</button>
-        </div>
-    </div>
-    <div class="pdf-modal-content">
-        <img id="pdfPreviewImg" src="" alt="Apercu PDF">
-    </div>
-</div>
-
-<!-- PDF Indicator -->
-<div class="pdf-indicator" id="pdfIndicator">
-    <button class="pdf-indicator-btn" onclick="App.openPdfModal()">
-        <span>PDF</span>
-        <span id="pdfIndicatorName">Voir le PDF</span>
-    </button>
+    <div class="pdf-modal-header"><span class="pdf-modal-title" id="pdfModalTitle">Aperçu</span><div class="pdf-modal-actions"><button class="pdf-modal-btn print" onclick="App.printPdf()">Imprimer</button><button class="pdf-modal-btn close" onclick="App.closePdfModal()">Fermer</button></div></div>
+    <div class="pdf-modal-content"><img id="pdfPreviewImg" src=""></div>
 </div>
 
 <script>
+// CONFIGURATION GOOGLE SHEETS
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTHi761jWpYHrLYeEtUnbQMqg982eb8Y6p9EnrprARTYW-OuRM8zQQ30fCwZwuW5Wm/exec";
+
+async function sendToGoogleSheets(formData) {
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) });
+    } catch (e) { console.error("Erreur Sheets:", e); }
+}
+
 const App = {
-    state: {
-        currentTab: 1,
-        nextId: 2,
-        tabs: {},
-        cans: { AV: null, AR: null },
-        countdownInterval: null
-    },
+    state: { currentTab: 1, nextId: 2, tabs: {}, cans: { AV: null, AR: null } },
 
     init() {
         this.cans = {
             AV: new fabric.Canvas('canAV', { width: 280, height: 330 }),
             AR: new fabric.Canvas('canAR', { width: 280, height: 330 })
         };
-
-        // Fabric delete control
-        fabric.Object.prototype.controls.deleteControl = new fabric.Control({
-            x: 0.5, y: -0.5, offsetY: -16, offsetX: 16, cursorStyle: 'pointer',
-            mouseUpHandler: (e, t) => { t.target.canvas.remove(t.target); t.target.canvas.requestRenderAll(); },
-            render: (ctx, l, t) => {
-                ctx.save(); ctx.translate(l, t);
-                ctx.beginPath(); ctx.arc(0, 0, 10, 0, 2*Math.PI);
-                ctx.fillStyle = "#EF4444"; ctx.fill();
-                ctx.strokeStyle = "white"; ctx.lineWidth = 2;
-                ctx.moveTo(-4,-4); ctx.lineTo(4,4);
-                ctx.moveTo(4,-4); ctx.lineTo(-4,4);
-                ctx.stroke(); ctx.restore();
-            }
-        });
-
         const loaded = this.loadFromStorage();
-
         if (!loaded) {
-            // Premiere utilisation - creer un onglet par defaut
             this.updateRefList();
             this.initDeadline();
-            this.updateTotal();
             this.state.tabs[1] = this.getFormData();
             this.renderTabs();
         }
-
-        this.startCountdown();
-        this.updatePdfIndicator();
     },
 
-    // Storage
     saveToStorage() {
-        try {
-            this.saveCurrentTab();
-            // Ne pas sauvegarder les blobs dans localStorage (trop gros)
-            const tabsToSave = {};
-            Object.entries(this.state.tabs).forEach(([id, data]) => {
-                tabsToSave[id] = { ...data };
-                if (tabsToSave[id].savedPdf) {
-                    // Garder seulement les infos essentielles, pas les blobs
-                    tabsToSave[id].savedPdf = {
-                        name: tabsToSave[id].savedPdf.name,
-                        imgData: tabsToSave[id].savedPdf.imgData
-                    };
-                }
-            });
-            localStorage.setItem('olda_tabs', JSON.stringify(tabsToSave));
-            localStorage.setItem('olda_currentTab', String(this.state.currentTab));
-            localStorage.setItem('olda_nextId', String(this.state.nextId));
-        } catch (e) {
-            console.warn('Erreur sauvegarde localStorage:', e);
-        }
+        this.saveCurrentTab();
+        localStorage.setItem('olda_tabs_pro', JSON.stringify(this.state.tabs));
     },
 
     loadFromStorage() {
-        try {
-            const tabs = localStorage.getItem('olda_tabs');
-            const current = localStorage.getItem('olda_currentTab');
-            const nextId = localStorage.getItem('olda_nextId');
-
-            if (tabs) {
-                const parsedTabs = JSON.parse(tabs);
-                // Restaurer les URLs des PDFs
-                Object.entries(parsedTabs).forEach(([id, data]) => {
-                    if (data.savedPdf && data.savedPdf.imgData) {
-                        // Recreer le blob depuis imgData
-                        const byteString = atob(data.savedPdf.imgData.split(',')[1]);
-                        const mimeString = data.savedPdf.imgData.split(',')[0].split(':')[1].split(';')[0];
-                        const ab = new ArrayBuffer(byteString.length);
-                        const ia = new Uint8Array(ab);
-                        for (let i = 0; i < byteString.length; i++) {
-                            ia[i] = byteString.charCodeAt(i);
-                        }
-                        const blob = new Blob([ab], { type: mimeString });
-                        data.savedPdf.blob = blob;
-                        data.savedPdf.url = URL.createObjectURL(blob);
-                    }
-                });
-                this.state.tabs = parsedTabs;
-                this.state.currentTab = parseInt(current) || 1;
-                this.state.nextId = parseInt(nextId) || 2;
-
-                // Verifier que le currentTab existe
-                if (!this.state.tabs[this.state.currentTab]) {
-                    const ids = Object.keys(this.state.tabs).map(Number);
-                    this.state.currentTab = ids[0] || 1;
-                }
-
-                this.renderTabs();
-                this.loadTab(this.state.currentTab);
-                return true;
-            }
-        } catch (e) {
-            console.warn('Erreur chargement localStorage:', e);
+        const data = localStorage.getItem('olda_tabs_pro');
+        if (data) {
+            this.state.tabs = JSON.parse(data);
+            this.loadTab(Object.keys(this.state.tabs)[0]);
+            this.renderTabs();
+            return true;
         }
         return false;
     },
 
-    // Tabs
     addTab() {
         this.saveCurrentTab();
         const id = this.state.nextId++;
@@ -1155,113 +818,36 @@ const App = {
         this.state.tabs[id] = this.getFormData();
         this.state.currentTab = id;
         this.renderTabs();
-        this.saveToStorage();
-    },
-
-    switchTab(id) {
-        if (id === this.state.currentTab) return;
-        this.saveCurrentTab();
-        this.state.currentTab = id;
-        this.loadTab(id);
-        this.renderTabs();
-        this.saveToStorage();
-    },
-
-    closeTab(id, e) {
-        e.stopPropagation();
-        const ids = Object.keys(this.state.tabs).map(Number);
-        if (ids.length <= 1) return;
-
-        delete this.state.tabs[id];
-        if (id === this.state.currentTab) {
-            const remaining = Object.keys(this.state.tabs).map(Number);
-            this.state.currentTab = remaining[0];
-            this.loadTab(this.state.currentTab);
-        }
-        this.renderTabs();
-        this.saveToStorage();
     },
 
     renderTabs() {
         const header = document.getElementById('tabsHeader');
-        const addBtn = header.querySelector('.tab-add');
-
-        // Remove old tabs
         header.querySelectorAll('.tab-item').forEach(t => t.remove());
-
-        // Sort by urgency
-        const sorted = Object.entries(this.state.tabs).sort((a, b) => {
-            const deadlineA = new Date(a[1].deadline || '2099-12-31');
-            const deadlineB = new Date(b[1].deadline || '2099-12-31');
-            return deadlineA - deadlineB;
-        });
-
-        sorted.forEach(([id, data]) => {
+        Object.entries(this.state.tabs).forEach(([id, data]) => {
             const tab = document.createElement('div');
-            tab.className = 'tab-item' + (parseInt(id) === this.state.currentTab ? ' active' : '');
-
-            const deadline = new Date(data.deadline);
-            const now = new Date();
-            const diff = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-            if (diff <= 2) tab.classList.add('urgent');
-
-            const countdown = diff < 0 ? `${Math.abs(diff)}j retard` : diff === 0 ? "Aujourd'hui" : `${diff}j restants`;
-
-            tab.innerHTML = `
-                <div class="tab-urgency"></div>
-                <div class="tab-info">
-                    <div class="tab-name">${data.custName || 'Nouvelle fiche'}</div>
-                    <div class="tab-countdown">${countdown}</div>
-                </div>
-                <div class="tab-close" onclick="App.closeTab(${id}, event)">x</div>
-            `;
-            tab.onclick = () => this.switchTab(parseInt(id));
-            header.insertBefore(tab, addBtn);
+            tab.className = 'tab-item' + (parseInt(id) == this.state.currentTab ? ' active' : '');
+            tab.innerHTML = `<div class="tab-name">${data.custName || 'Fiche'}</div>`;
+            tab.onclick = () => this.switchTab(id);
+            header.insertBefore(tab, header.querySelector('.tab-add'));
         });
-
         document.getElementById('countTshirts').textContent = Object.keys(this.state.tabs).length;
     },
 
-    saveCurrentTab() {
-        this.state.tabs[this.state.currentTab] = this.getFormData();
+    switchTab(id) {
+        this.saveCurrentTab();
+        this.state.currentTab = id;
+        this.loadTab(id);
+        this.renderTabs();
     },
+
+    saveCurrentTab() { this.state.tabs[this.state.currentTab] = this.getFormData(); },
 
     loadTab(id) {
         const data = this.state.tabs[id];
-        if (!data) return;
-
         document.getElementById('custName').value = data.custName || '';
         document.getElementById('custTel').value = data.custTel || '';
         document.getElementById('deadlineInput').value = data.deadline || '';
-        document.getElementById('refSelect').value = data.ref || '';
-        document.getElementById('sizeSelect').value = data.size || 'M';
-        document.getElementById('tsColorSelect').value = data.tsColor || '#FFFFFF';
-        document.getElementById('logoColorSelect').value = data.logoColor || '#000000';
-        document.getElementById('priceTshirt').value = data.priceTshirt || '25';
-        document.getElementById('pricePerso').value = data.pricePerso || '0';
-
-        this.state.isUrgent = data.isUrgent || false;
-        this.state.isPaid = data.isPaid || false;
-        this.state.step = data.step || 1;
-        this.state.savedPdf = data.savedPdf || null;
-        this.state.targetPrefix = data.targetPrefix || 'H';
-
-        this.updateTsColor();
         this.updateDeadline();
-        this.updateTotal();
-        this.updateUrgentUI();
-        this.updatePaymentUI();
-        this.updateStepperUI();
-        this.updateTargetUI();
-        this.updatePdfIndicator();
-
-        this.cans.AV.clear();
-        this.cans.AR.clear();
-
-        document.getElementById('btnAV').classList.remove('active');
-        document.getElementById('btnAR').classList.remove('active');
-        document.getElementById('zoneAV').classList.remove('visible');
-        document.getElementById('zoneAR').classList.remove('visible');
     },
 
     getFormData() {
@@ -1271,351 +857,138 @@ const App = {
             deadline: document.getElementById('deadlineInput').value,
             ref: document.getElementById('refSelect').value,
             size: document.getElementById('sizeSelect').value,
-            tsColor: document.getElementById('tsColorSelect').value,
-            logoColor: document.getElementById('logoColorSelect').value,
-            priceTshirt: document.getElementById('priceTshirt').value,
-            pricePerso: document.getElementById('pricePerso').value,
-            isUrgent: this.state.isUrgent || false,
-            isPaid: this.state.isPaid || false,
-            step: this.state.step || 1,
-            savedPdf: this.state.savedPdf || null,
-            targetPrefix: this.state.targetPrefix || 'H'
+            total: document.getElementById('displayTotal').textContent
         };
     },
 
     resetForm() {
         document.getElementById('custName').value = '';
-        document.getElementById('custTel').value = '';
         this.initDeadline();
-        document.getElementById('sizeSelect').value = 'M';
-        document.getElementById('tsColorSelect').value = '#FFFFFF';
-        document.getElementById('logoColorSelect').value = '#000000';
-        document.getElementById('priceTshirt').value = '25';
-        document.getElementById('pricePerso').value = '0';
-
-        this.state.isUrgent = false;
-        this.state.isPaid = false;
-        this.state.step = 1;
-        this.state.savedPdf = null;
-        this.state.targetPrefix = 'H';
-
-        this.updateRefList();
-        this.updateTsColor();
-        this.updateDeadline();
-        this.updateTotal();
-        this.updateUrgentUI();
-        this.updatePaymentUI();
-        this.updateStepperUI();
-        this.updateTargetUI();
-        this.updatePdfIndicator();
-
-        this.cans.AV.clear();
-        this.cans.AR.clear();
-
-        document.getElementById('btnAV').classList.remove('active');
-        document.getElementById('btnAR').classList.remove('active');
-        document.getElementById('zoneAV').classList.remove('visible');
-        document.getElementById('zoneAR').classList.remove('visible');
     },
 
-    updateTabName() {
-        this.saveToStorage();
-        this.renderTabs();
-    },
-
-    // Stepper
     setStep(step) {
         this.state.step = step;
-        this.updateStepperUI();
-        this.saveToStorage();
-    },
-
-    updateStepperUI() {
         const steps = document.querySelectorAll('.step');
-        const progress = document.getElementById('stepperProgress');
-        const currentStep = this.state.step || 1;
-
         steps.forEach((s, i) => {
-            s.classList.remove('completed', 'active');
-            if (i + 1 < currentStep) s.classList.add('completed');
-            if (i + 1 === currentStep) s.classList.add('active');
+            s.classList.toggle('completed', i + 1 < step);
+            s.classList.toggle('active', i + 1 === step);
         });
-
-        const percent = ((currentStep - 1) / 3) * 100;
-        progress.style.width = percent + '%';
+        document.getElementById('stepperProgress').style.width = ((step-1)/3*100) + '%';
     },
 
-    // Urgent
     toggleUrgent() {
         this.state.isUrgent = !this.state.isUrgent;
-        this.updateUrgentUI();
-        this.saveToStorage();
+        document.getElementById('productionCard').classList.toggle('urgent-mode');
+        document.getElementById('urgentBtn').classList.toggle('active');
     },
 
-    updateUrgentUI() {
-        const card = document.getElementById('productionCard');
-        const btn = document.getElementById('urgentBtn');
-        if (this.state.isUrgent) {
-            card.classList.add('urgent-mode');
-            btn.classList.add('active');
-        } else {
-            card.classList.remove('urgent-mode');
-            btn.classList.remove('active');
-        }
-    },
-
-    // Deadline
     initDeadline() {
-        const d = new Date();
-        d.setDate(d.getDate() + 7);
+        const d = new Date(); d.setDate(d.getDate() + 7);
         document.getElementById('deadlineInput').value = d.toISOString().split('T')[0];
         this.updateDeadline();
     },
 
     updateDeadline() {
-        const input = document.getElementById('deadlineInput');
+        const val = document.getElementById('deadlineInput').value;
         const badge = document.getElementById('deadlineBadge');
-        if (!input.value) return;
-
-        const deadline = new Date(input.value);
-        const now = new Date();
-        now.setHours(0,0,0,0);
-        deadline.setHours(0,0,0,0);
-        const diff = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-
-        badge.classList.remove('warning', 'danger');
-
-        if (diff < 0) {
-            badge.textContent = Math.abs(diff) + ' jour' + (Math.abs(diff) > 1 ? 's' : '') + ' de retard';
-            badge.classList.add('danger');
-        } else if (diff === 0) {
-            badge.textContent = "Aujourd'hui";
-            badge.classList.add('danger');
-        } else if (diff === 1) {
-            badge.textContent = '1 jour restant';
-            badge.classList.add('danger');
-        } else if (diff <= 3) {
-            badge.textContent = diff + ' jours restants';
-            badge.classList.add('warning');
-        } else {
-            badge.textContent = diff + ' jours restants';
-        }
-
-        this.saveToStorage();
-        this.renderTabs();
+        const diff = Math.ceil((new Date(val) - new Date()) / (1000*60*60*24));
+        badge.textContent = diff + "j restants";
+        badge.className = "deadline-badge " + (diff <= 2 ? "danger" : "");
     },
 
-    startCountdown() {
-        setInterval(() => {
-            this.renderTabs();
-        }, 60000);
-    },
-
-    // Target
-    setTarget(prefix, el) {
-        this.state.targetPrefix = prefix;
-        document.querySelectorAll('.chips-grid .chip').forEach(c => c.classList.remove('active'));
+    setTarget(p, el) {
+        this.state.targetPrefix = p;
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         this.updateRefList();
-        this.saveToStorage();
-    },
-
-    updateTargetUI() {
-        const map = { 'H': 0, 'F': 1, 'E': 2, 'B': 3 };
-        document.querySelectorAll('.chips-grid .chip').forEach((c, i) => {
-            c.classList.toggle('active', i === map[this.state.targetPrefix || 'H']);
-        });
     },
 
     updateRefList() {
-        const s = document.getElementById('refSelect');
-        s.innerHTML = '';
-        for (let i = 1; i <= 15; i++) {
-            const v = (this.state.targetPrefix || 'H') + i.toString().padStart(3, '0');
-            s.innerHTML += `<option value="${v}">${v}</option>`;
-        }
-        s.innerHTML += '<option value="MANUEL">MANUEL</option>';
+        const s = document.getElementById('refSelect'); s.innerHTML = '';
+        const p = this.state.targetPrefix || 'H';
+        for(let i=1; i<=10; i++) s.innerHTML += `<option>${p}${i.toString().padStart(3,'0')}</option>`;
+        s.innerHTML += `<option>MANUEL</option>`;
     },
 
-    checkManual() {
-        const v = document.getElementById('refSelect').value;
-        document.getElementById('manualZone').style.display = v === 'MANUEL' ? 'block' : 'none';
-    },
+    checkManual() { document.getElementById('manualZone').style.display = document.getElementById('refSelect').value === 'MANUEL' ? 'block' : 'none'; },
 
-    // Colors
     updateTsColor() {
-        const col = document.getElementById('tsColorSelect').value;
-        document.getElementById('pathAV').setAttribute('fill', col);
-        document.getElementById('pathAR').setAttribute('fill', col);
+        const c = document.getElementById('tsColorSelect').value;
+        document.getElementById('pathAV').setAttribute('fill', c);
+        document.getElementById('pathAR').setAttribute('fill', c);
     },
 
     updateLogoColor() {
-        const col = document.getElementById('logoColorSelect').value;
-        ['AV', 'AR'].forEach(s => {
-            this.cans[s].getObjects('text').forEach(o => o.set('fill', col));
-            this.cans[s].renderAll();
+        const c = document.getElementById('logoColorSelect').value;
+        Object.values(this.cans).forEach(can => {
+            can.getObjects('text').forEach(t => t.set('fill', c));
+            can.renderAll();
         });
     },
 
-    // Views
-    toggleView(side) {
-        const btn = document.getElementById('btn' + side);
-        const zone = document.getElementById('zone' + side);
-        btn.classList.toggle('active');
-        zone.classList.toggle('visible');
+    toggleView(s) {
+        document.getElementById('btn'+s).classList.toggle('active');
+        document.getElementById('zone'+s).classList.toggle('visible');
     },
 
-    // Upload
     handleUpload(side, e) {
         const file = e.target.files[0];
-        if (!file) return;
-
-        const btn = document.getElementById('btn' + side);
-        if (!btn.classList.contains('active')) this.toggleView(side);
-
         const reader = new FileReader();
-        reader.onload = (evt) => {
-            fabric.Image.fromURL(evt.target.result, (img) => {
-                if (!img) return;
-                img.scaleToWidth(side === 'AV' ? 80 : 140);
-                img.set({ left: 140, top: 170, originX: 'center', originY: 'center', padding: 20 });
-                this.cans[side].add(img).setActiveObject(img);
-                this.cans[side].renderAll();
+        reader.onload = (f) => {
+            fabric.Image.fromURL(f.target.result, (img) => {
+                img.scaleToWidth(100);
+                this.cans[side].add(img).centerObject(img).setActiveObject(img);
+                if(!document.getElementById('zone'+side).classList.contains('visible')) this.toggleView(side);
             });
         };
         reader.readAsDataURL(file);
     },
 
-    // Price
     updateTotal() {
-        const t = parseInt(document.getElementById('priceTshirt').value) || 0;
-        const p = parseInt(document.getElementById('pricePerso').value) || 0;
-        document.getElementById('displayTshirt').textContent = t + ' EUR';
-        document.getElementById('displayPerso').textContent = p + ' EUR';
-        document.getElementById('displayTotal').textContent = (t + p) + ' EUR';
+        const t = parseInt(document.getElementById('priceTshirt').value) + parseInt(document.getElementById('pricePerso').value);
+        document.getElementById('displayTotal').textContent = t + " EUR";
     },
 
-    // Payment
-    setPayment(paid) {
-        this.state.isPaid = paid;
-        this.updatePaymentUI();
-        this.saveToStorage();
+    setPayment(p) {
+        this.state.isPaid = p;
+        document.getElementById('btnPaid').classList.toggle('active', p);
+        document.getElementById('btnUnpaid').classList.toggle('active', !p);
     },
 
-    updatePaymentUI() {
-        const row = document.getElementById('totalRow');
-        const btnP = document.getElementById('btnPaid');
-        const btnU = document.getElementById('btnUnpaid');
-
-        row.classList.remove('paid', 'unpaid');
-        btnP.classList.remove('active');
-        btnU.classList.remove('active');
-
-        if (this.state.isPaid) {
-            row.classList.add('paid');
-            btnP.classList.add('active');
-        } else {
-            row.classList.add('unpaid');
-            btnU.classList.add('active');
-        }
-    },
-
-    // PDF
     generatePdf() {
-        Object.values(this.cans).forEach(c => c.discardActiveObject().renderAll());
+        const btn = document.getElementById('finalGenBtn');
+        btn.disabled = true; btn.innerText = "Enregistrement...";
 
-        html2canvas(document.getElementById('capture'), {
-            scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff'
-        }).then(canvas => {
-            const { jsPDF } = window.jspdf;
+        html2canvas(document.getElementById('capture')).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            const w = canvas.width, h = canvas.height;
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, 'PNG', 10, 10, 190, 250);
+            
+            this.state.pdfUrl = pdf.output('bloburl');
+            document.getElementById('pdfPreviewImg').src = imgData;
+            document.getElementById('pdfModal').classList.add('visible');
 
-            const pdf = new jsPDF({
-                orientation: h > w ? 'portrait' : 'landscape',
-                unit: 'px',
-                format: [w/2, h/2]
+            // ENVOI SHEETS
+            const formData = {
+                client: document.getElementById('custName').value,
+                tel: document.getElementById('custTel').value,
+                modele: document.getElementById('refSelect').value + " (" + document.getElementById('sizeSelect').value + ")",
+                technique: "Total: " + document.getElementById('displayTotal').textContent,
+                delai: document.getElementById('deadlineInput').value
+            };
+            sendToGoogleSheets(formData).then(() => {
+                btn.disabled = false; btn.innerText = "GÉNÉRER PDF & ENREGISTRER";
             });
-            pdf.addImage(imgData, 'PNG', 0, 0, w/2, h/2);
-
-            const name = document.getElementById('custName').value || 'Client';
-            const ref = document.getElementById('refSelect').value;
-            const filename = 'OLDA_' + name.replace(/[^a-zA-Z0-9]/g, '_') + '_' + ref + '.pdf';
-
-            const blob = pdf.output('blob');
-            const url = URL.createObjectURL(blob);
-
-            this.state.savedPdf = { name: filename, url, blob, imgData };
-            this.updatePdfIndicator();
-            this.saveToStorage();
-
-            // Ouvrir le modal avec l'apercu
-            this.openPdfModal();
         });
     },
 
-    updatePdfIndicator() {
-        const indicator = document.getElementById('pdfIndicator');
-        if (this.state.savedPdf) {
-            indicator.classList.add('visible');
-            document.getElementById('pdfIndicatorName').textContent = this.state.savedPdf.name;
-        } else {
-            indicator.classList.remove('visible');
-        }
-    },
-
-    openPdfModal() {
-        if (!this.state.savedPdf) return;
-        const modal = document.getElementById('pdfModal');
-        const img = document.getElementById('pdfPreviewImg');
-        const title = document.getElementById('pdfModalTitle');
-
-        title.textContent = this.state.savedPdf.name;
-        img.src = this.state.savedPdf.imgData;
-        modal.classList.add('visible');
-    },
-
-    closePdfModal() {
-        document.getElementById('pdfModal').classList.remove('visible');
-    },
-
-    printPdf() {
-        if (!this.state.savedPdf) return;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-            <head><title>${this.state.savedPdf.name}</title></head>
-            <body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh;">
-                <img src="${this.state.savedPdf.imgData}" style="max-width:100%; height:auto;">
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.onload = () => {
-            printWindow.print();
-        };
-    },
-
-    downloadPdf() {
-        if (!this.state.savedPdf) return;
-        const a = document.createElement('a');
-        a.href = this.state.savedPdf.url;
-        a.download = this.state.savedPdf.name;
-        a.click();
-    }
+    printPdf() { window.open(this.state.pdfUrl, '_blank').print(); },
+    closePdfModal() { document.getElementById('pdfModal').classList.remove('visible'); },
+    updateTabName() { this.renderTabs(); }
 };
 
-// Sauvegarde automatique a chaque changement
 window.onload = () => App.init();
-window.addEventListener('beforeunload', () => App.saveToStorage());
-
-// Auto-save toutes les 5 secondes
-setInterval(() => {
-    if (App.state.tabs && Object.keys(App.state.tabs).length > 0) {
-        App.saveToStorage();
-    }
-}, 5000);
 </script>
-
 </body>
 </html>
