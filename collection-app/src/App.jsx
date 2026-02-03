@@ -4,6 +4,7 @@ import FicheClient from './components/FicheClient'
 import Dashboard from './components/Dashboard'
 import { db } from './firebase'
 import { collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from 'firebase/firestore'
+import { sendToGoogleSheets } from './utils/googleSheets'
 
 // Cle de stockage local
 const STORAGE_KEY = 'olda_commandes'
@@ -251,6 +252,16 @@ function App() {
             validated: true
           }
         }
+
+        // Envoyer vers Google Sheets
+        sendToGoogleSheets(validatedFiche)
+          .then(success => {
+            if (success) {
+              console.log('Commande envoyee vers Google Sheets avec succes')
+            } else {
+              console.warn('Echec de l\'envoi vers Google Sheets')
+            }
+          })
 
         // Ajouter a l'archive
         setArchive(prevArchive => {
