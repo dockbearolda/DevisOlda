@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVM7JAWntBUdJh9pOa1HCukMXPnI7DaIhZ82rNixrEMU8W0atsslB9MYXZsKSrmV0U/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuaRKqmP_V1FZkND0i4zPOMHyNHXthWI5SwPw-FTKlUV0PP6tNJfC0C_-nEt_8tVB2/exec"
 
 /**
  * Envoie les donnees d'une commande vers Google Sheets
@@ -19,38 +19,15 @@ export const sendToGoogleSheets = async (fiche) => {
 
     console.log('Envoi vers Google Sheets:', data)
 
-    // Methode 1: Utiliser un formulaire pour contourner CORS
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = GOOGLE_SCRIPT_URL
-    form.target = 'google-sheets-iframe'
-    form.style.display = 'none'
+    // Construire l'URL avec les parametres
+    const params = new URLSearchParams(data).toString()
+    const url = `${GOOGLE_SCRIPT_URL}?${params}`
 
-    // Ajouter les donnees comme champs caches
-    Object.entries(data).forEach(([key, value]) => {
-      const input = document.createElement('input')
-      input.type = 'hidden'
-      input.name = key
-      input.value = value
-      form.appendChild(input)
-    })
+    // Utiliser une image pour faire la requete GET (contourne CORS)
+    const img = new Image()
+    img.src = url
 
-    // Creer une iframe cachee pour recevoir la reponse
-    let iframe = document.getElementById('google-sheets-iframe')
-    if (!iframe) {
-      iframe = document.createElement('iframe')
-      iframe.id = 'google-sheets-iframe'
-      iframe.name = 'google-sheets-iframe'
-      iframe.style.display = 'none'
-      document.body.appendChild(iframe)
-    }
-
-    // Soumettre le formulaire
-    document.body.appendChild(form)
-    form.submit()
-    document.body.removeChild(form)
-
-    console.log('Donnees envoyees vers Google Sheets avec succes')
+    console.log('Donnees envoyees vers Google Sheets:', url)
     return true
 
   } catch (error) {
