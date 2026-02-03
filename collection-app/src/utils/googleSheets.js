@@ -14,7 +14,9 @@ export const sendToGoogleSheets = async (fiche) => {
       tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
       modele: getModelReference(fiche),
       technique: getTechniqueInfo(fiche),
-      delai: formatDeadline(fiche.deadline)
+      delai: formatDeadline(fiche.deadline),
+      logoFront: fiche.frontLogo ? 'Oui' : 'Non',
+      logoBack: fiche.backLogo ? 'Oui' : 'Non'
     }
 
     console.log('Envoi vers Google Sheets:', data)
