@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxcb1as7eYbvMF7rZpUTU39WxAiGZxGWHO3IUDwjjw06Ykskrn-zZ7xIHKPjXjT2Twd/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVM7JAWntBUdJh9pOa1HCukMXPnI7DaIhZ82rNixrEMU8W0atsslB9MYXZsKSrmV0U/exec"
 
 /**
  * Envoie les donnees d'une commande vers Google Sheets
