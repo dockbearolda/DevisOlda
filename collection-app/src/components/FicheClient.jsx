@@ -3,7 +3,7 @@ import ProductionStepper from './ProductionStepper'
 import TshirtEditor, { TshirtSvgFront, TshirtSvgBack, TSHIRT_COLORS, LOGO_COLORS } from './TshirtEditor'
 import Modal from './Modal'
 import { exportToPdf } from '../utils/pdfExport'
-import { captureAndUploadMockups } from '../utils/mockupUpload'
+// captureAndUploadMockups n'est plus necessaire, on capture le base64 directement
 
 // Options de collections (anciennement cibles/categories)
 const COLLECTION_OPTIONS = [
@@ -98,16 +98,24 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
     }
   }
 
-  // Capturer le mockup et valider
+  // Capturer le mockup base64 et valider
   const handleValidateWithMockup = async () => {
-    const { frontUrl } = await captureAndUploadMockups(editorRef, fiche.id)
-    onValidate(frontUrl || null)
+    let mockupBase64 = null
+    if (editorRef?.current?.captureMockup) {
+      const { front } = await editorRef.current.captureMockup()
+      mockupBase64 = front
+    }
+    onValidate(mockupBase64)
   }
 
   // Valider et generer PDF
   const handleValidateAndPdf = async () => {
-    const { frontUrl } = await captureAndUploadMockups(editorRef, fiche.id)
-    onValidate(frontUrl || null)
+    let mockupBase64 = null
+    if (editorRef?.current?.captureMockup) {
+      const { front } = await editorRef.current.captureMockup()
+      mockupBase64 = front
+    }
+    onValidate(mockupBase64)
     setTimeout(() => {
       generatePdf()
     }, 100)

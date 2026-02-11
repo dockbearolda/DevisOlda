@@ -5,7 +5,6 @@ import Dashboard from './components/Dashboard'
 import { db } from './firebase'
 import { collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { sendToGoogleSheets } from './utils/googleSheets'
-import { captureAndUploadMockups } from './utils/mockupUpload'
 
 // Cle de stockage local
 const STORAGE_KEY = 'olda_commandes'
@@ -240,8 +239,8 @@ function App() {
   }, [])
 
   // Valider une fiche (la figer) et l'archiver automatiquement
-  // mockupUrl optionnel : URL du mockup capturee depuis TshirtEditor
-  const handleValidateFiche = useCallback((ficheId, mockupUrl) => {
+  // mockupBase64 optionnel : image base64 du mockup capturee depuis TshirtEditor
+  const handleValidateFiche = useCallback((ficheId, mockupBase64) => {
     setFiches(prev => {
       const updatedFiches = prev.map(fiche => {
         if (fiche.id !== ficheId) return fiche
@@ -249,15 +248,14 @@ function App() {
           ...fiche,
           isValidated: true,
           validatedAt: new Date().toISOString(),
-          mockupUrl: mockupUrl || null,
           productionSteps: {
             ...fiche.productionSteps,
             validated: true
           }
         }
 
-        // Envoyer vers Google Sheets (avec mockup URL si disponible)
-        sendToGoogleSheets(validatedFiche, mockupUrl)
+        // Envoyer vers Google Sheets (avec mockup base64 si disponible)
+        sendToGoogleSheets(validatedFiche, mockupBase64)
           .then(success => {
             if (success) {
               console.log('Commande envoyee vers Google Sheets avec succes')
@@ -463,8 +461,8 @@ function App() {
                     // Les commandes terminees restent dans la vue production
                   }
                 }}
-                onValidate={(mockupUrl) => {
-                  handleValidateFiche(activeFiche.id, mockupUrl)
+                onValidate={(mockupBase64) => {
+                  handleValidateFiche(activeFiche.id, mockupBase64)
                   // Auto-transition vers Production apres validation
                   setTimeout(() => setCurrentView('production'), 400)
                 }}

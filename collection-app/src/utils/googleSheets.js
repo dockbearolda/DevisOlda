@@ -2,12 +2,13 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
 
 /**
- * Envoie les donnees d'une commande vers Google Sheets
+ * Envoie les donnees d'une commande vers Google Sheets via POST
+ * Le mockup base64 est envoye directement et sauvegarde sur Google Drive par le script
  * @param {Object} fiche - Les donnees de la fiche client
- * @param {string} [mockupUrl] - URL du mockup visuel (optionnel)
+ * @param {string} [mockupBase64] - Image base64 du mockup (optionnel)
  * @returns {Promise<boolean>} - true si succes, false sinon
  */
-export const sendToGoogleSheets = async (fiche, mockupUrl) => {
+export const sendToGoogleSheets = async (fiche, mockupBase64) => {
   try {
     // Calculer les prix
     const prixTshirt = fiche.tshirtPrice || 0
@@ -33,21 +34,24 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       prixTshirt: `${prixTshirt} EUR`,
       prixPerso: `${prixPerso} EUR`,
       total: `${totalTTC} EUR`,
-      paye: fiche.isPaid ? 'Oui' : 'Non',
-      mockup: mockupUrl || ''
+      paye: fiche.isPaid ? 'Oui' : 'Non'
     }
 
-    console.log('Envoi vers Google Sheets:', data)
+    // Ajouter le mockup base64 si disponible
+    if (mockupBase64) {
+      data.mockupBase64 = mockupBase64
+    }
 
-    // Construire l'URL avec les parametres
-    const params = new URLSearchParams(data).toString()
-    const url = `${GOOGLE_SCRIPT_URL}?${params}`
+    console.log('Envoi vers Google Sheets (POST):', { ...data, mockupBase64: mockupBase64 ? '[base64 present]' : 'aucun' })
 
-    // Utiliser une image pour faire la requete GET (contourne CORS)
-    const img = new Image()
-    img.src = url
+    // Envoyer via POST (supporte les donnees volumineuses comme le base64)
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    }).catch(err => console.warn('Erreur POST Google Sheets:', err.message))
 
-    console.log('Donnees envoyees vers Google Sheets:', url)
     return true
 
   } catch (error) {
