@@ -2,25 +2,6 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
 
 /**
- * Formate un numero de telephone en format local (supprime prefixe international)
- * Exemples: +33612345678 → 0612345678, +590690123456 → 0690123456
- * @param {string} phone - Le numero de telephone brut
- * @returns {string} - Le numero en format local commencant par 0
- */
-export const formatLocalPhone = (phone) => {
-  if (!phone) return ''
-  // Nettoyer tout sauf les chiffres et le +
-  let cleaned = phone.replace(/[^\d+]/g, '')
-  // Supprimer tout prefixe international (+33, +590, +596, +594, +1721, +1, +44, etc.)
-  cleaned = cleaned.replace(/^\+?\d{1,4}(?=\d{9,10}$)/, '')
-  // S'assurer que le numero commence par 0
-  if (!cleaned.startsWith('0')) {
-    cleaned = '0' + cleaned
-  }
-  return cleaned
-}
-
-/**
  * Envoie les donnees d'une commande vers Google Sheets
  * @param {Object} fiche - Les donnees de la fiche client
  * @param {string} [mockupUrl] - URL du mockup visuel (optionnel)
@@ -28,34 +9,32 @@ export const formatLocalPhone = (phone) => {
  */
 export const sendToGoogleSheets = async (fiche, mockupUrl) => {
   try {
-    // Construire le numero de telephone complet puis le convertir en local
-    const fullPhone = `+${fiche.phoneCountryCode || '590'}${(fiche.clientPhone || '').replace(/\D/g, '').replace(/^0/, '')}`
-    const localPhone = formatLocalPhone(fullPhone)
-
-    // Calculer le Total TTC
+    // Calculer les prix
     const prixTshirt = fiche.tshirtPrice || 0
     const prixPerso = fiche.personalizationPrice || 0
     const totalTTC = prixTshirt + prixPerso
 
-    // Preparer les donnees selon le format attendu par le script Apps Script
+    // Generer un ID commande court
+    const idCommande = (fiche.id || '').replace('fiche-', '').substring(0, 8).toUpperCase()
+
+    // Preparer les donnees selon les colonnes du Google Sheets (A-P)
     const data = {
+      idCommande: idCommande,
       client: fiche.clientName || '',
-      tel: localPhone,
+      tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
       collection: getCollectionName(fiche.target),
       reference: getModelReference(fiche),
       echeance: formatDeadline(fiche.deadline),
       taille: fiche.size || 'M',
-      couleurTshirt: getTshirtColorName(fiche.tshirtColor),
-      couleurLogo: getLogoColorName(fiche.logoColor),
+      couleurTshirt: getColorName(fiche.tshirtColor),
+      couleurLogo: getColorName(fiche.logoColor),
       logoAvant: fiche.frontLogo ? 'Oui' : 'Non',
       logoArriere: fiche.backLogo ? 'Oui' : 'Non',
-      prix: `${totalTTC} EUR`,
-      paye: fiche.isPaid ? 'Oui' : 'Non'
-    }
-
-    // Ajouter l'URL du mockup si disponible (pour formule =IMAGE dans le Sheets)
-    if (mockupUrl) {
-      data.mockup = mockupUrl
+      prixTshirt: `${prixTshirt} EUR`,
+      prixPerso: `${prixPerso} EUR`,
+      total: `${totalTTC} EUR`,
+      paye: fiche.isPaid ? 'Oui' : 'Non',
+      mockup: mockupUrl || ''
     }
 
     console.log('Envoi vers Google Sheets:', data)
@@ -78,6 +57,16 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
 }
 
 /**
+ * Formate le numero de telephone avec le code pays
+ */
+const formatPhoneNumber = (countryCode, phone) => {
+  if (!phone) return ''
+  const cleanPhone = phone.replace(/\D/g, '')
+  const phoneWithoutLeadingZero = cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone
+  return `+${countryCode || '590'}${phoneWithoutLeadingZero}`
+}
+
+/**
  * Obtient le nom de la collection
  */
 const getCollectionName = (target) => {
@@ -96,50 +85,27 @@ const getModelReference = (fiche) => {
 }
 
 /**
- * Obtient le nom lisible de la couleur T-shirt (mappage complet depuis TshirtEditor)
+ * Obtient le nom de la couleur
  */
-const getTshirtColorName = (hex) => {
+const getColorName = (hex) => {
   const colors = {
-    '#FFFFFF': 'Blanc Pure',
-    '#1A1A1A': 'Noir Deep',
-    '#FDFD96': 'Jaune Pastel',
-    '#FFD1DC': 'Rose Pastel',
-    '#B3E5FC': 'Bleu Ciel',
-    '#C1E1C1': 'Vert Menthe',
-    '#E6E6FA': 'Lavande',
-    '#FFDAB9': 'Peche',
-    '#F5F5DC': 'Beige',
-    '#B0E0E6': 'Bleu Poudre',
-    '#F08080': 'Corail Douce',
-    '#D3D3D3': 'Gris Clair',
-    '#FAF0E6': 'Lin',
-    '#FFF5EE': 'Coquillage',
-    '#F0FFFF': 'Azure'
-  }
-  return colors[hex] || hex || ''
-}
-
-/**
- * Obtient le nom lisible de la couleur Logo (mappage complet depuis TshirtEditor)
- */
-const getLogoColorName = (hex) => {
-  const colors = {
-    '#000000': 'Noir',
-    '#FFFFFF': 'Blanc',
-    '#FF3B30': 'Rouge Apple',
-    '#007AFF': 'Bleu Apple',
-    '#34C759': 'Vert Apple',
-    '#FFCC00': 'Or / Jaune',
-    '#AF52DE': 'Violet',
-    '#5856D6': 'Indigo',
-    '#FF9500': 'Orange',
-    '#A2845E': 'Bronze',
-    '#8E8E93': 'Gris',
-    '#C0C0C0': 'Argent',
-    '#FF2D55': 'Rose Flash',
-    '#5AC8FA': 'Bleu Cyan',
-    '#000080': 'Marine',
-    '#556B2F': 'Olive'
+    '#FFFFFF': 'Blanc', '#000000': 'Noir', '#1A1A1A': 'Noir',
+    '#D3D3D3': 'Gris', '#E5E5E5': 'Gris clair', '#9CA3AF': 'Gris moyen',
+    '#EF4444': 'Rouge', '#F59E0B': 'Orange', '#EAB308': 'Jaune',
+    '#22C55E': 'Vert', '#3B82F6': 'Bleu', '#8B5CF6': 'Violet',
+    '#EC4899': 'Rose', '#0EA5E9': 'Bleu ciel', '#14B8A6': 'Turquoise',
+    '#F97316': 'Orange vif', '#A855F7': 'Violet clair',
+    '#FDFD96': 'Jaune Pastel', '#FFD1DC': 'Rose Pastel',
+    '#B3E5FC': 'Bleu Ciel', '#C1E1C1': 'Vert Menthe',
+    '#E6E6FA': 'Lavande', '#FFDAB9': 'Peche', '#F5F5DC': 'Beige',
+    '#B0E0E6': 'Bleu Poudre', '#F08080': 'Corail Douce',
+    '#FAF0E6': 'Lin', '#FFF5EE': 'Coquillage', '#F0FFFF': 'Azure',
+    '#FF3B30': 'Rouge Apple', '#007AFF': 'Bleu Apple',
+    '#34C759': 'Vert Apple', '#FFCC00': 'Or / Jaune',
+    '#AF52DE': 'Violet', '#5856D6': 'Indigo', '#FF9500': 'Orange',
+    '#A2845E': 'Bronze', '#8E8E93': 'Gris', '#C0C0C0': 'Argent',
+    '#FF2D55': 'Rose Flash', '#5AC8FA': 'Bleu Cyan',
+    '#000080': 'Marine', '#556B2F': 'Olive'
   }
   return colors[hex] || hex || ''
 }
