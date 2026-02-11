@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard'
 import { db } from './firebase'
 import { collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { sendToGoogleSheets } from './utils/googleSheets'
+import { captureAndUploadMockups } from './utils/mockupUpload'
 
 // Cle de stockage local
 const STORAGE_KEY = 'olda_commandes'
@@ -124,7 +125,7 @@ function App() {
   const [fiches, setFiches] = useState(() => loadFromStorage())
   const [archive, setArchive] = useState(() => loadArchive())
   const [activeTabId, setActiveTabId] = useState(fiches[0]?.id || '')
-  const [currentView, setCurrentView] = useState('commande') // 'commande', 'preparation', 'production', 'terminee', 'dashboard'
+  const [currentView, setCurrentView] = useState('commande') // 'commande', 'production', 'dashboard'
   const [firebaseReady, setFirebaseReady] = useState(false)
   const skipRemoteSync = useRef(false)
 
@@ -239,7 +240,8 @@ function App() {
   }, [])
 
   // Valider une fiche (la figer) et l'archiver automatiquement
-  const handleValidateFiche = useCallback((ficheId) => {
+  // mockupUrl optionnel : URL du mockup capturee depuis TshirtEditor
+  const handleValidateFiche = useCallback((ficheId, mockupUrl) => {
     setFiches(prev => {
       const updatedFiches = prev.map(fiche => {
         if (fiche.id !== ficheId) return fiche
@@ -247,14 +249,15 @@ function App() {
           ...fiche,
           isValidated: true,
           validatedAt: new Date().toISOString(),
+          mockupUrl: mockupUrl || null,
           productionSteps: {
             ...fiche.productionSteps,
             validated: true
           }
         }
 
-        // Envoyer vers Google Sheets
-        sendToGoogleSheets(validatedFiche)
+        // Envoyer vers Google Sheets (avec mockup URL si disponible)
+        sendToGoogleSheets(validatedFiche, mockupUrl)
           .then(success => {
             if (success) {
               console.log('Commande envoyee vers Google Sheets avec succes')
@@ -300,9 +303,7 @@ function App() {
       }
       // Router vers la bonne vue selon l'etat de la fiche
       const f = archivedFiche
-      if (f.isValidated && f.productionSteps?.completed) {
-        setCurrentView('terminee')
-      } else if (f.isValidated) {
+      if (f.isValidated) {
         setCurrentView('production')
       } else {
         setCurrentView('commande')
@@ -323,8 +324,7 @@ function App() {
 
   // Compteurs pour le flux logistique
   const commandesNonValidees = fiches.filter(f => !f.isValidated).length
-  const enProduction = fiches.filter(f => f.isValidated && !f.productionSteps?.completed).length
-  const terminees = fiches.filter(f => f.isValidated && f.productionSteps?.completed).length
+  const enProduction = fiches.filter(f => f.isValidated).length
 
   // Filtrer les fiches selon la vue actuelle
   const getFichesForView = () => {
@@ -332,9 +332,7 @@ function App() {
       case 'commande':
         return fiches.filter(f => !f.isValidated)
       case 'production':
-        return fiches.filter(f => f.isValidated && !f.productionSteps?.completed)
-      case 'terminee':
-        return fiches.filter(f => f.isValidated && f.productionSteps?.completed)
+        return fiches.filter(f => f.isValidated)
       default:
         return fiches
     }
@@ -353,7 +351,6 @@ function App() {
               {[
                 { key: 'commande', label: 'Commande', count: commandesNonValidees, activeClass: 'bg-stone-900 text-white shadow-md' },
                 { key: 'production', label: 'Prod', count: enProduction, activeClass: 'bg-blue-500 text-white shadow-md' },
-                { key: 'terminee', label: 'Terminé', count: terminees, activeClass: 'bg-emerald-500 text-white shadow-md' },
               ].map(({ key, label, count, activeClass }) => (
                 <button
                   key={key}
@@ -410,8 +407,7 @@ function App() {
             onAddTab={currentView === 'commande' ? handleAddTab : null}
             viewLabel={
               currentView === 'commande' ? 'Nouvelles commandes' :
-              currentView === 'production' ? 'En production' :
-              'Commandes terminees'
+              'En production'
             }
           />
 
@@ -431,21 +427,14 @@ function App() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   )}
-                  {currentView === 'terminee' && (
-                    <svg className="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  )}
                 </div>
                 <h3 className="text-xl font-serif font-semibold text-stone-700 mb-2">
                   {currentView === 'commande' && 'Aucune nouvelle commande'}
                   {currentView === 'production' && 'Aucune commande en production'}
-                  {currentView === 'terminee' && 'Aucune commande terminee'}
                 </h3>
                 <p className="text-stone-500 mb-6">
                   {currentView === 'commande' && 'Cliquez sur "Nouvelle commande" pour creer une fiche'}
                   {currentView === 'production' && 'Les commandes validees passeront ici'}
-                  {currentView === 'terminee' && 'Les commandes terminees seront listees ici'}
                 </p>
                 {currentView === 'commande' && (
                   <button
@@ -469,18 +458,13 @@ function App() {
                   handleUpdateFiche(activeFiche.id, updates)
                   syncArchive({ ...activeFiche, ...updates })
 
-                  // Auto-transition vers la vue suivante apres mise a jour des etapes
+                  // Sync production steps (plus de redirection vers terminee)
                   if (updates.productionSteps) {
-                    const newSteps = { ...activeFiche.productionSteps, ...updates.productionSteps }
-
-                    // Production terminee → Terminé
-                    if (newSteps.completed && currentView === 'production') {
-                      setTimeout(() => setCurrentView('terminee'), 400)
-                    }
+                    // Les commandes terminees restent dans la vue production
                   }
                 }}
-                onValidate={() => {
-                  handleValidateFiche(activeFiche.id)
+                onValidate={(mockupUrl) => {
+                  handleValidateFiche(activeFiche.id, mockupUrl)
                   // Auto-transition vers Production apres validation
                   setTimeout(() => setCurrentView('production'), 400)
                 }}

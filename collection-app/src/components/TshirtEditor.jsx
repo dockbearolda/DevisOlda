@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react'
+import html2canvas from 'html2canvas'
 
 // Composant Logo Draggable et Redimensionnable
 function DraggableLogo({
@@ -442,13 +443,36 @@ const TshirtEditor = forwardRef(function TshirtEditor({
     }
   }
 
+  // Capturer le mockup d'un container en image base64
+  const captureMockupSide = useCallback(async (containerRef) => {
+    if (!containerRef?.current) return null
+    try {
+      const canvas = await html2canvas(containerRef.current, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      })
+      return canvas.toDataURL('image/png')
+    } catch (e) {
+      console.error('Erreur capture mockup:', e)
+      return null
+    }
+  }, [])
+
   // Exposer methodes via ref
   useImperativeHandle(ref, () => ({
     clearSelection: () => {},
     getCanvasData: () => ({
       front: null,
       back: null
-    })
+    }),
+    captureMockup: async () => {
+      const front = await captureMockupSide(containerFrontRef)
+      const back = await captureMockupSide(containerBackRef)
+      return { front, back }
+    }
   }))
 
   return (

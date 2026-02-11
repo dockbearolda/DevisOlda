@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
@@ -11,14 +12,18 @@ const firebaseConfig = {
 }
 
 let db = null
+let storage = null
 
 try {
   if (firebaseConfig.projectId) {
     const app = initializeApp(firebaseConfig)
     db = getFirestore(app)
+    if (firebaseConfig.storageBucket) {
+      storage = getStorage(app)
+    }
   }
 } catch (e) {
   console.warn('Firebase non configure, mode localStorage uniquement:', e.message)
 }
 
-export { db }
+export { db, storage }
