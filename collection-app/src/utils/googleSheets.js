@@ -1,6 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-// L'utilisateur doit deployer son script et mettre l'URL ici
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTHi761jWpYHrLYeEtUnbQMqg982eb8Y6p9EnrprARTYW-OuRM8zQQ30fCwZwuW5Wm/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
 
 /**
  * Envoie les donnees d'une commande vers Google Sheets
@@ -13,24 +12,29 @@ export const sendToGoogleSheets = async (fiche) => {
     const data = {
       client: fiche.clientName || '',
       tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
-      modele: getModelReference(fiche),
-      technique: getTechniqueInfo(fiche),
-      delai: formatDeadline(fiche.deadline)
+      collection: getCollectionName(fiche.target),
+      reference: getModelReference(fiche),
+      echeance: formatDeadline(fiche.deadline),
+      taille: fiche.size || 'M',
+      couleurTshirt: getColorName(fiche.tshirtColor),
+      couleurLogo: getColorName(fiche.logoColor),
+      logoAvant: fiche.frontLogo ? 'Oui' : 'Non',
+      logoArriere: fiche.backLogo ? 'Oui' : 'Non',
+      prix: (fiche.tshirtPrice || 25) + (fiche.personalizationPrice || 0),
+      paye: fiche.isPaid ? 'Oui' : 'Non'
     }
 
-    // Envoyer les donnees via POST
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Google Apps Script necessite no-cors
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
+    console.log('Envoi vers Google Sheets:', data)
 
-    // Avec mode no-cors, on ne peut pas lire la reponse
-    // On considere que c'est un succes si aucune erreur n'est levee
-    console.log('Donnees envoyees vers Google Sheets:', data)
+    // Construire l'URL avec les parametres
+    const params = new URLSearchParams(data).toString()
+    const url = `${GOOGLE_SCRIPT_URL}?${params}`
+
+    // Utiliser une image pour faire la requete GET (contourne CORS)
+    const img = new Image()
+    img.src = url
+
+    console.log('Donnees envoyees vers Google Sheets:', url)
     return true
 
   } catch (error) {
@@ -40,14 +44,31 @@ export const sendToGoogleSheets = async (fiche) => {
 }
 
 /**
- * Formate le numero de telephone avec le code pays
+ * Formate le numero de telephone en local (supprime l'indicatif international)
+ * Conserve uniquement le numero commencant par 0
  */
 const formatPhoneNumber = (countryCode, phone) => {
   if (!phone) return ''
-  const cleanPhone = phone.replace(/\D/g, '')
-  // Si le numero commence par 0, le retirer pour ajouter le code pays
-  const phoneWithoutLeadingZero = cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone
-  return `+${countryCode || '590'}${phoneWithoutLeadingZero}`
+  // Nettoyer le numero (garder uniquement les chiffres)
+  let cleanPhone = phone.replace(/\D/g, '')
+  // Supprimer l'indicatif international s'il est present au debut
+  const code = String(countryCode || '')
+  if (code && cleanPhone.startsWith(code)) {
+    cleanPhone = cleanPhone.slice(code.length)
+  }
+  // S'assurer que le numero commence par 0
+  if (!cleanPhone.startsWith('0')) {
+    cleanPhone = '0' + cleanPhone
+  }
+  return cleanPhone
+}
+
+/**
+ * Obtient le nom de la collection
+ */
+const getCollectionName = (target) => {
+  const collections = { H: 'Homme', F: 'Femme', E: 'Enfant', B: 'Bebe' }
+  return collections[target] || ''
 }
 
 /**
@@ -57,54 +78,39 @@ const getModelReference = (fiche) => {
   if (fiche.reference === 'MANUEL') {
     return fiche.manualReference || 'Manuel'
   }
-  return fiche.reference || 'Non specifie'
+  return fiche.reference || ''
 }
 
 /**
- * Obtient les informations de technique/personnalisation
+ * Obtient le nom de la couleur (mapping complet TSHIRT_COLORS + LOGO_COLORS)
  */
-const getTechniqueInfo = (fiche) => {
-  const parts = []
-
-  // Collection (Homme/Femme/Enfant/Bebe)
-  if (fiche.target) {
-    const collections = { H: 'Homme', F: 'Femme', E: 'Enfant', B: 'Bebe' }
-    parts.push(collections[fiche.target] || fiche.target)
+const getColorName = (hex) => {
+  const colors = {
+    // Couleurs T-shirt
+    '#FFFFFF': 'Blanc Pure', '#1A1A1A': 'Noir Deep',
+    '#FDFD96': 'Jaune Pastel', '#FFD1DC': 'Rose Pastel',
+    '#B3E5FC': 'Bleu Ciel', '#C1E1C1': 'Vert Menthe',
+    '#E6E6FA': 'Lavande', '#FFDAB9': 'Peche',
+    '#F5F5DC': 'Beige', '#B0E0E6': 'Bleu Poudre',
+    '#F08080': 'Corail Douce', '#D3D3D3': 'Gris Clair',
+    '#FAF0E6': 'Lin', '#FFF5EE': 'Coquillage', '#F0FFFF': 'Azure',
+    // Couleurs Logo
+    '#000000': 'Noir', '#FF3B30': 'Rouge Apple',
+    '#007AFF': 'Bleu Apple', '#34C759': 'Vert Apple',
+    '#FFCC00': 'Or / Jaune', '#AF52DE': 'Violet',
+    '#5856D6': 'Indigo', '#FF9500': 'Orange',
+    '#A2845E': 'Bronze', '#8E8E93': 'Gris',
+    '#C0C0C0': 'Argent', '#FF2D55': 'Rose Flash',
+    '#5AC8FA': 'Bleu Cyan', '#000080': 'Marine', '#556B2F': 'Olive'
   }
-
-  // Taille
-  if (fiche.size) {
-    parts.push(`Taille ${fiche.size}`)
-  }
-
-  // Couleurs
-  const tshirtColors = {
-    '#FFFFFF': 'Blanc', '#000000': 'Noir', '#1A1A1A': 'Noir',
-    '#D3D3D3': 'Gris', '#E5E5E5': 'Gris clair', '#9CA3AF': 'Gris moyen',
-    '#EF4444': 'Rouge', '#F59E0B': 'Orange', '#EAB308': 'Jaune',
-    '#22C55E': 'Vert', '#3B82F6': 'Bleu', '#8B5CF6': 'Violet',
-    '#EC4899': 'Rose', '#0EA5E9': 'Bleu ciel', '#14B8A6': 'Turquoise',
-    '#F97316': 'Orange vif', '#A855F7': 'Violet clair'
-  }
-
-  if (fiche.tshirtColor) {
-    const colorName = tshirtColors[fiche.tshirtColor] || fiche.tshirtColor
-    parts.push(`T-shirt ${colorName}`)
-  }
-
-  if (fiche.logoColor && fiche.logoColor !== fiche.tshirtColor) {
-    const logoColorName = tshirtColors[fiche.logoColor] || fiche.logoColor
-    parts.push(`Logo ${logoColorName}`)
-  }
-
-  return parts.join(' | ') || 'Standard'
+  return colors[hex] || hex || ''
 }
 
 /**
  * Formate la date d'echeance
  */
 const formatDeadline = (deadline) => {
-  if (!deadline) return 'Non defini'
+  if (!deadline) return ''
 
   try {
     const date = new Date(deadline)
