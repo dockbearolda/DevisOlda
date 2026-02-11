@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEVRde7Is4qu61-L3wA-KdPjlRiIIDVds969y-mcqxIvCvnibWVMCgC8heDjgpK8Hw/exec"
 
 /**
  * Formate un numero de telephone en format local (supprime prefixe international)
@@ -56,20 +56,38 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       prixPerso: `${prixPerso} EUR`,
       total: `${totalTTC} EUR`,
       paye: fiche.isPaid ? 'Oui' : 'Non',
-      design: mockupUrl && !mockupUrl.startsWith('data:') ? mockupUrl : ''
+      design: mockupUrl || ''
     }
 
     console.log('Envoi vers Google Sheets:', data)
 
-    // Construire l'URL avec les parametres
-    const params = new URLSearchParams(data).toString()
-    const url = `${GOOGLE_SCRIPT_URL}?${params}`
+    // Envoyer via POST (formulaire cache + iframe) pour supporter les images base64
+    const iframe = document.createElement('iframe')
+    iframe.name = 'gsheets-' + Date.now()
+    iframe.style.display = 'none'
+    document.body.appendChild(iframe)
 
-    // Utiliser une image pour faire la requete GET (contourne CORS)
-    const img = new Image()
-    img.src = url
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = GOOGLE_SCRIPT_URL
+    form.target = iframe.name
 
-    console.log('Donnees envoyees vers Google Sheets:', url)
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = 'data'
+    input.value = JSON.stringify(data)
+    form.appendChild(input)
+
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
+
+    // Nettoyer l'iframe apres 30s
+    setTimeout(() => {
+      if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
+    }, 30000)
+
+    console.log('Donnees envoyees vers Google Sheets via POST')
     return true
 
   } catch (error) {
