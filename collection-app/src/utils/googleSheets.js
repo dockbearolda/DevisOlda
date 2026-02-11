@@ -56,7 +56,7 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       prixPerso: `${prixPerso} EUR`,
       total: `${totalTTC} EUR`,
       paye: fiche.isPaid ? 'Oui' : 'Non',
-      design: mockupUrl || ''
+      design: mockupUrl && !mockupUrl.startsWith('data:') ? mockupUrl : ''
     }
 
     console.log('Envoi vers Google Sheets:', data)
