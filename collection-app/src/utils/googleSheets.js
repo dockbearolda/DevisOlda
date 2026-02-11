@@ -40,7 +40,7 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
     // Preparer les donnees selon le format attendu par le script Apps Script
     // Colonnes: A=date(auto) B=client C=tel D=collection E=reference F=echeance
     //           G=taille H=couleurTshirt I=couleurLogo J=logoAvant K=logoArriere
-    //           L=prixTshirt M=prixPerso N=total O=paye P=design
+    //           L=prixTshirt M=prixPerso N=quantite O=total P=paye Q=design
     const data = {
       client: fiche.clientName || '',
       tel: localPhone,
@@ -54,6 +54,7 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       logoArriere: fiche.backLogo ? 'Oui' : 'Non',
       prixTshirt: `${prixTshirt} EUR`,
       prixPerso: `${prixPerso} EUR`,
+      quantite: fiche.quantity || 1,
       total: `${totalTTC} EUR`,
       paye: fiche.isPaid ? 'Oui' : 'Non',
       design: mockupUrl || ''
