@@ -59,9 +59,9 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       design: mockupUrl || ''
     }
 
-    console.log('Envoi vers Google Sheets:', data)
+    console.log('Envoi vers Google Sheets:', { ...data, design: data.design ? '(image base64)' : '' })
 
-    // Envoyer via POST (formulaire cache + iframe) pour supporter les images base64
+    // Envoyer via POST avec champs individuels (formulaire cache + iframe)
     const iframe = document.createElement('iframe')
     iframe.name = 'gsheets-' + Date.now()
     iframe.style.display = 'none'
@@ -72,18 +72,21 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
     form.action = GOOGLE_SCRIPT_URL
     form.target = iframe.name
 
-    const input = document.createElement('input')
-    input.type = 'hidden'
-    input.name = 'data'
-    input.value = JSON.stringify(data)
-    form.appendChild(input)
+    // Ajouter chaque champ comme input hidden individuel
+    for (const [key, value] of Object.entries(data)) {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = key
+      input.value = value
+      form.appendChild(input)
+    }
 
     document.body.appendChild(form)
     form.submit()
-    document.body.removeChild(form)
 
-    // Nettoyer l'iframe apres 30s
+    // Nettoyer form + iframe apres 30s
     setTimeout(() => {
+      if (form.parentNode) form.parentNode.removeChild(form)
       if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
     }, 30000)
 

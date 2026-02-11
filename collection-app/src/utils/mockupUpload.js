@@ -42,7 +42,11 @@ export async function captureAndUploadMockups(editorRef, ficheId) {
       back ? uploadMockup(back, ficheId, 'back') : null
     ])
 
-    return { frontUrl, backUrl }
+    // Si Firebase echoue (pas configure), retourner le base64 en fallback
+    return {
+      frontUrl: frontUrl || front || null,
+      backUrl: backUrl || back || null
+    }
   } catch (e) {
     console.warn('Erreur capture/upload mockups:', e.message)
     return { frontUrl: null, backUrl: null }
