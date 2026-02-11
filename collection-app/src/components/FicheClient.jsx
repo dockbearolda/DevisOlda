@@ -126,301 +126,6 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
     : (fiche.reference || '—')
 
   // ============================================================
-  // VUE TERMINEE (FINI) — Objet Editorial, miroir du PDF
-  // ============================================================
-  if (currentView === 'terminee') {
-    const tshirtColorLabel = getColorLabel(fiche.tshirtColor || '#FFFFFF', TSHIRT_COLORS)
-    const logoColorLabel = getColorLabel(fiche.logoColor || '#000000', LOGO_COLORS)
-
-    return (
-      <div className="view-slide-enter">
-        <div ref={printRef} className="max-w-3xl mx-auto">
-
-          {/* Fiche Finale — Design Editorial */}
-          <div className="bg-white overflow-hidden" style={{ borderRadius: '0' }}>
-
-            {/* Bande verte superieure — Signature de completion */}
-            <div className="h-1" style={{ backgroundColor: '#00FF66' }} />
-
-            {/* En-tete Editorial */}
-            <div className="px-10 sm:px-16 py-12 text-center border-b border-stone-100">
-              {/* Badge Termine */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6"
-                   style={{ backgroundColor: '#00FF66' }}>
-                <svg className="w-4 h-4 text-stone-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-stone-900 text-[10px] font-bold uppercase tracking-[0.25em]">
-                  Commande Terminée
-                </span>
-              </div>
-
-              {/* Nom Client — Typographie editoriale */}
-              <h1 className="font-serif text-4xl sm:text-5xl font-bold text-stone-900 tracking-tight mb-4">
-                {fiche.clientName || 'Client'}
-              </h1>
-
-              {/* Meta-informations */}
-              <div className="flex items-center justify-center gap-4 text-sm text-stone-500">
-                {fiche.target && (
-                  <span className="font-medium">{getCollectionLabel(fiche.target)}</span>
-                )}
-                {displayReference !== '—' && (
-                  <>
-                    <span className="w-1 h-1 rounded-full bg-stone-300" />
-                    <span className="font-medium">{displayReference}</span>
-                  </>
-                )}
-                {fiche.size && (
-                  <>
-                    <span className="w-1 h-1 rounded-full bg-stone-300" />
-                    <span className="font-medium">Taille {fiche.size}</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Visuels — Disposition verticale */}
-            <div className="px-10 sm:px-16 py-12">
-              <div className="flex flex-col items-center gap-10">
-                {/* Logo Avant */}
-                <div className="flex flex-col items-center">
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Avant</p>
-                  <div className="relative w-[200px] h-[240px] bg-stone-50 overflow-hidden">
-                    <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
-                    {fiche.frontLogo && (
-                      <div
-                        className="absolute z-10 flex items-center justify-center"
-                        style={fiche.frontLogoPosition ? {
-                          left: `${fiche.frontLogoPosition.position.x * (200/300)}px`,
-                          top: `${fiche.frontLogoPosition.position.y * (240/350)}px`,
-                          width: `${fiche.frontLogoPosition.size.width * (200/300)}px`,
-                          height: `${fiche.frontLogoPosition.size.height * (240/350)}px`
-                        } : {
-                          left: '50%',
-                          top: '45%',
-                          transform: 'translate(-50%, -50%)',
-                          width: `${Math.min(fiche.frontLogoSize || 100, 120)}px`,
-                          height: `${Math.min(fiche.frontLogoSize || 100, 120)}px`
-                        }}
-                      >
-                        {fiche.frontLogo.startsWith('data:') ? (
-                          <img
-                            src={fiche.frontLogo}
-                            alt="Logo avant"
-                            className="max-w-full max-h-full object-contain"
-                          />
-                        ) : (
-                          <span
-                            className="font-black text-center leading-none"
-                            style={{
-                              color: fiche.logoColor || '#000000',
-                              fontSize: fiche.frontLogoPosition
-                                ? `${Math.min(fiche.frontLogoPosition.size.width * (200/300) * 0.35, 32)}px`
-                                : `${Math.min((fiche.frontLogoSize || 100) * 0.22, 26)}px`
-                            }}
-                          >
-                            {fiche.frontLogo}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Séparateur */}
-                <div className="w-16 h-px bg-stone-200" />
-
-                {/* Logo Arriere */}
-                <div className="flex flex-col items-center">
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-[0.2em] mb-4">Arrière</p>
-                  <div className="relative w-[200px] h-[240px] bg-stone-50 overflow-hidden">
-                    <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
-                    {fiche.backLogo && (
-                      <div
-                        className="absolute z-10 flex items-center justify-center"
-                        style={fiche.backLogoPosition ? {
-                          left: `${fiche.backLogoPosition.position.x * (200/300)}px`,
-                          top: `${fiche.backLogoPosition.position.y * (240/350)}px`,
-                          width: `${fiche.backLogoPosition.size.width * (200/300)}px`,
-                          height: `${fiche.backLogoPosition.size.height * (240/350)}px`
-                        } : {
-                          left: '50%',
-                          top: '45%',
-                          transform: 'translate(-50%, -50%)',
-                          width: `${Math.min(fiche.backLogoSize || 100, 140)}px`,
-                          height: `${Math.min(fiche.backLogoSize || 100, 140)}px`
-                        }}
-                      >
-                        {fiche.backLogo.startsWith('data:') ? (
-                          <img
-                            src={fiche.backLogo}
-                            alt="Logo arriere"
-                            className="max-w-full max-h-full object-contain"
-                          />
-                        ) : (
-                          <span
-                            className="font-black text-center leading-none"
-                            style={{
-                              color: fiche.logoColor || '#000000',
-                              fontSize: fiche.backLogoPosition
-                                ? `${Math.min(fiche.backLogoPosition.size.width * (200/300) * 0.35, 36)}px`
-                                : `${Math.min((fiche.backLogoSize || 100) * 0.28, 30)}px`
-                            }}
-                          >
-                            {fiche.backLogo}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Specifications — Style tableau editorial */}
-            <div className="border-t border-stone-100 px-10 sm:px-16 py-10">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-                {/* Couleur T-Shirt */}
-                <div className="text-center">
-                  <div
-                    className="w-12 h-12 rounded-full mx-auto mb-3 ring-1 ring-stone-200"
-                    style={{ backgroundColor: fiche.tshirtColor || '#FFFFFF' }}
-                  />
-                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">T-Shirt</p>
-                  <p className="text-xs font-medium text-stone-700">{tshirtColorLabel}</p>
-                </div>
-
-                {/* Couleur Logo */}
-                <div className="text-center">
-                  <div
-                    className="w-12 h-12 rounded-full mx-auto mb-3 ring-1 ring-stone-200"
-                    style={{ backgroundColor: fiche.logoColor || '#000000' }}
-                  />
-                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Logo</p>
-                  <p className="text-xs font-medium text-stone-700">{logoColorLabel}</p>
-                </div>
-
-                {/* Prix Total */}
-                <div className="text-center">
-                  <div className="w-12 h-12 rounded-full mx-auto mb-3 bg-stone-900 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">{total}</span>
-                  </div>
-                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Total</p>
-                  <p className="text-xs font-medium text-stone-700">{total} EUR</p>
-                </div>
-
-                {/* Statut Paiement */}
-                <div className="text-center">
-                  <div className={`w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center ${
-                    fiche.isPaid ? 'bg-green-500' : 'bg-red-500'
-                  }`}>
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {fiche.isPaid ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
-                      )}
-                    </svg>
-                  </div>
-                  <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-[0.15em] mb-1">Paiement</p>
-                  <p className="text-xs font-medium text-stone-700">{fiche.isPaid ? 'Réglé' : 'En attente'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Pied de page — Dates */}
-            <div className="border-t border-stone-100 px-10 sm:px-16 py-6 flex items-center justify-between text-stone-400">
-              <div>
-                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Créée le</p>
-                <p className="text-xs font-medium text-stone-600">
-                  {fiche.createdAt ? formatDateShort(fiche.createdAt) : '—'}
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Échéance</p>
-                <p className="text-xs font-medium text-stone-600">
-                  {fiche.deadline ? formatDateShort(fiche.deadline) : '—'}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] mb-0.5">Validée le</p>
-                <p className="text-xs font-medium text-stone-600">
-                  {fiche.validatedAt ? formatDateShort(fiche.validatedAt) : '—'}
-                </p>
-              </div>
-            </div>
-
-            {/* Actions — No Print */}
-            <div className="border-t border-stone-100 px-10 sm:px-16 py-8 no-print">
-              {/* Bouton WhatsApp */}
-              {fiche.clientPhone && (
-                <button
-                  onClick={() => {
-                    const phone = fiche.clientPhone.replace(/\D/g, '')
-                    const countryCode = fiche.phoneCountryCode || '33'
-                    const message = encodeURIComponent(
-                      `Bonjour\nBonne nouvelle, votre commande est terminée ! ✅\nElle vous attend à l'atelier OLDA.\n\nÀ bientôt 👋`
-                    )
-                    window.open(`https://wa.me/${countryCode}${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
-                  }}
-                  className="w-full py-4 font-semibold text-xs uppercase tracking-[0.25em]
-                             hover:opacity-90 transition-all duration-300
-                             shadow-lg hover:shadow-xl hover:-translate-y-0.5
-                             flex items-center justify-center gap-3"
-                  style={{
-                    backgroundColor: '#00FF66',
-                    color: '#0a0a0a',
-                    borderRadius: '0'
-                  }}
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                  </svg>
-                  NOTIFIER LE CLIENT
-                </button>
-              )}
-
-              {/* PDF et Archiver */}
-              <div className="flex items-center gap-4 mt-4">
-                <button
-                  onClick={generatePdf}
-                  className="flex-1 py-3 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                             hover:text-stone-900 transition-all duration-200
-                             flex items-center justify-center gap-2 cursor-pointer
-                             ring-1 ring-stone-200 hover:ring-stone-400"
-                  style={{ borderRadius: '0', background: 'transparent' }}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  PDF
-                </button>
-
-                <button
-                  onClick={onArchive}
-                  className="flex-1 py-3 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                             hover:text-stone-900 transition-all duration-200
-                             flex items-center justify-center gap-2 cursor-pointer
-                             ring-1 ring-stone-200 hover:ring-stone-400"
-                  style={{ borderRadius: '0', background: 'transparent' }}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                          d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                  </svg>
-                  ARCHIVER
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // ============================================================
   // VUE PRODUCTION — Fiche Atelier Studio
   // ============================================================
   if (currentView === 'production') {
@@ -650,9 +355,9 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
             </div>
 
             {/* Actions — No Print */}
-            <div className="border-t border-stone-100 px-8 sm:px-12 py-8 no-print">
-              <div className="flex items-center gap-4">
-                {/* Terminer la production */}
+            <div className="border-t border-stone-100 px-8 sm:px-12 py-8 no-print space-y-4">
+              {/* Terminer la production */}
+              {!fiche.productionSteps?.completed && (
                 <button
                   onClick={() => {
                     onUpdate({
@@ -662,30 +367,58 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                       }
                     })
                   }}
-                  className="flex-1 py-4 bg-stone-900 text-white font-semibold text-xs uppercase tracking-[0.25em]
+                  className="w-full py-4 bg-stone-900 text-white font-semibold text-xs uppercase tracking-[0.25em]
                              hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl
                              hover:-translate-y-0.5"
                   style={{ borderRadius: '0' }}
                 >
                   TERMINER LA PRODUCTION
                 </button>
+              )}
 
-                {/* PDF */}
+              {/* Notifier le client (WhatsApp) */}
+              {fiche.clientPhone && (
                 <button
-                  onClick={generatePdf}
-                  className="py-4 px-6 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
-                             hover:text-stone-900 transition-all duration-200
-                             flex items-center justify-center gap-2 cursor-pointer
-                             ring-1 ring-stone-200 hover:ring-stone-400"
-                  style={{ borderRadius: '0', background: 'transparent' }}
+                  onClick={() => {
+                    const phone = fiche.clientPhone.replace(/\D/g, '')
+                    const countryCode = fiche.phoneCountryCode || '33'
+                    const message = encodeURIComponent(
+                      `Bonjour\nBonne nouvelle, votre commande est terminée ! ✅\nElle vous attend à l'atelier OLDA.\n\nÀ bientôt 👋`
+                    )
+                    window.open(`https://wa.me/${countryCode}${phone.startsWith('0') ? phone.slice(1) : phone}?text=${message}`, '_blank')
+                  }}
+                  className="w-full py-4 font-semibold text-xs uppercase tracking-[0.25em]
+                             hover:opacity-90 transition-all duration-300
+                             shadow-lg hover:shadow-xl hover:-translate-y-0.5
+                             flex items-center justify-center gap-3"
+                  style={{
+                    backgroundColor: '#00FF66',
+                    color: '#0a0a0a',
+                    borderRadius: '0'
+                  }}
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
-                  PDF
+                  NOTIFIER LE CLIENT
                 </button>
-              </div>
+              )}
+
+              {/* Enregistrer en PDF */}
+              <button
+                onClick={generatePdf}
+                className="w-full py-4 text-stone-500 font-medium text-xs uppercase tracking-[0.15em]
+                           hover:text-stone-900 transition-all duration-200
+                           flex items-center justify-center gap-2 cursor-pointer
+                           ring-1 ring-stone-200 hover:ring-stone-400"
+                style={{ borderRadius: '0', background: 'transparent' }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                ENREGISTRER EN PDF
+              </button>
             </div>
           </div>
         </div>

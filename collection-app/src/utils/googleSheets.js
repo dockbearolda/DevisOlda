@@ -20,10 +20,8 @@ export const sendToGoogleSheets = async (fiche) => {
       couleurLogo: getColorName(fiche.logoColor),
       logoAvant: fiche.frontLogo ? 'Oui' : 'Non',
       logoArriere: fiche.backLogo ? 'Oui' : 'Non',
-      prixTshirt: fiche.tshirtPrice || 25,
-      prixPerso: fiche.personalizationPrice || 0,
-      paye: fiche.isPaid ? 'Oui' : '',
-      nonPaye: fiche.isPaid ? '' : 'Oui'
+      prix: (fiche.tshirtPrice || 25) + (fiche.personalizationPrice || 0),
+      paye: fiche.isPaid ? 'Oui' : 'Non'
     }
 
     console.log('Envoi vers Google Sheets:', data)
@@ -46,13 +44,23 @@ export const sendToGoogleSheets = async (fiche) => {
 }
 
 /**
- * Formate le numero de telephone avec le code pays
+ * Formate le numero de telephone en local (supprime l'indicatif international)
+ * Conserve uniquement le numero commencant par 0
  */
 const formatPhoneNumber = (countryCode, phone) => {
   if (!phone) return ''
-  const cleanPhone = phone.replace(/\D/g, '')
-  const phoneWithoutLeadingZero = cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone
-  return `+${countryCode || '590'}${phoneWithoutLeadingZero}`
+  // Nettoyer le numero (garder uniquement les chiffres)
+  let cleanPhone = phone.replace(/\D/g, '')
+  // Supprimer l'indicatif international s'il est present au debut
+  const code = String(countryCode || '')
+  if (code && cleanPhone.startsWith(code)) {
+    cleanPhone = cleanPhone.slice(code.length)
+  }
+  // S'assurer que le numero commence par 0
+  if (!cleanPhone.startsWith('0')) {
+    cleanPhone = '0' + cleanPhone
+  }
+  return cleanPhone
 }
 
 /**
@@ -74,16 +82,26 @@ const getModelReference = (fiche) => {
 }
 
 /**
- * Obtient le nom de la couleur
+ * Obtient le nom de la couleur (mapping complet TSHIRT_COLORS + LOGO_COLORS)
  */
 const getColorName = (hex) => {
   const colors = {
-    '#FFFFFF': 'Blanc', '#000000': 'Noir', '#1A1A1A': 'Noir',
-    '#D3D3D3': 'Gris', '#E5E5E5': 'Gris clair', '#9CA3AF': 'Gris moyen',
-    '#EF4444': 'Rouge', '#F59E0B': 'Orange', '#EAB308': 'Jaune',
-    '#22C55E': 'Vert', '#3B82F6': 'Bleu', '#8B5CF6': 'Violet',
-    '#EC4899': 'Rose', '#0EA5E9': 'Bleu ciel', '#14B8A6': 'Turquoise',
-    '#F97316': 'Orange vif', '#A855F7': 'Violet clair'
+    // Couleurs T-shirt
+    '#FFFFFF': 'Blanc Pure', '#1A1A1A': 'Noir Deep',
+    '#FDFD96': 'Jaune Pastel', '#FFD1DC': 'Rose Pastel',
+    '#B3E5FC': 'Bleu Ciel', '#C1E1C1': 'Vert Menthe',
+    '#E6E6FA': 'Lavande', '#FFDAB9': 'Peche',
+    '#F5F5DC': 'Beige', '#B0E0E6': 'Bleu Poudre',
+    '#F08080': 'Corail Douce', '#D3D3D3': 'Gris Clair',
+    '#FAF0E6': 'Lin', '#FFF5EE': 'Coquillage', '#F0FFFF': 'Azure',
+    // Couleurs Logo
+    '#000000': 'Noir', '#FF3B30': 'Rouge Apple',
+    '#007AFF': 'Bleu Apple', '#34C759': 'Vert Apple',
+    '#FFCC00': 'Or / Jaune', '#AF52DE': 'Violet',
+    '#5856D6': 'Indigo', '#FF9500': 'Orange',
+    '#A2845E': 'Bronze', '#8E8E93': 'Gris',
+    '#C0C0C0': 'Argent', '#FF2D55': 'Rose Flash',
+    '#5AC8FA': 'Bleu Cyan', '#000080': 'Marine', '#556B2F': 'Olive'
   }
   return colors[hex] || hex || ''
 }
