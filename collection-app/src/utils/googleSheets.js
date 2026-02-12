@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKJh8HVQnE3-g5T7YGI-99R9RlAVuKhSbUSNAj9713Fy3462bfxfcYtjCT7mZ9s_R2/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyagbLyE5L6rs0wJbUltvzazIS4gyIO3nFjpCmETu6vkP4JLvAtbv7UlYmwX1akLgaS/exec"
 
 // Anti-doublon persistant (survit aux rechargements de page)
 const SENT_ORDERS_KEY = 'olda_sent_orders'
