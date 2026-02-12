@@ -1,6 +1,9 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMM6H59JW7qFXnvr_Ars8h_fG1yeybdXuvUYiXRQaYBg2yu7gzVGaSoeqIF4ZYTAM/exec"
 
+// Guard anti-doublon : empeche l'envoi multiple de la meme commande
+const sentOrders = new Set()
+
 /**
  * Envoie les donnees d'une commande vers Google Sheets via formulaire POST (iframe)
  * Methode fiable qui contourne les problemes CORS avec Google Apps Script
@@ -10,6 +13,13 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMM6H59JW7qF
  */
 export const sendToGoogleSheets = async (fiche, mockupBase64) => {
   try {
+    // Guard anti-doublon : si cette commande a deja ete envoyee, on skip
+    if (sentOrders.has(fiche.id)) {
+      console.warn('Commande deja envoyee, doublon bloque:', fiche.id)
+      return true
+    }
+    sentOrders.add(fiche.id)
+
     // Calculer les prix (envoyes en nombres)
     const prixTshirt = fiche.tshirtPrice || 0
     const prixPerso = fiche.personalizationPrice || 0

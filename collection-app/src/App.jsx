@@ -241,44 +241,44 @@ function App() {
   // Valider une fiche (la figer) et l'archiver automatiquement
   // mockupBase64 optionnel : image base64 du mockup capturee depuis TshirtEditor
   const handleValidateFiche = useCallback((ficheId, mockupBase64) => {
-    setFiches(prev => {
-      const updatedFiches = prev.map(fiche => {
-        if (fiche.id !== ficheId) return fiche
-        const validatedFiche = {
-          ...fiche,
-          isValidated: true,
-          validatedAt: new Date().toISOString(),
-          productionSteps: {
-            ...fiche.productionSteps,
-            validated: true
-          }
+    // Trouver la fiche AVANT de modifier le state (evite les side effects dans setFiches)
+    const ficheToValidate = fiches.find(f => f.id === ficheId)
+    if (!ficheToValidate) return
+
+    const validatedFiche = {
+      ...ficheToValidate,
+      isValidated: true,
+      validatedAt: new Date().toISOString(),
+      productionSteps: {
+        ...ficheToValidate.productionSteps,
+        validated: true
+      }
+    }
+
+    // Envoyer vers Google Sheets UNE SEULE FOIS (en dehors du state updater)
+    sendToGoogleSheets(validatedFiche, mockupBase64)
+      .then(success => {
+        if (success) {
+          console.log('Commande envoyee vers Google Sheets avec succes')
+        } else {
+          console.warn('Echec de l\'envoi vers Google Sheets')
         }
-
-        // Envoyer vers Google Sheets (avec mockup base64 si disponible)
-        sendToGoogleSheets(validatedFiche, mockupBase64)
-          .then(success => {
-            if (success) {
-              console.log('Commande envoyee vers Google Sheets avec succes')
-            } else {
-              console.warn('Echec de l\'envoi vers Google Sheets')
-            }
-          })
-
-        // Ajouter a l'archive
-        setArchive(prevArchive => {
-          // Verifier si deja archive
-          const exists = prevArchive.some(f => f.id === ficheId)
-          if (exists) {
-            return prevArchive.map(f => f.id === ficheId ? validatedFiche : f)
-          }
-          return [validatedFiche, ...prevArchive]
-        })
-
-        return validatedFiche
       })
-      return updatedFiches
+
+    // Mettre a jour le state
+    setFiches(prev => prev.map(fiche =>
+      fiche.id === ficheId ? validatedFiche : fiche
+    ))
+
+    // Ajouter a l'archive
+    setArchive(prevArchive => {
+      const exists = prevArchive.some(f => f.id === ficheId)
+      if (exists) {
+        return prevArchive.map(f => f.id === ficheId ? validatedFiche : f)
+      }
+      return [validatedFiche, ...prevArchive]
     })
-  }, [])
+  }, [fiches])
 
   // Mettre a jour l'archive quand une fiche change
   const syncArchive = useCallback((fiche) => {
