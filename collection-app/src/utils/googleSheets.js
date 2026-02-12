@@ -2,15 +2,15 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_iUCQpKuksy0qbkTD1-gj0m0HUkhuNCaf45fmFjtcQjrKADLZzK51GD-jCKOmVTq/exec"
 
 /**
- * Envoie les donnees d'une commande vers Google Sheets via POST
- * Le mockup base64 est envoye directement et sauvegarde sur Google Drive par le script
+ * Envoie les donnees d'une commande vers Google Sheets via formulaire POST (iframe)
+ * Methode fiable qui contourne les problemes CORS avec Google Apps Script
  * @param {Object} fiche - Les donnees de la fiche client
  * @param {string} [mockupBase64] - Image base64 du mockup (optionnel)
  * @returns {Promise<boolean>} - true si succes, false sinon
  */
 export const sendToGoogleSheets = async (fiche, mockupBase64) => {
   try {
-    // Calculer les prix
+    // Calculer les prix (envoyes en nombres)
     const prixTshirt = fiche.tshirtPrice || 0
     const prixPerso = fiche.personalizationPrice || 0
     const totalTTC = prixTshirt + prixPerso
@@ -18,8 +18,8 @@ export const sendToGoogleSheets = async (fiche, mockupBase64) => {
     // Generer un ID commande court
     const idCommande = (fiche.id || '').replace('fiche-', '').substring(0, 8).toUpperCase()
 
-    // Preparer les donnees selon les colonnes du Google Sheets (A-P)
-    const data = {
+    // Preparer les champs du formulaire (colonnes A-P)
+    const fields = {
       idCommande: idCommande,
       client: fiche.clientName || '',
       tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
@@ -31,33 +31,67 @@ export const sendToGoogleSheets = async (fiche, mockupBase64) => {
       couleurLogo: getColorName(fiche.logoColor),
       logoAvant: fiche.frontLogo ? 'Oui' : 'Non',
       logoArriere: fiche.backLogo ? 'Oui' : 'Non',
-      prixTshirt: `${prixTshirt} EUR`,
-      prixPerso: `${prixPerso} EUR`,
-      total: `${totalTTC} EUR`,
+      prixTshirt: String(prixTshirt),
+      prixPerso: String(prixPerso),
+      total: String(totalTTC),
       paye: fiche.isPaid ? 'Oui' : 'Non'
     }
 
     // Ajouter le mockup base64 si disponible
     if (mockupBase64) {
-      data.mockupBase64 = mockupBase64
+      fields.mockupBase64 = mockupBase64
     }
 
-    console.log('Envoi vers Google Sheets (POST):', { ...data, mockupBase64: mockupBase64 ? '[base64 present]' : 'aucun' })
+    console.log('Envoi vers Google Sheets (form POST):', {
+      ...fields,
+      mockupBase64: mockupBase64 ? '[base64 present]' : 'aucun'
+    })
 
-    // Envoyer via POST (supporte les donnees volumineuses comme le base64)
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(data)
-    }).catch(err => console.warn('Erreur POST Google Sheets:', err.message))
+    // Envoyer via formulaire cache dans un iframe (contourne CORS de facon fiable)
+    submitViaIframe(fields)
 
     return true
-
   } catch (error) {
     console.error('Erreur lors de l\'envoi vers Google Sheets:', error)
     return false
   }
+}
+
+/**
+ * Soumet les donnees via un formulaire HTML cache dans un iframe
+ * C'est la methode la plus fiable pour envoyer des donnees a Google Apps Script
+ * car les soumissions de formulaire ne sont pas bloquees par CORS
+ */
+const submitViaIframe = (fields) => {
+  // Creer un iframe invisible
+  const iframe = document.createElement('iframe')
+  iframe.name = 'olda_sheet_' + Date.now()
+  iframe.style.display = 'none'
+  document.body.appendChild(iframe)
+
+  // Creer le formulaire
+  const form = document.createElement('form')
+  form.method = 'POST'
+  form.action = GOOGLE_SCRIPT_URL
+  form.target = iframe.name
+
+  // Ajouter chaque champ comme input hidden
+  Object.entries(fields).forEach(([name, value]) => {
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = name
+    input.value = value
+    form.appendChild(input)
+  })
+
+  document.body.appendChild(form)
+  form.submit()
+
+  // Nettoyage apres 15 secondes
+  setTimeout(() => {
+    if (form.parentNode) form.remove()
+    if (iframe.parentNode) iframe.remove()
+  }, 15000)
 }
 
 /**
