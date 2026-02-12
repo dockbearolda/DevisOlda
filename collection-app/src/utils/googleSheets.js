@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMM6H59JW7qFXnvr_Ars8h_fG1yeybdXuvUYiXRQaYBg2yu7gzVGaSoeqIF4ZYTAM/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKJh8HVQnE3-g5T7YGI-99R9RlAVuKhSbUSNAj9713Fy3462bfxfcYtjCT7mZ9s_R2/exec"
 
 // Guard anti-doublon : empeche l'envoi multiple de la meme commande
 const sentOrders = new Set()
