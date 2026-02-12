@@ -1,5 +1,5 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMM6H59JW7qFXnvr_Ars8h_fG1yeybdXuvUYiXRQaYBg2yu7gzVGaSoeqIF4ZYTAM/exec"
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBYqbZrbsApXUlhEen03AiI0_BwRNJlydTl5d1VSHiYB80n8yrwifBRF_4j7oHti3-/exec"
 
 /**
  * Formate un numero de telephone en format local (supprime prefixe international)
