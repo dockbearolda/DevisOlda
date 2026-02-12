@@ -59,7 +59,8 @@ export const sendToGoogleSheets = async (fiche, mockupUrl) => {
       design: mockupUrl || ''
     }
 
-    console.log('Envoi vers Google Sheets:', { ...data, design: data.design ? '(image base64)' : '' })
+    console.log('URL Google Sheets:', GOOGLE_SCRIPT_URL)
+    console.log('Donnees envoyees:', { ...data, design: data.design ? '(image base64)' : '' })
 
     // Envoyer via POST avec champs individuels (formulaire cache + iframe)
     const iframe = document.createElement('iframe')
