@@ -1,35 +1,59 @@
 // URL du script Google Apps Script pour l'integration Google Sheets
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKJh8HVQnE3-g5T7YGI-99R9RlAVuKhSbUSNAj9713Fy3462bfxfcYtjCT7mZ9s_R2/exec"
 
-// Guard anti-doublon : empeche l'envoi multiple de la meme commande
-const sentOrders = new Set()
+// Anti-doublon persistant (survit aux rechargements de page)
+const SENT_ORDERS_KEY = 'olda_sent_orders'
+
+const getSentOrders = () => {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(SENT_ORDERS_KEY) || '[]'))
+  } catch {
+    return new Set()
+  }
+}
+
+const markAsSent = (idCommande) => {
+  const sent = getSentOrders()
+  sent.add(idCommande)
+  // Garder seulement les 200 derniers pour eviter le bloat localStorage
+  const arr = [...sent].slice(-200)
+  localStorage.setItem(SENT_ORDERS_KEY, JSON.stringify(arr))
+}
+
+// Verrou global : empeche tout envoi simultane
+let submitting = false
 
 /**
- * Envoie les donnees d'une commande vers Google Sheets via formulaire POST (iframe)
- * Methode fiable qui contourne les problemes CORS avec Google Apps Script
+ * Envoie les donnees d'une commande vers Google Sheets via fetch (UNE seule requete)
+ * Remplace l'ancienne methode iframe qui causait des lignes en double
  * @param {Object} fiche - Les donnees de la fiche client
  * @param {string} [mockupBase64] - Image base64 du mockup (optionnel)
  * @returns {Promise<boolean>} - true si succes, false sinon
  */
 export const sendToGoogleSheets = async (fiche, mockupBase64) => {
   try {
-    // Guard anti-doublon : si cette commande a deja ete envoyee, on skip
-    if (sentOrders.has(fiche.id)) {
-      console.warn('Commande deja envoyee, doublon bloque:', fiche.id)
+    const idCommande = (fiche.id || '').replace('fiche-', '').substring(0, 8).toUpperCase()
+
+    // Anti-doublon persistant (survit au rechargement de page)
+    if (getSentOrders().has(idCommande)) {
+      console.warn('Commande deja envoyee (doublon bloque):', idCommande)
       return true
     }
-    sentOrders.add(fiche.id)
 
-    // Calculer les prix (envoyes en nombres)
+    // Verrou anti-envoi simultane
+    if (submitting) {
+      console.warn('Envoi deja en cours, requete ignoree')
+      return true
+    }
+    submitting = true
+
+    // Calculer les prix
     const prixTshirt = fiche.tshirtPrice || 0
     const prixPerso = fiche.personalizationPrice || 0
     const totalTTC = prixTshirt + prixPerso
 
-    // Generer un ID commande court
-    const idCommande = (fiche.id || '').replace('fiche-', '').substring(0, 8).toUpperCase()
-
-    // Preparer les champs du formulaire (colonnes A-P)
-    const fields = {
+    // Preparer les donnees (colonnes A-O + mockup optionnel)
+    const data = {
       idCommande: idCommande,
       client: fiche.clientName || '',
       tel: formatPhoneNumber(fiche.phoneCountryCode, fiche.clientPhone),
@@ -48,60 +72,38 @@ export const sendToGoogleSheets = async (fiche, mockupBase64) => {
     }
 
     // Ajouter le mockup base64 si disponible
-    if (mockupBase64) {
-      fields.mockupBase64 = mockupBase64
+    if (mockupBase64 && mockupBase64.length > 100) {
+      data.mockupBase64 = mockupBase64
     }
 
-    console.log('Envoi vers Google Sheets (form POST):', {
-      ...fields,
-      mockupBase64: mockupBase64 ? '[base64 present]' : 'aucun'
+    console.log('Envoi vers Google Sheets (fetch unique):', {
+      ...data,
+      mockupBase64: data.mockupBase64 ? '[base64 present]' : 'aucun'
     })
 
-    // Envoyer via formulaire cache dans un iframe (contourne CORS de facon fiable)
-    submitViaIframe(fields)
+    // === ENVOI UNIQUE via fetch ===
+    // - mode no-cors : evite les problemes CORS avec Google Apps Script
+    // - Content-Type text/plain : evite le preflight OPTIONS
+    // - Corps JSON : toutes les donnees dans une seule requete
+    // - UNE SEULE requete HTTP (contrairement a l'iframe qui causait des doublons)
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    })
+
+    // Marquer comme envoye (persiste dans localStorage)
+    markAsSent(idCommande)
+    console.log('Commande envoyee avec succes:', idCommande)
 
     return true
   } catch (error) {
     console.error('Erreur lors de l\'envoi vers Google Sheets:', error)
     return false
+  } finally {
+    submitting = false
   }
-}
-
-/**
- * Soumet les donnees via un formulaire HTML cache dans un iframe
- * C'est la methode la plus fiable pour envoyer des donnees a Google Apps Script
- * car les soumissions de formulaire ne sont pas bloquees par CORS
- */
-const submitViaIframe = (fields) => {
-  // Creer un iframe invisible
-  const iframe = document.createElement('iframe')
-  iframe.name = 'olda_sheet_' + Date.now()
-  iframe.style.display = 'none'
-  document.body.appendChild(iframe)
-
-  // Creer le formulaire
-  const form = document.createElement('form')
-  form.method = 'POST'
-  form.action = GOOGLE_SCRIPT_URL
-  form.target = iframe.name
-
-  // Ajouter chaque champ comme input hidden
-  Object.entries(fields).forEach(([name, value]) => {
-    const input = document.createElement('input')
-    input.type = 'hidden'
-    input.name = name
-    input.value = value
-    form.appendChild(input)
-  })
-
-  document.body.appendChild(form)
-  form.submit()
-
-  // Nettoyage apres 15 secondes
-  setTimeout(() => {
-    if (form.parentNode) form.remove()
-    if (iframe.parentNode) iframe.remove()
-  }, 15000)
 }
 
 /**
