@@ -1,3 +1,10 @@
+// Collections disponibles
+export const COLLECTIONS = [
+  { value: 'Homme', label: 'Homme' },
+  { value: 'Femme', label: 'Femme' },
+  { value: 'Enfant', label: 'Enfant' },
+]
+
 // Couleurs T-shirt disponibles
 export const TSHIRT_COLORS = [
   { name: 'Blanc', hex: '#FFFFFF' },
@@ -36,16 +43,18 @@ export const LOGO_COLORS = [
 // Tailles disponibles
 export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-// Génère un ID commande : CMD-20260213-A7K2
+// Logos prédéfinis
+export const PRESET_LOGOS = ['Bea-16', 'Sxm-12', 'Cor-01', 'Avi-04']
+
+// Format STRICT : YYYY-DD/MM-HHmm
 export const generateOrderId = () => {
   const now = new Date()
-  const date = now.toISOString().slice(0, 10).replace(/-/g, '')
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let rand = ''
-  for (let i = 0; i < 4; i++) {
-    rand += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return `CMD-${date}-${rand}`
+  const yyyy = now.getFullYear()
+  const dd = String(now.getDate()).padStart(2, '0')
+  const mm = String(now.getMonth() + 1).padStart(2, '0')
+  const hh = String(now.getHours()).padStart(2, '0')
+  const min = String(now.getMinutes()).padStart(2, '0')
+  return `${yyyy}-${dd}/${mm}-${hh}${min}`
 }
 
 // Formate la date du jour en français
