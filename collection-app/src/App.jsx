@@ -1,11 +1,10 @@
 import { useState, useMemo, useCallback } from 'react'
-import { CheckCircle2, AlertCircle, Shirt } from 'lucide-react'
+import { CheckCircle2, AlertCircle } from 'lucide-react'
 import OrderForm from './components/OrderForm'
 import TshirtMockup from './components/TshirtMockup'
 import { generateOrderId, formatDateFr } from './utils/constants'
 import { sendToGoogleSheets } from './utils/googleSheets'
 
-// État initial d'une commande vierge
 const createEmptyOrder = () => ({
   idCommande: generateOrderId(),
   date: formatDateFr(),
@@ -27,25 +26,20 @@ const createEmptyOrder = () => ({
 
 export default function App() {
   const [order, setOrder] = useState(createEmptyOrder)
-  const [status, setStatus] = useState(null) // null | 'sending' | 'success' | 'error'
+  const [status, setStatus] = useState(null)
 
-  // Validation : nom du client obligatoire + taille sélectionnée
   const isValid = useMemo(() => {
     return order.clientName.trim().length > 0 && order.taille
   }, [order.clientName, order.taille])
 
-  // Total calculé
   const total = useMemo(() => {
     return ((parseFloat(order.prixTshirt) || 0) + (parseFloat(order.prixPerso) || 0)).toFixed(2)
   }, [order.prixTshirt, order.prixPerso])
 
-  // Envoi de la commande
   const handleSubmit = useCallback(async () => {
     if (!isValid || status === 'sending') return
-
     setStatus('sending')
 
-    // Préparer les données pour le Sheet (ordre des colonnes A-Q)
     const payload = {
       idCommande: order.idCommande,
       date: order.date,
@@ -70,7 +64,6 @@ export default function App() {
 
     if (result.success) {
       setStatus('success')
-      // Reset après 2s
       setTimeout(() => {
         setOrder(createEmptyOrder())
         setStatus(null)
@@ -82,25 +75,20 @@ export default function App() {
   }, [order, isValid, status, total])
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-            <Shirt size={16} className="text-white" />
-          </div>
-          <div>
-            <h1 className="text-sm font-bold text-gray-900 tracking-tight">OLDA</h1>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest">Prise de commande</p>
-          </div>
+    <div className="h-screen flex flex-col bg-[#F5F5F7] overflow-hidden">
+      {/* ─── Header style Apple ─── */}
+      <header className="bg-white/80 backdrop-blur-xl border-b border-[#D2D2D7] px-6 py-3 flex items-center justify-between">
+        <div>
+          <h1 className="text-[22px] font-bold text-[#1D1D1F] tracking-tight">OLDA</h1>
+          <p className="text-[13px] text-[#86868B]">Nouvelle commande</p>
         </div>
-        <div className="text-xs text-gray-400">{formatDateFr()}</div>
+        <div className="text-[13px] text-[#86868B]">{formatDateFr()}</div>
       </header>
 
-      {/* Split screen */}
+      {/* ─── Split Screen ─── */}
       <div className="flex-1 flex min-h-0">
-        {/* LEFT — Formulaire */}
-        <div className="w-1/2 border-r border-gray-200 bg-white p-6 flex flex-col min-h-0">
+        {/* GAUCHE — Formulaire */}
+        <div className="w-1/2 bg-[#F5F5F7] p-5 flex flex-col min-h-0 overflow-hidden">
           <OrderForm
             order={order}
             onChange={setOrder}
@@ -109,8 +97,8 @@ export default function App() {
           />
         </div>
 
-        {/* RIGHT — Mockup */}
-        <div className="w-1/2 bg-gray-50 p-6 flex flex-col items-center justify-center relative">
+        {/* DROITE — Mockup */}
+        <div className="w-1/2 bg-[#F5F5F7] border-l border-[#D2D2D7] flex flex-col items-center justify-center relative p-6">
           <TshirtMockup
             tshirtColor={order.couleurTshirt}
             logoColor={order.couleurLogo}
@@ -118,49 +106,52 @@ export default function App() {
             backLogo={order.logoArriere}
           />
 
-          {/* Récapitulatif rapide */}
-          <div className="absolute bottom-6 left-6 right-6">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <div className="grid grid-cols-4 gap-4 text-center">
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase">Client</p>
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {order.clientName || '—'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase">Taille</p>
-                  <p className="text-sm font-medium text-gray-900">{order.taille}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase">Réf.</p>
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {order.reference || '—'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase">Total</p>
-                  <p className="text-sm font-bold text-gray-900">{total} €</p>
-                </div>
-              </div>
+          {/* Recap en bas */}
+          <div className="absolute bottom-5 left-5 right-5">
+            <div className="bg-white rounded-2xl px-5 py-3 flex items-center justify-between">
+              <Info label="Client" value={order.clientName || '—'} />
+              <Separator />
+              <Info label="Taille" value={order.taille} />
+              <Separator />
+              <Info label="Réf." value={order.reference || '—'} />
+              <Separator />
+              <Info label="Total" value={`${total} €`} bold />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Toast notification */}
+      {/* ─── Toast ─── */}
       {status && status !== 'sending' && (
         <div className={`
-          fixed top-4 right-4 flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg
-          animate-fade-in z-50
-          ${status === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}
+          fixed top-5 left-1/2 -translate-x-1/2 flex items-center gap-2.5 px-5 py-3
+          rounded-2xl shadow-xl animate-fade-in z-50 backdrop-blur-xl
+          ${status === 'success'
+            ? 'bg-[#34C759]/95 text-white'
+            : 'bg-[#FF3B30]/95 text-white'
+          }
         `}>
           {status === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span className="text-sm font-medium">
-            {status === 'success' ? 'Commande envoyée !' : 'Erreur — réessayez'}
+          <span className="text-[15px] font-medium">
+            {status === 'success' ? 'Commande envoyée' : 'Erreur — réessayez'}
           </span>
         </div>
       )}
     </div>
   )
+}
+
+function Info({ label, value, bold }) {
+  return (
+    <div className="text-center min-w-0 flex-1">
+      <p className="text-[11px] text-[#86868B] uppercase">{label}</p>
+      <p className={`text-[15px] truncate ${bold ? 'font-bold text-[#1D1D1F]' : 'text-[#1D1D1F]'}`}>
+        {value}
+      </p>
+    </div>
+  )
+}
+
+function Separator() {
+  return <div className="w-px h-8 bg-[#E5E5EA] shrink-0" />
 }

@@ -9,9 +9,23 @@
     @apply h-full;
   }
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    @apply bg-gray-50 text-gray-900 antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    @apply bg-[#F5F5F7] text-[#1D1D1F] antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Inputs Apple-style */
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"] {
+    @apply text-right text-[#1D1D1F] bg-transparent border-none outline-none;
+    font-size: 17px;
+  }
+  input::placeholder {
+    @apply text-[#C7C7CC];
   }
 }
 
@@ -25,11 +39,19 @@
   }
 }
 
-/* Animation fade-in pour toasts */
+/* Animation */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
-  animation: fade-in 0.25s ease-out;
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
 }

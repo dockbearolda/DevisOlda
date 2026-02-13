@@ -1,14 +1,11 @@
 import { Check } from 'lucide-react'
 
 /**
- * Palette de couleurs visuelle cliquable
- * @param {Array} colors - [{name, hex}]
- * @param {string} selected - hex de la couleur sélectionnée
- * @param {function} onChange - callback(hex)
+ * Palette de couleurs style Apple — cercles avec check
  */
 export default function ColorPicker({ colors, selected, onChange }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2.5">
       {colors.map((color) => {
         const isSelected = selected === color.hex
         const isLight = isLightColor(color.hex)
@@ -19,21 +16,20 @@ export default function ColorPicker({ colors, selected, onChange }) {
             title={color.name}
             onClick={() => onChange(color.hex)}
             className={`
-              relative w-9 h-9 rounded-full border-2 transition-all duration-150
-              hover:scale-110 active:scale-95
+              relative w-8 h-8 rounded-full transition-transform duration-150
+              active:scale-90
               ${isSelected
-                ? 'border-gray-900 ring-2 ring-gray-900 ring-offset-2'
-                : isLight
-                  ? 'border-gray-300 hover:border-gray-400'
-                  : 'border-transparent hover:border-gray-400'
+                ? 'ring-2 ring-[#007AFF] ring-offset-2'
+                : ''
               }
+              ${isLight && !isSelected ? 'ring-1 ring-[#E5E5EA]' : ''}
             `}
             style={{ backgroundColor: color.hex }}
           >
             {isSelected && (
               <Check
-                size={16}
-                className={`absolute inset-0 m-auto ${isLight ? 'text-gray-800' : 'text-white'}`}
+                size={14}
+                className={`absolute inset-0 m-auto ${isLight ? 'text-[#1D1D1F]' : 'text-white'}`}
                 strokeWidth={3}
               />
             )}

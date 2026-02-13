@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import { RotateCcw } from 'lucide-react'
 
 /**
- * Mockup interactif T-shirt avec vues Avant/Arrière
- * Change de couleur en temps réel selon la sélection
+ * Mockup T-shirt SVG interactif — style Apple, clean
  */
 export default function TshirtMockup({
   tshirtColor = '#FFFFFF',
-  logoColor = '#111827',
   frontLogo = null,
   backLogo = null,
 }) {
@@ -15,194 +12,115 @@ export default function TshirtMockup({
 
   const currentLogo = view === 'front' ? frontLogo : backLogo
   const isLight = isLightColor(tshirtColor)
-  const strokeColor = isLight ? '#D1D5DB' : 'rgba(255,255,255,0.15)'
-  const placeholderColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)'
-  const placeholderTextColor = isLight ? '#9CA3AF' : 'rgba(255,255,255,0.35)'
+  const stitchColor = isLight ? '#D1D5DB' : 'rgba(255,255,255,0.12)'
+  const placeholderFill = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)'
+  const placeholderStroke = isLight ? '#C7C7CC' : 'rgba(255,255,255,0.2)'
+  const placeholderText = isLight ? '#C7C7CC' : 'rgba(255,255,255,0.3)'
 
   return (
-    <div className="flex flex-col items-center gap-4 h-full justify-center">
-      {/* Toggle Avant / Arrière */}
-      <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1">
+    <div className="flex flex-col items-center gap-5">
+      {/* Toggle Avant / Arrière — style segmented control iOS */}
+      <div className="bg-[#E5E5EA] rounded-[9px] p-[2px] flex">
         <button
           type="button"
           onClick={() => setView('front')}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-            view === 'front'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
+          className={`
+            px-6 py-1.5 rounded-[7px] text-[13px] font-semibold transition-all duration-200
+            ${view === 'front'
+              ? 'bg-white text-[#1D1D1F] shadow-sm'
+              : 'text-[#86868B]'
+            }
+          `}
         >
           Avant
         </button>
         <button
           type="button"
           onClick={() => setView('back')}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-            view === 'back'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
+          className={`
+            px-6 py-1.5 rounded-[7px] text-[13px] font-semibold transition-all duration-200
+            ${view === 'back'
+              ? 'bg-white text-[#1D1D1F] shadow-sm'
+              : 'text-[#86868B]'
+            }
+          `}
         >
           Arrière
-        </button>
-        <button
-          type="button"
-          onClick={() => setView(v => v === 'front' ? 'back' : 'front')}
-          className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-white transition-all"
-          title="Retourner"
-        >
-          <RotateCcw size={16} />
         </button>
       </div>
 
       {/* SVG Mockup */}
-      <div className="relative w-full max-w-[320px] aspect-[3/4]">
-        <svg viewBox="0 0 300 380" className="w-full h-full drop-shadow-lg">
-          {/* T-shirt shape */}
+      <div className="relative w-64 aspect-[3/4]">
+        <svg viewBox="0 0 300 380" className="w-full h-full">
+          {/* Ombre douce */}
+          <ellipse cx="150" cy="355" rx="90" ry="8" fill="rgba(0,0,0,0.06)" />
+
+          {/* T-shirt */}
+          <path
+            d={TSHIRT_PATH}
+            fill={tshirtColor}
+            stroke={stitchColor}
+            strokeWidth="1"
+          />
+
+          {/* Col */}
           {view === 'front' ? (
-            <FrontView color={tshirtColor} strokeColor={strokeColor} />
+            <path d="M 120 46 C 130 56, 170 56, 180 46" fill="none" stroke={stitchColor} strokeWidth="2" strokeLinecap="round" />
           ) : (
-            <BackView color={tshirtColor} strokeColor={strokeColor} />
+            <path d="M 125 40 C 135 44, 165 44, 175 40" fill="none" stroke={stitchColor} strokeWidth="2" strokeLinecap="round" />
           )}
 
-          {/* Logo zone placeholder ou image */}
+          {/* Couture dos */}
+          {view === 'back' && (
+            <line x1="150" y1="44" x2="150" y2="330" stroke={stitchColor} strokeWidth="0.4" opacity="0.4" />
+          )}
+
+          {/* Zone logo */}
           {currentLogo ? (
             <foreignObject x="100" y={view === 'front' ? '120' : '100'} width="100" height="100">
               <div className="w-full h-full flex items-center justify-center">
                 <img
                   src={currentLogo}
-                  alt={`Logo ${view === 'front' ? 'avant' : 'arrière'}`}
+                  alt=""
                   className="max-w-full max-h-full object-contain"
-                  style={{ filter: `drop-shadow(0 1px 2px rgba(0,0,0,0.15))` }}
                 />
               </div>
             </foreignObject>
           ) : (
-            <>
+            <g>
               <rect
-                x="112" y={view === 'front' ? '130' : '110'}
-                width="76" height="76" rx="8"
-                fill={placeholderColor}
-                stroke={placeholderTextColor}
+                x="115" y={view === 'front' ? '130' : '110'}
+                width="70" height="70" rx="10"
+                fill={placeholderFill}
+                stroke={placeholderStroke}
                 strokeWidth="1"
-                strokeDasharray="4 3"
+                strokeDasharray="5 4"
               />
               <text
-                x="150" y={view === 'front' ? '173' : '153'}
+                x="150" y={view === 'front' ? '170' : '150'}
                 textAnchor="middle"
-                fontSize="10"
-                fill={placeholderTextColor}
-                fontFamily="Inter, sans-serif"
+                fontSize="9"
+                fill={placeholderText}
+                fontFamily="Inter, system-ui, sans-serif"
+                fontWeight="500"
               >
                 {view === 'front' ? 'LOGO AVANT' : 'LOGO ARRIÈRE'}
               </text>
-            </>
+            </g>
           )}
         </svg>
-      </div>
-
-      {/* Couleur info */}
-      <div className="flex items-center gap-2">
-        <div
-          className="w-4 h-4 rounded-full border border-gray-300"
-          style={{ backgroundColor: tshirtColor }}
-        />
-        <span className="text-xs text-gray-400">
-          T-shirt {tshirtColor}
-        </span>
-        <div
-          className="w-4 h-4 rounded-full border border-gray-300 ml-2"
-          style={{ backgroundColor: logoColor }}
-        />
-        <span className="text-xs text-gray-400">
-          Logo {logoColor}
-        </span>
       </div>
     </div>
   )
 }
 
-/* SVG T-shirt Avant */
-function FrontView({ color, strokeColor }) {
-  return (
-    <g>
-      {/* Ombre */}
-      <path
-        d="M 68 72 C 68 50, 100 32, 150 32 C 200 32, 232 50, 232 72
-           L 272 96 L 252 140 L 220 118
-           L 220 320 Q 220 332, 208 332
-           L 92 332 Q 80 332, 80 320
-           L 80 118 L 48 140 L 28 96 Z"
-        fill="rgba(0,0,0,0.06)"
-        transform="translate(2, 3)"
-      />
-      {/* Corps */}
-      <path
-        d="M 68 72 C 68 50, 100 32, 150 32 C 200 32, 232 50, 232 72
-           L 272 96 L 252 140 L 220 118
-           L 220 320 Q 220 332, 208 332
-           L 92 332 Q 80 332, 80 320
-           L 80 118 L 48 140 L 28 96 Z"
-        fill={color}
-        stroke={strokeColor}
-        strokeWidth="1"
-      />
-      {/* Col rond */}
-      <path
-        d="M 120 46 C 130 56, 170 56, 180 46"
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      {/* Coutures manches */}
-      <line x1="80" y1="118" x2="80" y2="80" stroke={strokeColor} strokeWidth="0.5" opacity="0.5" />
-      <line x1="220" y1="118" x2="220" y2="80" stroke={strokeColor} strokeWidth="0.5" opacity="0.5" />
-    </g>
-  )
-}
-
-/* SVG T-shirt Arrière */
-function BackView({ color, strokeColor }) {
-  return (
-    <g>
-      {/* Ombre */}
-      <path
-        d="M 68 72 C 68 50, 100 32, 150 32 C 200 32, 232 50, 232 72
-           L 272 96 L 252 140 L 220 118
-           L 220 320 Q 220 332, 208 332
-           L 92 332 Q 80 332, 80 320
-           L 80 118 L 48 140 L 28 96 Z"
-        fill="rgba(0,0,0,0.06)"
-        transform="translate(2, 3)"
-      />
-      {/* Corps */}
-      <path
-        d="M 68 72 C 68 50, 100 32, 150 32 C 200 32, 232 50, 232 72
-           L 272 96 L 252 140 L 220 118
-           L 220 320 Q 220 332, 208 332
-           L 92 332 Q 80 332, 80 320
-           L 80 118 L 48 140 L 28 96 Z"
-        fill={color}
-        stroke={strokeColor}
-        strokeWidth="1"
-      />
-      {/* Col arrière (plus haut, pas d'échancrure) */}
-      <path
-        d="M 125 40 C 135 44, 165 44, 175 40"
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      {/* Ligne couture centrale dos */}
-      <line x1="150" y1="44" x2="150" y2="332" stroke={strokeColor} strokeWidth="0.3" opacity="0.3" />
-      {/* Coutures manches */}
-      <line x1="80" y1="118" x2="80" y2="80" stroke={strokeColor} strokeWidth="0.5" opacity="0.5" />
-      <line x1="220" y1="118" x2="220" y2="80" stroke={strokeColor} strokeWidth="0.5" opacity="0.5" />
-    </g>
-  )
-}
+const TSHIRT_PATH = `
+  M 68 72 C 68 50, 100 32, 150 32 C 200 32, 232 50, 232 72
+  L 272 96 L 252 140 L 220 118
+  L 220 320 Q 220 332, 208 332
+  L 92 332 Q 80 332, 80 320
+  L 80 118 L 48 140 L 28 96 Z
+`
 
 function isLightColor(hex) {
   const r = parseInt(hex.slice(1, 3), 16)
