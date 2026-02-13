@@ -298,73 +298,28 @@ const PRESET_LOGOS = ['BEA-16', 'SXM-12', 'VIN-01', 'SUR-07']
 // Composant SVG du T-shirt AVANT
 function TshirtSvgFront({ color }) {
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 300 350">
-      <defs>
-        <linearGradient id="shadeFront" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: 'rgba(255,255,255,0.3)' }} />
-          <stop offset="100%" style={{ stopColor: 'rgba(0,0,0,0.05)' }} />
-        </linearGradient>
-      </defs>
-      <path
-        d="M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 190,45 160,55 150,55 C 140,55 110,45 100,25 Z"
-        fill={color}
-        stroke="#CCCCCC"
-        strokeWidth="2"
-        strokeLinejoin="round"
+    <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center">
+      <img
+        src="/tshirt-front.svg"
+        alt="T-shirt avant"
+        className="w-full h-full object-contain"
+        draggable={false}
       />
-      <path
-        d="M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 190,45 160,55 150,55 C 140,55 110,45 100,25 Z"
-        fill="url(#shadeFront)"
-        opacity="0.4"
-      />
-      <path
-        d="M 100,25 C 110,45 140,55 150,55 C 160,55 190,45 200,25"
-        fill="none"
-        stroke="#BBBBBB"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" strokeWidth="1" strokeDasharray="4,2" />
-      <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" strokeWidth="1" strokeDasharray="4,2" />
-      <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" strokeWidth="1.5" />
-    </svg>
+    </div>
   )
 }
 
 // Composant SVG du T-shirt ARRIERE
 function TshirtSvgBack({ color }) {
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 300 350">
-      <defs>
-        <linearGradient id="shadeBack" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: 'rgba(255,255,255,0.3)' }} />
-          <stop offset="100%" style={{ stopColor: 'rgba(0,0,0,0.05)' }} />
-        </linearGradient>
-      </defs>
-      <path
-        d="M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 195,30 175,35 150,35 C 125,35 105,30 100,25 Z"
-        fill={color}
-        stroke="#CCCCCC"
-        strokeWidth="2"
-        strokeLinejoin="round"
+    <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center">
+      <img
+        src="/tshirt-back.svg"
+        alt="T-shirt arrière"
+        className="w-full h-full object-contain"
+        draggable={false}
       />
-      <path
-        d="M 100,25 L 70,35 L 15,70 L 35,115 L 55,100 L 55,320 L 245,320 L 245,100 L 265,115 L 285,70 L 230,35 L 200,25 C 195,30 175,35 150,35 C 125,35 105,30 100,25 Z"
-        fill="url(#shadeBack)"
-        opacity="0.4"
-      />
-      <path
-        d="M 100,25 C 105,30 125,35 150,35 C 175,35 195,30 200,25"
-        fill="none"
-        stroke="#BBBBBB"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <rect x="140" y="38" width="20" height="10" rx="1" fill="#F8F8F8" stroke="#DDDDDD" strokeWidth="1" />
-      <line x1="55" y1="100" x2="70" y2="35" stroke="#E5E5E5" strokeWidth="1" strokeDasharray="4,2" />
-      <line x1="245" y1="100" x2="230" y2="35" stroke="#E5E5E5" strokeWidth="1" strokeDasharray="4,2" />
-      <line x1="58" y1="316" x2="242" y2="316" stroke="#E0E0E0" strokeWidth="1.5" />
-    </svg>
+    </div>
   )
 }
 

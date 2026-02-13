@@ -3,96 +3,24 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Upload, RotateCcw, ZoomIn, MoveHorizontal, MoveVertical, Trash2 } from 'lucide-react'
 
 // ═══════════════════════════════════════════════════════════
-// SVG PATHS — Tracés détaillés du T-shirt (viewBox 400×500)
+// T-shirt SVG images (avant / arrière)
 // ═══════════════════════════════════════════════════════════
 
-const FRONT_BODY = `
-  M 55 124
-  C 62 98, 95 74, 140 74
-  C 158 56, 175 47, 188 50
-  Q 200 65, 212 50
-  C 225 47, 242 56, 260 74
-  C 305 74, 338 98, 345 124
-  L 328 174
-  C 316 170, 296 158, 284 150
-  C 286 172, 284 280, 280 350
-  Q 278 405, 275 428
-  Q 271 452, 250 452
-  L 150 452
-  Q 129 452, 125 428
-  Q 122 405, 120 350
-  C 116 280, 114 172, 116 150
-  C 104 158, 84 170, 72 174
-  Z
-`
+const TSHIRT_IMAGES = {
+  front: '/tshirt-front.svg',
+  back: '/tshirt-back.svg',
+}
 
-const BACK_BODY = `
-  M 55 124
-  C 62 98, 95 74, 140 74
-  C 160 60, 180 52, 200 52
-  C 220 52, 240 60, 260 74
-  C 305 74, 338 98, 345 124
-  L 328 174
-  C 316 170, 296 158, 284 150
-  C 286 172, 284 280, 280 350
-  Q 278 405, 275 428
-  Q 271 452, 250 452
-  L 150 452
-  Q 129 452, 125 428
-  Q 122 405, 120 350
-  C 116 280, 114 172, 116 150
-  C 104 158, 84 170, 72 174
-  Z
-`
-
-// Clip-path : zone buste uniquement (sans manches) pour masquer le logo
-const FRONT_CLIP = `
-  M 116 148
-  C 114 172, 116 280, 120 350
-  Q 122 405, 125 428 Q 129 452, 150 452
-  L 250 452
-  Q 271 452, 275 428 Q 278 405, 280 350
-  C 284 280, 286 172, 284 148
-  L 260 74
-  C 242 56, 225 47, 212 50
-  Q 200 65, 188 50
-  C 175 47, 158 56, 140 74
-  Z
-`
-
-const BACK_CLIP = `
-  M 116 148
-  C 114 172, 116 280, 120 350
-  Q 122 405, 125 428 Q 129 452, 150 452
-  L 250 452
-  Q 271 452, 275 428 Q 278 405, 280 350
-  C 284 280, 286 172, 284 148
-  L 260 74
-  C 240 60, 220 52, 200 52
-  C 180 52, 160 60, 140 74
-  Z
-`
-
-// Lignes de plis du tissu — avant
-const FRONT_FOLDS = [
-  'M 190 82 Q 194 220, 191 390',       // pli central poitrine
-  'M 152 115 Q 156 260, 153 400',      // pli gauche
-  'M 248 115 Q 244 260, 247 400',      // pli droit
-  'M 122 168 Q 138 200, 136 250',      // creux sous-bras gauche
-  'M 278 168 Q 262 200, 264 250',      // creux sous-bras droit
-]
-
-// Lignes de plis du tissu — arrière
-const BACK_FOLDS = [
-  'M 200 52 L 200 450',                // couture centrale dos
-  'M 156 78 Q 159 260, 156 430',       // pli gauche dos
-  'M 244 78 Q 241 260, 244 430',       // pli droit dos
-]
-
-// Safe zones pour placement logo
+// Safe zones pour placement logo (viewBox 400×500)
 const SAFE_ZONES = {
   front: { x: 140, y: 110, w: 120, h: 180 },
   back:  { x: 140, y: 95,  w: 120, h: 200 },
+}
+
+// Clip-path rectangulaire pour le logo (zone buste)
+const LOGO_CLIP = {
+  front: { x: 115, y: 80, w: 170, h: 370 },
+  back:  { x: 115, y: 80, w: 170, h: 370 },
 }
 
 const LOGO_BASE_SIZE = 80
@@ -136,8 +64,6 @@ export default function TshirtMockup({
   const onCurrentLogoChange = view === 'front' ? onLogoFrontChange : onLogoBackChange
 
   const isLight = isLightColor(tshirtColor)
-  const stitchColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.10)'
-  const foldColor = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)'
 
   // ── Transform helpers ──
   const updateT = useCallback((key, val) => {
@@ -189,9 +115,8 @@ export default function TshirtMockup({
   const isImage = currentLogo?.startsWith?.('data:')
   const half = (LOGO_BASE_SIZE / 2)
 
-  const bodyPath = view === 'front' ? FRONT_BODY : BACK_BODY
-  const clipPath = view === 'front' ? FRONT_CLIP : BACK_CLIP
-  const folds = view === 'front' ? FRONT_FOLDS : BACK_FOLDS
+  const tshirtImage = TSHIRT_IMAGES[view]
+  const clip = LOGO_CLIP[view]
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -225,82 +150,30 @@ export default function TshirtMockup({
           >
             <svg viewBox="0 0 400 500" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                {/* Dégradé lumière haut-gauche */}
-                <linearGradient id={`hl-${uid}`} x1="0%" y1="0%" x2="80%" y2="100%">
-                  <stop offset="0%" stopColor="white" stopOpacity="0.22" />
-                  <stop offset="100%" stopColor="white" stopOpacity="0" />
-                </linearGradient>
-                {/* Dégradé ombre bas-droite */}
-                <linearGradient id={`sh-${uid}`} x1="20%" y1="0%" x2="80%" y2="100%">
-                  <stop offset="0%" stopColor="black" stopOpacity="0" />
-                  <stop offset="100%" stopColor="black" stopOpacity="0.08" />
-                </linearGradient>
-                {/* Ombre intérieure manches */}
-                <radialGradient id={`arm-sh-l-${uid}`} cx="100%" cy="0%">
-                  <stop offset="0%" stopColor="black" stopOpacity="0.06" />
-                  <stop offset="100%" stopColor="black" stopOpacity="0" />
-                </radialGradient>
-                <radialGradient id={`arm-sh-r-${uid}`} cx="0%" cy="0%">
-                  <stop offset="0%" stopColor="black" stopOpacity="0.06" />
-                  <stop offset="100%" stopColor="black" stopOpacity="0" />
-                </radialGradient>
                 {/* Drop shadow */}
                 <filter id={`ds-${uid}`}>
                   <feDropShadow dx="0" dy="5" stdDeviation="8" floodOpacity="0.10" />
                 </filter>
-                {/* Clip-path buste pour logo */}
+                {/* Clip-path rectangulaire buste pour logo */}
                 <clipPath id={`bc-${uid}`}>
-                  <path d={clipPath} />
+                  <rect x={clip.x} y={clip.y} width={clip.w} height={clip.h} rx="12" />
                 </clipPath>
               </defs>
 
               {/* Ombre au sol */}
               <ellipse cx="200" cy="472" rx="105" ry="10" fill="rgba(0,0,0,0.06)" />
 
-              {/* ── T-shirt body ── */}
+              {/* ── T-shirt SVG image ── */}
               <g filter={`url(#ds-${uid})`}>
-                <path d={bodyPath} fill={tshirtColor} stroke={stitchColor} strokeWidth="1" />
+                <image
+                  href={tshirtImage}
+                  x="30"
+                  y="20"
+                  width="340"
+                  height="460"
+                  preserveAspectRatio="xMidYMid meet"
+                />
               </g>
-
-              {/* Highlight overlay */}
-              <path d={bodyPath} fill={`url(#hl-${uid})`} />
-
-              {/* Shadow overlay */}
-              <path d={bodyPath} fill={`url(#sh-${uid})`} />
-
-              {/* Ombres sous-bras */}
-              <ellipse cx="120" cy="168" rx="18" ry="35" fill={`url(#arm-sh-l-${uid})`} opacity="0.5" />
-              <ellipse cx="280" cy="168" rx="18" ry="35" fill={`url(#arm-sh-r-${uid})`} opacity="0.5" />
-
-              {/* Plis du tissu */}
-              {folds.map((d, i) => (
-                <path key={i} d={d} fill="none" stroke={foldColor} strokeWidth="1.2" strokeLinecap="round" />
-              ))}
-
-              {/* ── Col ── */}
-              {view === 'front' ? (
-                <g>
-                  {/* Col crew neck — 3 lignes de côte */}
-                  <path d="M 188 50 Q 200 65, 212 50" fill="none" stroke={stitchColor} strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M 190 51 Q 200 62, 210 51" fill="none" stroke={stitchColor} strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-                  <path d="M 192 53 Q 200 59, 208 53" fill="none" stroke={stitchColor} strokeWidth="0.8" strokeLinecap="round" opacity="0.3" />
-                </g>
-              ) : (
-                <g>
-                  {/* Col dos + couture tag */}
-                  <path d="M 160 60 C 175 66, 225 66, 240 60" fill="none" stroke={stitchColor} strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M 162 61 C 175 65, 225 65, 238 61" fill="none" stroke={stitchColor} strokeWidth="1" strokeLinecap="round" opacity="0.4" />
-                  {/* Étiquette col (petit rectangle) */}
-                  <rect x="194" y="56" width="12" height="8" rx="1.5" fill="none" stroke={stitchColor} strokeWidth="0.8" opacity="0.4" />
-                </g>
-              )}
-
-              {/* Coutures épaules */}
-              <line x1="140" y1="74" x2="116" y2="150" stroke={stitchColor} strokeWidth="0.6" opacity="0.3" strokeDasharray="4 3" />
-              <line x1="260" y1="74" x2="284" y2="150" stroke={stitchColor} strokeWidth="0.6" opacity="0.3" strokeDasharray="4 3" />
-
-              {/* Couture ourlet bas */}
-              <path d="M 150 448 Q 200 454, 250 448" fill="none" stroke={stitchColor} strokeWidth="0.8" opacity="0.4" strokeDasharray="3 2" />
 
               {/* ══════════════════════════════════════ */}
               {/* LOGO — clippé au buste, avec perspective */}
@@ -355,14 +228,14 @@ export default function TshirtMockup({
                     x={zone.x + zone.w * 0.15} y={zone.y + zone.h * 0.2}
                     width={zone.w * 0.7} height={zone.h * 0.35}
                     rx="14"
-                    fill={isLight ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.04)'}
-                    stroke={isLight ? '#D1D5DB' : 'rgba(255,255,255,0.15)'}
+                    fill="rgba(0,0,0,0.02)"
+                    stroke="#D1D5DB"
                     strokeWidth="1" strokeDasharray="6 4"
                   />
                   <text
                     x="200" y={zone.y + zone.h * 0.4}
                     textAnchor="middle" fontSize="10" fontWeight="500"
-                    fill={isLight ? '#C7C7CC' : 'rgba(255,255,255,0.25)'}
+                    fill="#C7C7CC"
                     fontFamily="-apple-system, system-ui, sans-serif"
                   >
                     {view === 'front' ? 'LOGO AVANT' : 'LOGO ARRIÈRE'}
