@@ -602,7 +602,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           {/* Preview T-shirt AVANT */}
           <div
             ref={containerFrontRef}
-            className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
+            className="relative w-[260px] h-[303px] sm:w-[300px] sm:h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
                        rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgFront color={tshirtColor} />
@@ -687,7 +687,7 @@ const TshirtEditor = forwardRef(function TshirtEditor({
           {/* Preview T-shirt ARRIERE */}
           <div
             ref={containerBackRef}
-            className="relative w-[300px] h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
+            className="relative w-[260px] h-[303px] sm:w-[300px] sm:h-[350px] mx-auto bg-gradient-to-br from-stone-50 to-stone-100
                        rounded-2xl border border-stone-200 shadow-inner"
           >
             <TshirtSvgBack color={tshirtColor} />

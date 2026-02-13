@@ -50,7 +50,7 @@ export default function TshirtMockup({
       </div>
 
       {/* SVG Mockup */}
-      <div className="relative w-64 aspect-[3/4]">
+      <div className="relative w-48 sm:w-64 aspect-[3/4]">
         <svg viewBox="0 0 300 380" className="w-full h-full">
           {/* Ombre douce */}
           <ellipse cx="150" cy="355" rx="90" ry="8" fill="rgba(0,0,0,0.06)" />

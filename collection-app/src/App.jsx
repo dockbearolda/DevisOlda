@@ -77,18 +77,18 @@ export default function App() {
   return (
     <div className="h-screen flex flex-col bg-[#F5F5F7] overflow-hidden">
       {/* ─── Header style Apple ─── */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-[#D2D2D7] px-6 py-3 flex items-center justify-between">
+      <header className="bg-white/80 backdrop-blur-xl border-b border-[#D2D2D7] px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between safe-area-x">
         <div>
-          <h1 className="text-[22px] font-bold text-[#1D1D1F] tracking-tight">OLDA</h1>
-          <p className="text-[13px] text-[#86868B]">Nouvelle commande</p>
+          <h1 className="text-[18px] sm:text-[22px] font-bold text-[#1D1D1F] tracking-tight">OLDA</h1>
+          <p className="text-[11px] sm:text-[13px] text-[#86868B]">Nouvelle commande</p>
         </div>
-        <div className="text-[13px] text-[#86868B]">{formatDateFr()}</div>
+        <div className="text-[11px] sm:text-[13px] text-[#86868B]">{formatDateFr()}</div>
       </header>
 
-      {/* ─── Split Screen ─── */}
-      <div className="flex-1 flex min-h-0">
+      {/* ─── Split Screen (vertical mobile / horizontal desktop) ─── */}
+      <div className="flex-1 flex flex-col sm:flex-row min-h-0 overflow-hidden">
         {/* GAUCHE — Formulaire */}
-        <div className="w-1/2 bg-[#F5F5F7] p-5 flex flex-col min-h-0 overflow-hidden">
+        <div className="w-full sm:w-1/2 bg-[#F5F5F7] p-3 sm:p-5 flex flex-col min-h-0 overflow-hidden flex-1 sm:flex-none">
           <OrderForm
             order={order}
             onChange={setOrder}
@@ -97,8 +97,8 @@ export default function App() {
           />
         </div>
 
-        {/* DROITE — Mockup */}
-        <div className="w-1/2 bg-[#F5F5F7] border-l border-[#D2D2D7] flex flex-col items-center justify-center relative p-6">
+        {/* DROITE — Mockup (caché en portrait mobile, visible en landscape et desktop) */}
+        <div className="hidden landscape:flex sm:flex w-full sm:w-1/2 bg-[#F5F5F7] sm:border-l border-[#D2D2D7] flex-col items-center justify-center relative p-4 sm:p-6">
           <TshirtMockup
             tshirtColor={order.couleurTshirt}
             logoColor={order.couleurLogo}
@@ -107,8 +107,8 @@ export default function App() {
           />
 
           {/* Recap en bas */}
-          <div className="absolute bottom-5 left-5 right-5">
-            <div className="bg-white rounded-2xl px-5 py-3 flex items-center justify-between">
+          <div className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 right-3 sm:right-5">
+            <div className="bg-white rounded-2xl px-3 sm:px-5 py-2 sm:py-3 flex items-center justify-between">
               <Info label="Client" value={order.clientName || '—'} />
               <Separator />
               <Info label="Taille" value={order.taille} />
@@ -144,8 +144,8 @@ export default function App() {
 function Info({ label, value, bold }) {
   return (
     <div className="text-center min-w-0 flex-1">
-      <p className="text-[11px] text-[#86868B] uppercase">{label}</p>
-      <p className={`text-[15px] truncate ${bold ? 'font-bold text-[#1D1D1F]' : 'text-[#1D1D1F]'}`}>
+      <p className="text-[9px] sm:text-[11px] text-[#86868B] uppercase">{label}</p>
+      <p className={`text-[13px] sm:text-[15px] truncate ${bold ? 'font-bold text-[#1D1D1F]' : 'text-[#1D1D1F]'}`}>
         {value}
       </p>
     </div>

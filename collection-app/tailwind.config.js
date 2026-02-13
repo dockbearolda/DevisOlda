@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      screens: {
+        'landscape': { 'raw': '(orientation: landscape) and (max-height: 500px)' },
+      },
     },
   },
   plugins: [],

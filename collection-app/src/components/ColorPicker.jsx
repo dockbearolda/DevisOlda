@@ -5,7 +5,7 @@ import { Check } from 'lucide-react'
  */
 export default function ColorPicker({ colors, selected, onChange }) {
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="flex flex-wrap gap-2 sm:gap-2.5">
       {colors.map((color) => {
         const isSelected = selected === color.hex
         const isLight = isLightColor(color.hex)
@@ -16,7 +16,7 @@ export default function ColorPicker({ colors, selected, onChange }) {
             title={color.name}
             onClick={() => onChange(color.hex)}
             className={`
-              relative w-8 h-8 rounded-full transition-transform duration-150
+              relative w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-transform duration-150
               active:scale-90
               ${isSelected
                 ? 'ring-2 ring-[#007AFF] ring-offset-2'

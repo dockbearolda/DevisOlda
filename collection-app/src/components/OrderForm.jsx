@@ -83,14 +83,14 @@ export default function OrderForm({ order, onChange, onSubmit, isValid }) {
             />
           </Row>
           <Row label="Taille" last>
-            <div className="flex gap-1">
+            <div className="flex gap-0.5 sm:gap-1 flex-wrap justify-end">
               {SIZES.map(size => (
                 <button
                   key={size}
                   type="button"
                   onClick={() => update('taille', size)}
                   className={`
-                    px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all
+                    px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-[13px] font-semibold transition-all
                     ${order.taille === size
                       ? 'bg-[#007AFF] text-white'
                       : 'bg-[#F2F2F7] text-[#1D1D1F]'
@@ -106,8 +106,8 @@ export default function OrderForm({ order, onChange, onSubmit, isValid }) {
 
         {/* ─── COULEURS ─── */}
         <Section title="Couleurs">
-          <div className="px-4 py-3">
-            <p className="text-[15px] text-[#1D1D1F] mb-3">Couleur T-shirt</p>
+          <div className="px-3 sm:px-4 py-2.5 sm:py-3">
+            <p className="text-[14px] sm:text-[15px] text-[#1D1D1F] mb-2 sm:mb-3">Couleur T-shirt</p>
             <ColorPicker
               colors={TSHIRT_COLORS}
               selected={order.couleurTshirt}
@@ -115,8 +115,8 @@ export default function OrderForm({ order, onChange, onSubmit, isValid }) {
             />
           </div>
           <Divider />
-          <div className="px-4 py-3">
-            <p className="text-[15px] text-[#1D1D1F] mb-3">Couleur Logo</p>
+          <div className="px-3 sm:px-4 py-2.5 sm:py-3">
+            <p className="text-[14px] sm:text-[15px] text-[#1D1D1F] mb-2 sm:mb-3">Couleur Logo</p>
             <ColorPicker
               colors={LOGO_COLORS}
               selected={order.couleurLogo}
@@ -235,12 +235,12 @@ export default function OrderForm({ order, onChange, onSubmit, isValid }) {
       </div>
 
       {/* ─── BOUTON ENVOYER ─── */}
-      <div className="pt-4 pb-2">
+      <div className="pt-4 pb-2 safe-area-bottom">
         <button
           type="submit"
           disabled={!isValid}
           className={`
-            w-full py-4 rounded-2xl text-[17px] font-semibold transition-all duration-200
+            w-full py-3.5 sm:py-4 rounded-2xl text-[15px] sm:text-[17px] font-semibold transition-all duration-200
             ${isValid
               ? 'bg-[#007AFF] text-white active:bg-[#0056CC] active:scale-[0.98]'
               : 'bg-[#E5E5EA] text-[#C7C7CC] cursor-not-allowed'
@@ -262,7 +262,7 @@ export default function OrderForm({ order, onChange, onSubmit, isValid }) {
 function Section({ title, children }) {
   return (
     <div>
-      <h3 className="text-[13px] font-normal text-[#86868B] uppercase px-4 mb-1.5">
+      <h3 className="text-[11px] sm:text-[13px] font-normal text-[#86868B] uppercase px-3 sm:px-4 mb-1.5">
         {title}
       </h3>
       <div className="bg-white rounded-2xl overflow-hidden">
@@ -281,11 +281,11 @@ function Row({ label, required, children, onClick, chevron, last }) {
         type={onClick ? 'button' : undefined}
         onClick={onClick}
         className={`
-          w-full flex items-center justify-between px-4 min-h-[52px]
+          w-full flex items-center justify-between px-3 sm:px-4 min-h-[44px] sm:min-h-[52px]
           ${onClick ? 'active:bg-[#F2F2F7] cursor-pointer' : ''}
         `}
       >
-        <span className="text-[17px] text-[#1D1D1F] shrink-0 mr-4">
+        <span className="text-[15px] sm:text-[17px] text-[#1D1D1F] shrink-0 mr-3 sm:mr-4">
           {label}
           {required && <span className="text-[#FF3B30] ml-0.5">*</span>}
         </span>

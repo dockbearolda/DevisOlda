@@ -209,13 +209,13 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                 Visuels de Production
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                 {/* Logo Avant */}
                 <div className="flex flex-col items-center">
-                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-3 sm:mb-4">
                     Avant
                   </p>
-                  <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
+                  <div className="relative w-[180px] h-[213px] sm:w-[220px] sm:h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
                                   rounded-2xl ring-1 ring-stone-200 overflow-hidden">
                     <TshirtSvgFront color={fiche.tshirtColor || '#FFFFFF'} />
                     {fiche.frontLogo ? (
@@ -269,10 +269,10 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
 
                 {/* Logo Arriere */}
                 <div className="flex flex-col items-center">
-                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-3 sm:mb-4">
                     Arrière
                   </p>
-                  <div className="relative w-[220px] h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
+                  <div className="relative w-[180px] h-[213px] sm:w-[220px] sm:h-[260px] bg-gradient-to-br from-stone-50 to-stone-100
                                   rounded-2xl ring-1 ring-stone-200 overflow-hidden">
                     <TshirtSvgBack color={fiche.tshirtColor || '#FFFFFF'} />
                     {fiche.backLogo ? (
@@ -332,7 +332,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
                 Couleurs de Production
               </p>
 
-              <div className="flex items-center justify-center gap-12">
+              <div className="flex items-center justify-center gap-8 sm:gap-12">
                 {/* Couleur T-shirt */}
                 <div className="flex flex-col items-center gap-3">
                   <div
@@ -835,7 +835,7 @@ function FicheClient({ fiche, onUpdate, onValidate, onArchive, currentView }) {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-white text-4xl font-black tracking-tight">
+              <p className="text-white text-2xl sm:text-4xl font-black tracking-tight">
                 {total} EUR
               </p>
             </div>

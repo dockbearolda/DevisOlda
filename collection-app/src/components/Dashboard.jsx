@@ -127,9 +127,9 @@ function Dashboard({ archive, onLoadFiche, onDeleteFiche }) {
           <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">En cours</p>
           <p className="text-2xl font-black text-stone-600">{stats.inProgress}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-stone-100">
-          <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">CA Total</p>
-          <p className="text-2xl font-black text-stone-900">{stats.totalRevenue} EUR</p>
+        <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-stone-100">
+          <p className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider mb-1">CA Total</p>
+          <p className="text-xl sm:text-2xl font-black text-stone-900">{stats.totalRevenue} EUR</p>
         </div>
       </div>
 
