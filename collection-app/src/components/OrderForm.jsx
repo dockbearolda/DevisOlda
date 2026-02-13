@@ -104,6 +104,8 @@ export default function OrderForm({ order, onChange, onSubmit, isValid, total })
             tshirtColor={order.couleurTshirt}
             logoFront={order.logoAvant}
             logoBack={order.logoArriere}
+            onLogoFrontChange={(src) => update('logoAvant', src || '')}
+            onLogoBackChange={(src) => update('logoArriere', src || '')}
           />
         </div>
         <Divider />
